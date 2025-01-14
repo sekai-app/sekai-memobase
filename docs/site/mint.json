@@ -19,12 +19,12 @@
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:contact@memobase.io"
+      "url": "https://github.com/memodb-io/memobase?tab=readme-ov-file#support"
     }
   ],
   "topbarCtaButton": {
     "name": "Dashboard",
-    "url": "https://memobase.io/pricing"
+    "url": "https://memobase.io/dashboard"
   },
   "tabs": [],
   "anchors": [
