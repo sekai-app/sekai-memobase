@@ -25,6 +25,7 @@ from uvicorn.config import LOGGING_CONFIG
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_redis_pool()
+    LOG.info(f"Start Memobase Server {memobase_server.__version__} 🖼️")
     yield
     await close_connection()
 
