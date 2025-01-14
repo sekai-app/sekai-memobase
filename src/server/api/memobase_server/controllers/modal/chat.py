@@ -71,12 +71,6 @@ async def process_blobs(
         already_topics_prompt = ""
 
     blob_strs = tag_chat_blobs_in_order_xml(blobs)
-    print(
-        blob_strs,
-        PROMPTS[CONFIG.language]["extract"].get_prompt(
-            already_topics=already_topics_prompt
-        ),
-    )
     p = await llm_complete(
         blob_strs,
         system_prompt=PROMPTS[CONFIG.language]["extract"].get_prompt(
@@ -185,7 +179,6 @@ async def merge_or_add_new_memos(
         old_p: ProfileData = old_new_profile["old_profile"]
 
         update_response: UpdateResponse = parse_string_into_merge_action(p.data())
-        print(update_response)
         if update_response is None:
             LOG.warning(f"Failed to parse merge action: {p.data()}")
             continue
