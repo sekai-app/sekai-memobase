@@ -18,8 +18,6 @@
 </div>
 
 
-
-
 🌬️ **Does your AI forget your users?** 
 
 
