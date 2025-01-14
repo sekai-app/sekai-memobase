@@ -1,3 +1,5 @@
+"""Read the docs of how this patch works: https://docs.memobase.io/features/openai"""
+
 from memobase import MemoBaseClient
 from openai import OpenAI
 from memobase.patch.openai import openai_memory
