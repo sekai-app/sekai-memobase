@@ -1,4 +1,4 @@
-# Synced from backend 0.0.3.dev0
+# Synced from backend 0.0.5
 from enum import StrEnum
 from datetime import datetime
 from typing import Literal, Optional
