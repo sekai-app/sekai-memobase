@@ -6,18 +6,14 @@ from .utils import pack_profiles_into_string
 EXAMPLES = [
     (
         """
-<chat date="2024/1/1">
-    user: 你好，今天过得怎么样？
-</chat>
+[2025/01/01] user: 你好，今天过得怎么样？
 """,
         AIUserProfiles(**{"facts": []}),
     ),
     (
         """
-<chat date="2024/1/1">
-    user: 我还是不敢相信我们今天结婚了！
-    assistant: 我知道，这将是我人生中最美好的旅程。
-</chat>
+[2025/01/01] user: 我还是不敢相信我们今天结婚了！
+[2025/01/01] Silei: 我知道，这将是我人生中最美好的旅程。
 """,
         AIUserProfiles(
             **{
@@ -25,7 +21,7 @@ EXAMPLES = [
                     {
                         "topic": "人口统计",
                         "sub_topic": "婚姻状况",
-                        "memo": "用户与assistant已婚, 结婚日期在2024/1/1",
+                        "memo": "用户与Silei已婚, 结婚日期在2025/01/01",
                     }
                 ]
             }
@@ -33,9 +29,7 @@ EXAMPLES = [
     ),
     (
         """
-<chat date="2024/1/1">
-    user: 你好，我住在旧金山，想找一家日常餐厅。
-</chat>
+[2025/01/4] user: 你好，我住在旧金山，想找一家日常餐厅。
 """,
         AIUserProfiles(
             **{
@@ -51,24 +45,22 @@ EXAMPLES = [
     ),
     (
         """
-<chat  date="2024/1/1">
-    user: 你能给我写一封博士申请推荐信吗？
-    assistant: 明白了，Melinda！...
-    user: 谢谢你记得我的名字！
-</chat>
+[2025/01/14] user: 你能给我写一封博士申请推荐信吗？
+[2025/01/14] assistant: 明白了，Melinda！...
+[2025/01/14] user: 谢谢你记得我的名字！
 """,
         AIUserProfiles(
             **{
                 "facts": [
                     {
                         "topic": "基本信息",
-                        "sub_topic": "可能的姓名",
+                        "sub_topic": "姓名",
                         "memo": "用户被称为Melinda",
                     },
                     {
                         "topic": "教育经历",
                         "sub_topic": "学历",
-                        "memo": "用户在2024/1/1正在申请博士学位",
+                        "memo": "用户在2025/01/14正在申请博士学位",
                     },
                 ]
             }
@@ -76,9 +68,7 @@ EXAMPLES = [
     ),
     (
         """
-<chat  date="2024/10/11">
-    user: 昨天下午3点我和John开了个会，讨论了新项目。
-</chat>
+[2024/10/12] user: 昨天下午3点我和John开了个会，讨论了新项目。
 """,
         AIUserProfiles(
             **{
@@ -94,9 +84,7 @@ EXAMPLES = [
     ),
     (
         """
-<chat  date="2024/1/1">
-    user: 你好，我叫John，我是MemoBase的软件工程师。
-</chat>
+[2025/01/14] user: 你好，我叫John，我是MemoBase的软件工程师。
 """,
         AIUserProfiles(
             **{
@@ -122,13 +110,9 @@ EXAMPLES = [
     ),
     (
         """
-<chat  date="2024/1/1">
-    user: 我最喜欢的电影是《盗梦空间》和《星际穿越》。
-    assistant: 这些都是很棒的电影，你看过《信条》吗？
-</chat>
-<chat date="2024/1/1">
-    user: 我看过《信条》，事实上那是我最喜欢的。
-</chat>
+[2025/01/14] user: 我最喜欢的电影是《盗梦空间》和《星际穿越》。
+[2025/01/14] assistant: 这些都是很棒的电影，你看过《信条》吗？
+[2025/01/14] user: 我看过《信条》，事实上那是我最喜欢的。
 """,
         AIUserProfiles(
             **{
@@ -157,13 +141,18 @@ DEFAULT_JOB = """你是一位专业的心理学家。
 
 FACT_RETRIEVAL_PROMPT = """{system_prompt}
 
-
 ## 你应该关注的主题
 以下是一些可以参考的主题/子主题示例：
 {user_profile_topics}
 如果你认为有必要，可以创建自己的主题/子主题，任何有助于评估用户状态的信息都是受欢迎的。
 
 ## 格式
+### 输入
+输入的格式是用户和另一方的对话:
+- [TIME] NAME: MESSAGE
+其中NAME有时候是user，有时候是assistant或者别的名字。
+MESSGAE则是对话内容. 理解对话内容并且记住事情发生的时间
+
 ### 输出
 你需要从对话中提取事实和偏好，并按顺序列出：
 - TOPIC{tab}SUB_TOPIC{tab}MEMO

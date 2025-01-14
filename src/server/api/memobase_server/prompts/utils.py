@@ -2,25 +2,26 @@ import re
 import json
 from ..env import LOG, CONFIG
 from ..models.response import AIUserProfiles, AIUserProfile
-from ..models.blob import Blob
+from ..models.blob import ChatBlob
 from ..utils import get_blob_str
 
 LIST_INT_PATTERN = re.compile(r"\[\d+(?:,\s*\d+)*\]")
 INT_INT_PATTERN = re.compile(r"\[(\d+)\]")
 
 
-def tag_blobs_in_order_xml(
-    blobs: list[Blob],
-    tag_name: str = "doc",
+def tag_chat_blobs_in_order_xml(
+    blobs: list[ChatBlob],
 ):
-    dates = [
-        b.created_at.strftime("%Y/%m/%d %I:%M%p") if b.created_at else None
-        for b in blobs
-    ]
-    return "\n".join(
-        f'<{tag_name} date="{d}">\n{get_blob_str(b)}\n</{tag_name}>'
-        for b, d in zip(blobs, dates)
-    )
+    # tag_name = "chat"
+    # dates = [
+    #     b.created_at.strftime("%Y/%m/%d %I:%M%p") if b.created_at else None
+    #     for b in blobs
+    # ]
+    # return "\n".join(
+    #     f'<{tag_name} date="{d}">\n{get_blob_str(b)}\n</{tag_name}>'
+    #     for b, d in zip(blobs, dates)
+    # )
+    return "\n".join(get_blob_str(b) for b in blobs)
 
 
 def attribute_unify(attr: str):

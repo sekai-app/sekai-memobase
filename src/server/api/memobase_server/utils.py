@@ -2,7 +2,7 @@ from typing import cast
 from datetime import timezone, datetime
 from functools import wraps
 from .env import ENCODER, LOG
-from .models.blob import Blob, BlobType, ChatBlob, DocBlob
+from .models.blob import Blob, BlobType, ChatBlob, DocBlob, OpenAICompatibleMessage
 from .models.database import GeneralBlob
 from .connectors import get_redis_client, PROJECT_ID
 
@@ -26,12 +26,23 @@ def pack_blob_from_db(blob: GeneralBlob, blob_type: BlobType) -> Blob:
             raise ValueError(f"Unsupported Blob Type: {blob_type}")
 
 
+def get_message_timestamp(
+    message: OpenAICompatibleMessage, fallback_blob_timestamp: datetime
+):
+    fallback_blob_timestamp = fallback_blob_timestamp or datetime.now()
+    return (
+        message.created_at
+        if message.created_at
+        else fallback_blob_timestamp.strftime("%Y/%m/%d %I:%M%p")
+    )
+
+
 def get_blob_str(blob: Blob):
     match blob.type:
         case BlobType.chat:
             return "\n".join(
                 [
-                    f"{m.alias or m.role}: {m.content}"
+                    f"[{get_message_timestamp(m, blob.created_at)}] {m.alias or m.role}: {m.content}"
                     for m in cast(ChatBlob, blob).messages
                 ]
             )

@@ -243,3 +243,53 @@ async def test_api_user_flush_buffer(client, db_env, mock_llm_complete):
     d = response.json()
     assert response.status_code == 200
     assert d["errno"] == 0
+
+
+def test_chat_blob_param_api(client, db_env):
+    response = client.post(f"{PREFIX}/users", json={})
+    d = response.json()
+    assert response.status_code == 200
+    assert d["errno"] == 0
+    u_id = d["data"]["id"]
+
+    response = client.post(
+        f"{PREFIX}/blobs/insert/{u_id}",
+        json={
+            "blob_type": "chat",
+            "blob_data": {
+                "messages": [
+                    {"role": "user", "content": "Hello world", "alias": "try"},
+                    {"role": "assistant", "content": "hi"},
+                ]
+            },
+        },
+    )
+    d = response.json()
+    assert response.status_code == 200
+    assert d["errno"] == 0
+
+    response = client.post(
+        f"{PREFIX}/blobs/insert/{u_id}",
+        json={
+            "blob_type": "chat",
+            "blob_data": {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": "Hello world",
+                        "created_at": "2025-01-14",
+                    },
+                    {"role": "assistant", "content": "hi"},
+                ]
+            },
+        },
+    )
+    d = response.json()
+    assert response.status_code == 200
+    assert d["errno"] == 0
+    b_id = d["data"]["id"]
+
+    response = client.delete(f"{PREFIX}/users/{u_id}")
+    d = response.json()
+    assert response.status_code == 200
+    assert d["errno"] == 0

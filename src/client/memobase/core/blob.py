@@ -9,6 +9,7 @@ class OpenAICompatibleMessage(BaseModel):
     role: Literal["user", "assistant"]
     content: str
     alias: Optional[str] = None
+    created_at: Optional[str] = None
 
 
 class TranscriptStamp(BaseModel):

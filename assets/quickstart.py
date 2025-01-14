@@ -14,10 +14,12 @@ messages = [
     {
         "role": "user",
         "content": "Hello, I'm Gus",
+        "created_at": "2025-01-14",
     },
     {
         "role": "assistant",
         "content": "Hi, nice to meet you, Gus!",
+        "alias": "HerAI",
     },
 ]
 

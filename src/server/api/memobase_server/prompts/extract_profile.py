@@ -6,18 +6,14 @@ from ..env import CONFIG
 EXAMPLES = [
     (
         """
-<chat date="2024/1/1">
-    user: Hi, how is your day?
-</chat>
+[2025/01/14] user: Hi, how is your day?
 """,
         AIUserProfiles(**{"facts": []}),
     ),
     (
         """
-<chat date="2024/1/1">
-    user: I still can't believe we're married today!
-    SiLei: I know, it will be the most amazing journey of my life.
-</chat>
+[2025/01/01] user: I still can't believe we're married today!
+[2025/01/01] SiLei: I know, it will be the most amazing journey of my life.
 """,
         AIUserProfiles(
             **{
@@ -30,7 +26,7 @@ EXAMPLES = [
                     {
                         "topic": "life_event",
                         "sub_topic": "Marriage",
-                        "memo": "Married to SiLei at 2024/1/1",
+                        "memo": "Married to SiLei at 2025/01/01",
                     },
                 ]
             }
@@ -38,9 +34,7 @@ EXAMPLES = [
     ),
     (
         """
-<chat  date="2024/1/1">
-    user: Hi, I am looking for a daily restaurant in San Francisco cause I live there.
-</chat>
+[2025/01/01] user: Hi, I am looking for a daily restaurant in San Francisco cause I live there.
 """,
         AIUserProfiles(
             **{
@@ -56,11 +50,9 @@ EXAMPLES = [
     ),
     (
         """
-<chat  date="2024/1/1">
-    user: Can you give me a letter of references for my PhD applications?
-    assistant: Got it, Melinda!...
-    user: Thanks for remembering my name!
-</chat>
+[2025/01/01] user: Can you give me a letter of references for my PhD applications?
+[2025/01/01] assistant: Got it, Melinda!...
+[2025/01/01] user: Thanks for remembering my name!
 """,
         AIUserProfiles(
             **{
@@ -73,7 +65,7 @@ EXAMPLES = [
                     {
                         "topic": "education",
                         "sub_topic": "Degree",
-                        "memo": "user is applying PhD at the time: 2024/1/1",
+                        "memo": "user is applying PhD at the time: 2025/01/01",
                     },
                 ]
             }
@@ -81,9 +73,7 @@ EXAMPLES = [
     ),
     (
         """
-<chat  date="2024/10/11">
-    user: Yesterday, I had a meeting with John at 3pm. We discussed the new project.
-</chat>
+[2024/10/11] user: Yesterday, I had a meeting with John at 3pm. We discussed the new project.
 """,
         AIUserProfiles(
             **{
@@ -99,9 +89,7 @@ EXAMPLES = [
     ),
     (
         """
-<chat  date="2024/1/1">
-    user: Hi, my name is John. I am a software engineer at Memobase.
-</chat>
+[2025/01/01] user: Hi, my name is John. I am a software engineer at Memobase.
 """,
         AIUserProfiles(
             **{
@@ -127,13 +115,9 @@ EXAMPLES = [
     ),
     (
         """
-<chat date="2024/1/1">
-    user: Me favorite movies are Inception and Interstellar.
-    assistant: Those are great movies, how about the movie: Tenet?
-</chat>
-<chat date="2024/1/1">
-    user: I have watched Tenet, I think that's my favorite in fact.
-</chat>
+[2025/01/01] user: Me favorite movies are Inception and Interstellar.
+[2025/01/01] assistant: Those are great movies, how about the movie: Tenet?
+[2025/01/02] user: I have watched Tenet, I think that's my favorite in fact.
 """,
         AIUserProfiles(
             **{
@@ -169,6 +153,13 @@ Below are some example topics/sub_topics you can refer to:
 You can create your own topics/sub_topics if you find it necessary, Anything valuable to evaluate the user's state is welcomed.
 
 ## Formatting
+
+### Input
+You will receive a conversation between the user and the assistant. The format of the conversation is:
+- [TIME] NAME: MESSAGE
+where NAME is sometimes "user", sometimes "assistant" or other names.
+MESSAGE is the content of the conversation. Understand the conversation and remember the time when the conversation happened.
+
 ### Output
 You need to extract the facts and preferences from the conversation and place them in order list:
 - TOPIC{tab}SUB_TOPIC{tab}MEMO
