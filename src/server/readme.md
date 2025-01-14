@@ -7,10 +7,10 @@
   </a>
   <p><strong>The server-side of Memobase</strong></p>
   <p>
-    <img src="https://img.shields.io/badge/docker-blue">
-    <img src="https://img.shields.io/badge/version-0.0.1.dev-green">
+    <img src="https://img.shields.io/badge/docker-0.0.5-blue">
   </p>
 </div>
+
 
 
 
@@ -35,7 +35,7 @@ Check out the [docs](https://docs.memobase.io/quickstart) of how to use Memobase
 2. Find and download the docker image of Memobase:
 
    ```bash
-   docker pull ghcr.io/memodb-io/memobase:main
+   docker pull ghcr.io/memodb-io/memobase:latest
    ```
 
 3. Setup your `config.yaml` and an `env.list` file, the `env.list` should look like [this](./api/.env.example):
