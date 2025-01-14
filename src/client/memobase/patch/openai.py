@@ -93,24 +93,35 @@ def _sync_chat(client: OpenAI, mb_client: MemoBaseClient):
         user_query = kwargs["messages"][-1]
         if user_query["role"] != "user":
             LOG.warning(f"Last query is not user query: {user_query}")
-            return _create_chat(*args, **kwargs)
+            if not is_streaming:
+                return _create_chat(*args, **kwargs)
+            else:
+                res = _create_chat(*args, **kwargs)
+                for r in res:
+                    yield r
+                return
 
         u = mb_client.get_or_create_user(user_id)
         kwargs["messages"] = user_profile_insert(kwargs["messages"], u)
-
         response = _create_chat(*args, **kwargs)
 
         if is_streaming:
             total_response = ""
+            r_role = None
             for r in response:
                 yield r
                 try:
                     r_string = r.choices[0].delta.content
+                    r_role = r_role or r.choices[0].delta.role
                     total_response += r_string or ""
                 except Exception:
                     continue
             if not len(total_response):
                 return
+            if r_role != "assistant":
+                LOG.warning(f"Last response is not assistant response: {r_role}")
+                return response
+
             messages = ChatBlob(
                 messages=[
                     {"role": "user", "content": user_query["content"]},

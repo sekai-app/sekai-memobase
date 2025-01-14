@@ -68,7 +68,6 @@ class MemoBaseClient:
         try:
             return self.get_user(user_id)
         except ServerError:
-            print("create user")
             self.add_user(id=user_id)
         return User(user_id=user_id, project_client=self)
 
