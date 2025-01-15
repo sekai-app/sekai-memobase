@@ -90,6 +90,12 @@
           "group": "Manage Data",
           "pages": [
             "api-reference/blobs/insert_data",
+            {
+              "group": "Supported Blobs",
+              "pages": [
+                "api-reference/blobs/modal/chat"
+              ]
+            },
             "api-reference/blobs/get_all_data",
             "api-reference/blobs/get_blob",
             "api-reference/blobs/delete_blob"
