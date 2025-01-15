@@ -26,7 +26,12 @@
     "name": "Dashboard",
     "url": "https://memobase.io/dashboard"
   },
-  "tabs": [],
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    }
+  ],
   "anchors": [
     {
       "name": "Open Source",
@@ -37,11 +42,6 @@
       "name": "Community",
       "icon": "discord",
       "url": "https://discord.gg/YdgwU4d9NB"
-    },
-    {
-      "name": "API Reference",
-      "icon": "square-terminal",
-      "url": "api-reference"
     }
   ],
   "navigation": [
