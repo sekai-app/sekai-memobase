@@ -25,13 +25,24 @@
 
 🖼️ **Can you design the memory of AI?** 
 
-> Memobase offers accurate user profile, involving many aspects of your users: Age, Education, Interests, Opinions...
+> Memobase offers accurate user profile, involving many aspects of your users: Age, Education, Interests, Opinions... [Customize](https://docs.memobase.io/features/customization/profile) the aspects you want Memobase to collect.
 > 
-> [Customize](https://docs.memobase.io/features/customization/profile) the aspects you want Memobase to collect.
 
 ⌛️ **Do you want users spend more time on your Apps?** 
 
 > Memobase is working with some leading AI companion startups. They have observated increased chatting turns after adopting Memobase, leading to higher user retention and subscription rate.
+
+
+
+Memobase is a user profile-based memory system, providing abilities like user managment, multi-modal understanding and long-term user memory to your GenAI applications.
+
+Core Features:
+
+- **🎯 Memory Design**: Define and control exactly what user information your AI captures
+- **🔄 Auto-Profiling**: User profiles evolve naturally through conversation
+- **🔌 Easy Setup**: Minimal code changes to integrate with your existing LLM stack
+- **⚡️ Fast Retrieval**: Industry-leading speeds via non-embedding system
+- **🚀 Production Ready**: Battle-tested by our partners in production
 
 
 
