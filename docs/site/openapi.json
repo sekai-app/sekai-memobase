@@ -1,0 +1,1093 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Memobase API",
+        "summary": "APIs for Memobase, a user memory system for LLM Apps",
+        "version": "0.0.5"
+    },
+    "paths": {
+        "/api/v1/healthcheck": {
+            "get": {
+                "tags": [
+                    "chore"
+                ],
+                "summary": "Healthcheck",
+                "description": "Check if your memobase is set up correctly",
+                "operationId": "healthcheck_api_v1_healthcheck_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create User",
+                "description": "Create a new user with additional data",
+                "operationId": "create_user_api_v1_users_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserData",
+                                "description": "User data for creating a new user"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IdResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{user_id}": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get User",
+                "operationId": "get_user_api_v1_users__user_id__get",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the user to retrieve",
+                            "title": "User Id"
+                        },
+                        "description": "The ID of the user to retrieve"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserDataResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update User",
+                "operationId": "update_user_api_v1_users__user_id__put",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the user to update",
+                            "title": "User Id"
+                        },
+                        "description": "The ID of the user to update"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "description": "Updated user data",
+                                "title": "User Data"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IdResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Delete User",
+                "operationId": "delete_user_api_v1_users__user_id__delete",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the user to delete",
+                            "title": "User Id"
+                        },
+                        "description": "The ID of the user to delete"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/blobs/{user_id}/{blob_type}": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get User All Blobs",
+                "operationId": "get_user_all_blobs_api_v1_users_blobs__user_id___blob_type__get",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the user to fetch blobs for",
+                            "title": "User Id"
+                        },
+                        "description": "The ID of the user to fetch blobs for"
+                    },
+                    {
+                        "name": "blob_type",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/BlobType",
+                            "description": "The type of blobs to retrieve"
+                        },
+                        "description": "The type of blobs to retrieve"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "description": "Page number for pagination, starting from 0",
+                            "default": 0,
+                            "title": "Page"
+                        },
+                        "description": "Page number for pagination, starting from 0"
+                    },
+                    {
+                        "name": "page_size",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "description": "Number of items per page, default is 10",
+                            "default": 10,
+                            "title": "Page Size"
+                        },
+                        "description": "Number of items per page, default is 10"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IdsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/blobs/insert/{user_id}": {
+            "post": {
+                "tags": [
+                    "blob"
+                ],
+                "summary": "Insert Blob",
+                "operationId": "insert_blob_api_v1_blobs_insert__user_id__post",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the user to insert the blob for",
+                            "title": "User Id"
+                        },
+                        "description": "The ID of the user to insert the blob for"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BlobData",
+                                "description": "The blob data to insert"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IdResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/blobs/{user_id}/{blob_id}": {
+            "get": {
+                "tags": [
+                    "blob"
+                ],
+                "summary": "Get Blob",
+                "operationId": "get_blob_api_v1_blobs__user_id___blob_id__get",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the user",
+                            "title": "User Id"
+                        },
+                        "description": "The ID of the user"
+                    },
+                    {
+                        "name": "blob_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the blob to retrieve",
+                            "title": "Blob Id"
+                        },
+                        "description": "The ID of the blob to retrieve"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlobDataResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "blob"
+                ],
+                "summary": "Delete Blob",
+                "operationId": "delete_blob_api_v1_blobs__user_id___blob_id__delete",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the user",
+                            "title": "User Id"
+                        },
+                        "description": "The ID of the user"
+                    },
+                    {
+                        "name": "blob_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the blob to delete",
+                            "title": "Blob Id"
+                        },
+                        "description": "The ID of the blob to delete"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/profile/{user_id}": {
+            "get": {
+                "tags": [
+                    "profile"
+                ],
+                "summary": "Get User Profile",
+                "description": "Get the real-time user profiles for long term memory",
+                "operationId": "get_user_profile_api_v1_users_profile__user_id__get",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the user to get profiles for",
+                            "title": "User Id"
+                        },
+                        "description": "The ID of the user to get profiles for"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserProfileResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/buffer/{user_id}/{buffer_type}": {
+            "post": {
+                "tags": [
+                    "buffer"
+                ],
+                "summary": "Flush Buffer",
+                "description": "Get the real-time user profiles for long term memory",
+                "operationId": "flush_buffer_api_v1_users_buffer__user_id___buffer_type__post",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the user",
+                            "title": "User Id"
+                        },
+                        "description": "The ID of the user"
+                    },
+                    {
+                        "name": "buffer_type",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/BlobType",
+                            "description": "The type of buffer to flush"
+                        },
+                        "description": "The type of buffer to flush"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/profile/{user_id}/{profile_id}": {
+            "delete": {
+                "tags": [
+                    "profile"
+                ],
+                "summary": "Delete User Profile",
+                "description": "Get the real-time user profiles for long term memory",
+                "operationId": "delete_user_profile_api_v1_users_profile__user_id___profile_id__delete",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the user",
+                            "title": "User Id"
+                        },
+                        "description": "The ID of the user"
+                    },
+                    {
+                        "name": "profile_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the profile to delete",
+                            "title": "Profile Id"
+                        },
+                        "description": "The ID of the profile to delete"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "BaseResponse": {
+                "properties": {
+                    "data": {
+                        "anyOf": [
+                            {
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Data",
+                        "description": "Response data payload"
+                    },
+                    "errno": {
+                        "$ref": "#/components/schemas/CODE",
+                        "description": "Error code, 0 means success",
+                        "default": 0
+                    },
+                    "errmsg": {
+                        "type": "string",
+                        "title": "Errmsg",
+                        "description": "Error message, empty when success",
+                        "default": ""
+                    }
+                },
+                "type": "object",
+                "title": "BaseResponse"
+            },
+            "BlobData": {
+                "properties": {
+                    "blob_type": {
+                        "$ref": "#/components/schemas/BlobType"
+                    },
+                    "blob_data": {
+                        "type": "object",
+                        "title": "Blob Data"
+                    },
+                    "fields": {
+                        "anyOf": [
+                            {
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Fields"
+                    },
+                    "created_at": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Created At"
+                    },
+                    "updated_at": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Updated At"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "blob_type",
+                    "blob_data"
+                ],
+                "title": "BlobData"
+            },
+            "BlobDataResponse": {
+                "properties": {
+                    "data": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/BlobData"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "description": "Response containing blob data"
+                    },
+                    "errno": {
+                        "$ref": "#/components/schemas/CODE",
+                        "description": "Error code, 0 means success",
+                        "default": 0
+                    },
+                    "errmsg": {
+                        "type": "string",
+                        "title": "Errmsg",
+                        "description": "Error message, empty when success",
+                        "default": ""
+                    }
+                },
+                "type": "object",
+                "title": "BlobDataResponse"
+            },
+            "BlobType": {
+                "type": "string",
+                "enum": [
+                    "chat",
+                    "doc",
+                    "image",
+                    "code",
+                    "transcript"
+                ],
+                "title": "BlobType"
+            },
+            "CODE": {
+                "type": "integer",
+                "enum": [
+                    0,
+                    400,
+                    401,
+                    403,
+                    404,
+                    405,
+                    409,
+                    422,
+                    500,
+                    501,
+                    502,
+                    503,
+                    504
+                ],
+                "title": "CODE"
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "IdData": {
+                "properties": {
+                    "id": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "uuid4"
+                            },
+                            {
+                                "type": "string",
+                                "format": "uuid5"
+                            }
+                        ],
+                        "title": "Id",
+                        "description": "The UUID identifier"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id"
+                ],
+                "title": "IdData"
+            },
+            "IdResponse": {
+                "properties": {
+                    "data": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/IdData"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "description": "Response containing a single ID"
+                    },
+                    "errno": {
+                        "$ref": "#/components/schemas/CODE",
+                        "description": "Error code, 0 means success",
+                        "default": 0
+                    },
+                    "errmsg": {
+                        "type": "string",
+                        "title": "Errmsg",
+                        "description": "Error message, empty when success",
+                        "default": ""
+                    }
+                },
+                "type": "object",
+                "title": "IdResponse"
+            },
+            "IdsData": {
+                "properties": {
+                    "ids": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string",
+                                    "format": "uuid4"
+                                },
+                                {
+                                    "type": "string",
+                                    "format": "uuid5"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Ids",
+                        "description": "List of UUID identifiers"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "ids"
+                ],
+                "title": "IdsData"
+            },
+            "IdsResponse": {
+                "properties": {
+                    "data": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/IdsData"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "description": "Response containing multiple IDs"
+                    },
+                    "errno": {
+                        "$ref": "#/components/schemas/CODE",
+                        "description": "Error code, 0 means success",
+                        "default": 0
+                    },
+                    "errmsg": {
+                        "type": "string",
+                        "title": "Errmsg",
+                        "description": "Error message, empty when success",
+                        "default": ""
+                    }
+                },
+                "type": "object",
+                "title": "IdsResponse"
+            },
+            "ProfileData": {
+                "properties": {
+                    "id": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "uuid4"
+                            },
+                            {
+                                "type": "string",
+                                "format": "uuid5"
+                            }
+                        ],
+                        "title": "Id",
+                        "description": "The profile's unique identifier"
+                    },
+                    "content": {
+                        "type": "string",
+                        "title": "Content",
+                        "description": "User profile content value"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Created At",
+                        "description": "Timestamp when the profile was created"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Updated At",
+                        "description": "Timestamp when the profile was last updated"
+                    },
+                    "attributes": {
+                        "anyOf": [
+                            {
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Attributes",
+                        "description": "User profile attributes in JSON, containing 'topic', 'sub_topic'"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "content"
+                ],
+                "title": "ProfileData"
+            },
+            "UserData": {
+                "properties": {
+                    "data": {
+                        "anyOf": [
+                            {
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Data",
+                        "description": "User additional data in JSON"
+                    },
+                    "id": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "uuid4"
+                            },
+                            {
+                                "type": "string",
+                                "format": "uuid5"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Id",
+                        "description": "User ID in UUIDv4/5"
+                    },
+                    "created_at": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Created At",
+                        "description": "Timestamp when the user was created"
+                    },
+                    "updated_at": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Updated At",
+                        "description": "Timestamp when the user was last updated"
+                    }
+                },
+                "type": "object",
+                "title": "UserData"
+            },
+            "UserDataResponse": {
+                "properties": {
+                    "data": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/UserData"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "description": "Response containing user data"
+                    },
+                    "errno": {
+                        "$ref": "#/components/schemas/CODE",
+                        "description": "Error code, 0 means success",
+                        "default": 0
+                    },
+                    "errmsg": {
+                        "type": "string",
+                        "title": "Errmsg",
+                        "description": "Error message, empty when success",
+                        "default": ""
+                    }
+                },
+                "type": "object",
+                "title": "UserDataResponse"
+            },
+            "UserProfileResponse": {
+                "properties": {
+                    "data": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/UserProfilesData"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "description": "Response containing user profiles"
+                    },
+                    "errno": {
+                        "$ref": "#/components/schemas/CODE",
+                        "description": "Error code, 0 means success",
+                        "default": 0
+                    },
+                    "errmsg": {
+                        "type": "string",
+                        "title": "Errmsg",
+                        "description": "Error message, empty when success",
+                        "default": ""
+                    }
+                },
+                "type": "object",
+                "title": "UserProfileResponse"
+            },
+            "UserProfilesData": {
+                "properties": {
+                    "profiles": {
+                        "items": {
+                            "$ref": "#/components/schemas/ProfileData"
+                        },
+                        "type": "array",
+                        "title": "Profiles",
+                        "description": "List of user profiles"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "profiles"
+                ],
+                "title": "UserProfilesData"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            }
+        }
+    }
+}

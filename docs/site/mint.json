@@ -37,6 +37,11 @@
       "name": "Community",
       "icon": "discord",
       "url": "https://discord.gg/YdgwU4d9NB"
+    },
+    {
+      "name": "API Reference",
+      "icon": "square-terminal",
+      "url": "api-reference"
     }
   ],
   "navigation": [
@@ -58,6 +63,44 @@
           "pages": [
             "features/customization/profile",
             "features/customization/full"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "api-reference/overview",
+        {
+          "group": "Utility",
+          "pages": [
+            "api-reference/utility/healthcheck"
+          ]
+        },
+        {
+          "group": "Manage User",
+          "pages": [
+            "api-reference/users/create_user",
+            "api-reference/users/get_user",
+            "api-reference/users/update_user",
+            "api-reference/users/delete_user"
+          ]
+        },
+        {
+          "group": "Manage Data",
+          "pages": [
+            "api-reference/blobs/insert_data",
+            "api-reference/blobs/get_all_data",
+            "api-reference/blobs/get_blob",
+            "api-reference/blobs/delete_blob"
+          ]
+        },
+        {
+          "group": "Manage Profile",
+          "pages": [
+            "api-reference/profiles/flush",
+            "api-reference/profiles/profile",
+            "api-reference/profiles/delete_profile"
           ]
         }
       ]
