@@ -14,15 +14,30 @@
 
 
 
-
 ## Get started
-1. Make sure you have [docker-compose](https://docs.docker.com/compose/install/) installed.
-2. Copy the `.env.example` file to `.env` and set the environment variables.
-3. Copy the `./api/config.yaml.example` file to `./api/config.yaml` and set the configuration.
-   1. You must fill the OpenAI API Key in `llm_api_key`  in `config.yaml`
-   2. Or you can change `llm_base_url` to any OpenAI-SDK-Compatible service(via [vllm](https://github.com/vllm-project/vllm), [Ollama](https://github.com/ollama/ollama?tab=readme-ov-file),...)
 
-4. Run `docker-compose build && docker-compose up` to start the services.
+> [!NOTE]
+>
+> You must fill the OpenAI API Key in `llm_api_key` of `config.yaml`
+>
+> Or you can change `llm_base_url` to any OpenAI-SDK-Compatible service(via [vllm](https://github.com/vllm-project/vllm), [Ollama](https://github.com/ollama/ollama?tab=readme-ov-file),...)
+
+
+
+1. Make sure you have [docker-compose](https://docs.docker.com/compose/install/) installed.
+
+2. Prepare the configs:
+
+   ```bash
+   cd src/server
+   cp .env.example .env
+   cp ./api/config.yaml.example ./api/config.yaml
+   ```
+
+   1. `.env` contains the service configs, like running port, secret token...
+   2. `config.yaml` contains the Memobase configs, like LLM model, profile slots. [docs](https://docs.memobase.io/features/customization/full)
+
+3. Run `docker-compose build && docker-compose up` to start the services.
 
 Check out the [docs](https://docs.memobase.io/quickstart) of how to use Memobase client or APIs.
 
