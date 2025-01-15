@@ -44,6 +44,34 @@ Core Features:
 - **⚡️ Fast Retrieval**: Industry-leading speeds via non-embedding system
 - **🚀 Production Ready**: Battle-tested by our partners in production
 
+Memobase can provide you structured user profiles of users, check out the [partial result](./docs/experiments/900-chats/readme.md) from a 900-turns chatting:
+
+```python
+{
+  "basic_info": {
+    "language_spoken": ["English", "Korean"],
+    "name": "오*영"
+  },
+  "demographics": {
+    "marital_status": "married"
+  },
+  "education": {
+    "notes": "Had an English teacher who emphasized capitalization rules during school days",
+    "major": "국어국문학과 (Korean Language and Literature)"
+  },
+  "interest": {
+    "games": 'User is interested in Cyberpunk 2077 and wants to create a game better than it',
+    'youtube_channels': "Kurzgesagt",
+    ...
+  },
+  "psychological": {...},
+  'work': {'working_industry': ..., 'title': ..., },
+  ...
+}
+```
+
+
+
 
 
 ## Get Started
