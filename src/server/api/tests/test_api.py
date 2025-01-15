@@ -48,7 +48,7 @@ def test_user_api_curd(client, db_env):
     assert d["errno"] == 0
     assert d["data"]["data"]["test"] == 1
 
-    response = client.put(f"{PREFIX}/users/{u_id}", json={"data": {"test": 2}})
+    response = client.put(f"{PREFIX}/users/{u_id}", json={"test": 2})
     d = response.json()
     assert response.status_code == 200
     assert d["errno"] == 0

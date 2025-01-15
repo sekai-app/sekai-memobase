@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import IntEnum
 from typing import Optional
-from pydantic import BaseModel, UUID4, UUID5
+from pydantic import BaseModel, UUID4, UUID5, Field
 from .blob import BlobData
 from .claim import ClaimData
 from .action import ActionData
@@ -31,74 +31,91 @@ class CODE(IntEnum):
 
 
 class AIUserProfile(BaseModel):
-    topic: str
-    sub_topic: str
-    memo: str
+    topic: str = Field(..., description="The main topic of the user profile")
+    sub_topic: str = Field(..., description="The sub-topic of the user profile")
+    memo: str = Field(..., description="The memo content of the user profile")
 
 
 class AIUserProfiles(BaseModel):
-    facts: list[AIUserProfile]
+    facts: list[AIUserProfile] = Field(..., description="List of user profile facts")
 
 
 # Return data format
 class IdData(BaseModel):
-    id: UUID
+    id: UUID = Field(..., description="The UUID identifier")
 
 
 class IdsData(BaseModel):
-    ids: list[UUID]
+    ids: list[UUID] = Field(..., description="List of UUID identifiers")
 
 
 class ProfileData(BaseModel):
-    id: UUID
-    content: str
-    created_at: datetime = None
-    updated_at: datetime = None
-    attributes: Optional[dict] = None
+    id: UUID = Field(..., description="The profile's unique identifier")
+    content: str = Field(..., description="User profile content value")
+    created_at: datetime = Field(
+        None, description="Timestamp when the profile was created"
+    )
+    updated_at: datetime = Field(
+        None, description="Timestamp when the profile was last updated"
+    )
+    attributes: Optional[dict] = Field(
+        None,
+        description="User profile attributes in JSON, containing 'topic', 'sub_topic'",
+    )
 
 
 class UserData(BaseModel):
-    data: Optional[dict] = None
-    id: Optional[UUID] = None
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
+    data: Optional[dict] = Field(None, description="User additional data in JSON")
+    id: Optional[UUID] = Field(None, description="User ID in UUIDv4/5")
+    created_at: Optional[datetime] = Field(
+        None, description="Timestamp when the user was created"
+    )
+    updated_at: Optional[datetime] = Field(
+        None, description="Timestamp when the user was last updated"
+    )
 
 
 class UserProfilesData(BaseModel):
-    profiles: list[ProfileData]
+    profiles: list[ProfileData] = Field(..., description="List of user profiles")
 
 
 class QueryData(BaseModel):
-    claims: list[ClaimData]
-    actions: list[ActionData]
+    claims: list[ClaimData] = Field(..., description="List of claim data")
+    actions: list[ActionData] = Field(..., description="List of action data")
 
 
 # API response format
 class BaseResponse(BaseModel):
-    data: Optional[dict] = None
-    errno: CODE = CODE.SUCCESS
-    errmsg: str = ""
+    data: Optional[dict] = Field(None, description="Response data payload")
+    errno: CODE = Field(CODE.SUCCESS, description="Error code, 0 means success")
+    errmsg: str = Field("", description="Error message, empty when success")
 
 
 class IdResponse(BaseResponse):
-    data: Optional[IdData] = None
+    data: Optional[IdData] = Field(None, description="Response containing a single ID")
 
 
 class IdsResponse(BaseResponse):
-    data: Optional[IdsData] = None
+    data: Optional[IdsData] = Field(
+        None, description="Response containing multiple IDs"
+    )
 
 
 class UserDataResponse(BaseResponse):
-    data: Optional[UserData] = None
+    data: Optional[UserData] = Field(None, description="Response containing user data")
 
 
 class BlobDataResponse(BaseResponse):
-    data: Optional[BlobData] = None
+    data: Optional[BlobData] = Field(None, description="Response containing blob data")
 
 
 class QueryDataResponse(BaseResponse):
-    data: Optional[QueryData] = None
+    data: Optional[QueryData] = Field(
+        None, description="Response containing query results"
+    )
 
 
 class UserProfileResponse(BaseResponse):
-    data: Optional[UserProfilesData] = None
+    data: Optional[UserProfilesData] = Field(
+        None, description="Response containing user profiles"
+    )

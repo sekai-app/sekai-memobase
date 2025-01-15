@@ -5,6 +5,7 @@ import memobase_server.env
 import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, APIRouter, HTTPException, BackgroundTasks
+from fastapi import Path, Query, Body
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from memobase_server.connectors import (
@@ -70,33 +71,45 @@ async def healthcheck() -> BaseResponse:
 
 
 @router.post("/users", tags=["user"])
-async def create_user(user_data: res.UserData) -> res.IdResponse:
+async def create_user(
+    user_data: res.UserData = Body(..., description="User data for creating a new user")
+) -> res.IdResponse:
     """Create a new user with additional data"""
     p = await controllers.user.create_user(user_data)
     return p.to_response(res.IdResponse)
 
 
 @router.get("/users/{user_id}", tags=["user"])
-async def get_user(user_id: str) -> res.UserDataResponse:
+async def get_user(
+    user_id: str = Path(..., description="The ID of the user to retrieve")
+) -> res.UserDataResponse:
     p = await controllers.user.get_user(user_id)
     return p.to_response(res.UserDataResponse)
 
 
 @router.put("/users/{user_id}", tags=["user"])
-async def update_user(user_id: str, user_data: res.UserData) -> res.IdResponse:
+async def update_user(
+    user_id: str = Path(..., description="The ID of the user to update"),
+    user_data: dict = Body(..., description="Updated user data"),
+) -> res.IdResponse:
     p = await controllers.user.update_user(user_id, user_data)
     return p.to_response(res.IdResponse)
 
 
 @router.delete("/users/{user_id}", tags=["user"])
-async def delete_user(user_id: str) -> BaseResponse:
+async def delete_user(
+    user_id: str = Path(..., description="The ID of the user to delete")
+) -> BaseResponse:
     p = await controllers.user.delete_user(user_id)
     return p.to_response(BaseResponse)
 
 
 @router.get("/users/blobs/{user_id}/{blob_type}", tags=["user"])
 async def get_user_all_blobs(
-    user_id: str, blob_type: BlobType, page: int = 0, page_size: int = 10
+    user_id: str = Path(..., description="The ID of the user to fetch blobs for"),
+    blob_type: BlobType = Path(..., description="The type of blobs to retrieve"),
+    page: int = Query(0, description="Page number for pagination, starting from 0"),
+    page_size: int = Query(10, description="Number of items per page, default is 10"),
 ) -> res.IdsResponse:
     p = await controllers.user.get_user_all_blobs(user_id, blob_type, page, page_size)
     return p.to_response(res.IdsResponse)
@@ -104,7 +117,9 @@ async def get_user_all_blobs(
 
 @router.post("/blobs/insert/{user_id}", tags=["blob"])
 async def insert_blob(
-    user_id: str, blob_data: res.BlobData, background_tasks: BackgroundTasks
+    user_id: str = Path(..., description="The ID of the user to insert the blob for"),
+    blob_data: res.BlobData = Body(..., description="The blob data to insert"),
+    background_tasks: BackgroundTasks = BackgroundTasks(),
 ) -> res.IdResponse:
     background_tasks.add_task(capture_int_key, TelemetryKeyName.insert_blob_request)
 
@@ -127,33 +142,47 @@ async def insert_blob(
 
 
 @router.get("/blobs/{user_id}/{blob_id}", tags=["blob"])
-async def get_blob(user_id: str, blob_id: str) -> res.BlobDataResponse:
+async def get_blob(
+    user_id: str = Path(..., description="The ID of the user"),
+    blob_id: str = Path(..., description="The ID of the blob to retrieve"),
+) -> res.BlobDataResponse:
     p = await controllers.blob.get_blob(user_id, blob_id)
     return p.to_response(res.BlobDataResponse)
 
 
 @router.delete("/blobs/{user_id}/{blob_id}", tags=["blob"])
-async def delete_blob(user_id: str, blob_id: str) -> res.BaseResponse:
+async def delete_blob(
+    user_id: str = Path(..., description="The ID of the user"),
+    blob_id: str = Path(..., description="The ID of the blob to delete"),
+) -> res.BaseResponse:
     p = await controllers.blob.remove_blob(user_id, blob_id)
     return p.to_response(res.BaseResponse)
 
 
 @router.get("/users/profile/{user_id}", tags=["profile"])
-async def get_user_profile(user_id: str) -> res.UserProfileResponse:
+async def get_user_profile(
+    user_id: str = Path(..., description="The ID of the user to get profiles for")
+) -> res.UserProfileResponse:
     """Get the real-time user profiles for long term memory"""
     p = await controllers.profile.get_user_profiles(user_id)
     return p.to_response(res.UserProfileResponse)
 
 
 @router.post("/users/buffer/{user_id}/{buffer_type}", tags=["buffer"])
-async def flush_buffer(user_id: str, buffer_type: BlobType) -> res.BaseResponse:
+async def flush_buffer(
+    user_id: str = Path(..., description="The ID of the user"),
+    buffer_type: BlobType = Path(..., description="The type of buffer to flush"),
+) -> res.BaseResponse:
     """Get the real-time user profiles for long term memory"""
     p = await controllers.buffer.wait_insert_done_then_flush(user_id, buffer_type)
     return p.to_response(res.BaseResponse)
 
 
 @router.delete("/users/profile/{user_id}/{profile_id}", tags=["profile"])
-async def delete_user_profile(user_id: str, profile_id: str) -> res.BaseResponse:
+async def delete_user_profile(
+    user_id: str = Path(..., description="The ID of the user"),
+    profile_id: str = Path(..., description="The ID of the profile to delete"),
+) -> res.BaseResponse:
     """Get the real-time user profiles for long term memory"""
     p = await controllers.profile.delete_user_profile(user_id, profile_id)
     return p.to_response(res.IdResponse)

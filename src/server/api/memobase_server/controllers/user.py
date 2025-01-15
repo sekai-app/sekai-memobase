@@ -29,12 +29,12 @@ async def get_user(user_id: str) -> Promise[UserData]:
         )
 
 
-async def update_user(user_id: str, data: UserData) -> Promise[IdData]:
+async def update_user(user_id: str, data: dict) -> Promise[IdData]:
     with Session() as session:
         db_user = session.query(User).filter_by(id=user_id).one_or_none()
         if db_user is None:
             return Promise.reject(CODE.NOT_FOUND, f"User {user_id} not found")
-        db_user.additional_fields = data.data
+        db_user.additional_fields = data
         session.commit()
         return Promise.resolve(IdData(id=db_user.id))
 

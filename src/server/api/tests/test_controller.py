@@ -16,7 +16,7 @@ async def test_user_curd(db_env):
     d = p.data().data
     assert d["test"] == 1
 
-    p = await controllers.user.update_user(u_id, res.UserData(data={"test": 2}))
+    p = await controllers.user.update_user(u_id, {"test": 2})
     assert p.ok()
     p = await controllers.user.get_user(u_id)
     assert p.data().data["test"] == 2
