@@ -12,8 +12,8 @@ EXAMPLES = [
     ),
     (
         """
-[2025/01/01] user: 小姨好呀， 我大哥最近来北京找我了
-[2025/01/01] assistant: 哦，他最近来北京了，是吗？
+[2025/01/01] user: 小姨你好呀， 我现在在北京
+[2025/01/01] assistant: 哦，你最近来北京了，是吗？
 """,
         AIUserProfiles(
             **{
@@ -22,17 +22,7 @@ EXAMPLES = [
                         "topic": "基本信息",
                         "sub_topic": "居住地",
                         "memo": "北京",
-                    },
-                    {
-                        "topic": "人口统计",
-                        "sub_topic": "亲戚",
-                        "memo": "用户有一个大哥",
-                    },
-                    {
-                        "topic": "人际关系",
-                        "sub_topic": "assistant",
-                        "memo": "用户称呼assistant为小姨",
-                    },
+                    }
                 ]
             }
         ),
@@ -177,7 +167,7 @@ FACT_RETRIEVAL_PROMPT = """{system_prompt}
 ### 输入
 输入的格式是用户和另一方的对话:
 - [TIME] NAME: MESSAGE
-其中NAME有时候是user，有时候是assistant或者别的名字。
+其中NAME有时候是user，有时候是assistant。
 MESSGAE则是对话内容. 理解对话内容并且记住事情发生的时间
 
 ### 输出
@@ -208,7 +198,7 @@ MESSGAE则是对话内容. 理解对话内容并且记住事情发生的时间
 - 你应该推断对话中隐含的内容，而不仅仅是明确陈述的内容。
 - 相同的内容不需要在不同的 topic 和 sub_topic 下重复，选择最相关的主题和子主题即可。
 - 相同的 topic 和 sub_topic 只能出现一次。
-- 留意用户(user)对其他方(assistant)的称呼, 不要错误的记录其他方(assistant)的信息。
+忽视用户(user)对其他方(assistant)的称呼：比如用户称呼其他方(assistant)为小姨，因为对其他方的称呼不一定代表真实的关系，不需要推断用户有一个小姨， 只需要记录用户称呼其他方为小姨即可
 
 
 ## 用户之前的主题

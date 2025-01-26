@@ -43,7 +43,9 @@ def get_message_timestamp(
 
 def get_message_name(message: OpenAICompatibleMessage):
     if message.alias:
-        return f"{message.role}({message.alias})"
+        # if message.role == "assistant":
+        #     return f"{message.alias}"
+        return f"{message.alias}({message.role})"
     return message.role
 
 
