@@ -19,7 +19,13 @@
       <img src="https://github.com/memodb-io/memobase/actions/workflows/publish.yaml/badge.svg">
     </a>
   </p>
+  <p>
+    <a href="https://discord.gg/YdgwU4d9NB">
+      <img src="https://dcbadge.limes.pink/api/server/YdgwU4d9NB?style=flat">
+    </a>
+  </p>
 </div>
+
 
 
 
