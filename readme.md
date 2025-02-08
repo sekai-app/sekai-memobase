@@ -78,6 +78,7 @@ Memobase can provide you structured user profiles of users, check out the [resul
 ## Core Features
 
 - **🎯 Memory for User, not Agent**: Define and control exactly what user information your AI captures. 
+- ➡️ **Time-aware Memory**: In Memobase, specific date will be saved in profiles so your AI won't be affected by outdated information. Also, you can check out [Memobase event](./assets/episodic_memory.py) for sequential events (*i.e.* episodic memory)
 - **🔄 Scalable Profiling**: User profiles evolve naturally through conversation with controllable memory size. 
 - **🔌 Easy Integration**: Minimal code changes to integrate with your existing LLM stack with API, [Python](https://pypi.org/project/memobase/)/[Node](./src/client/memobase-ts/readme.md)/[Go](./src/client/memobase-go/readme.md) SDK.
 - **⚡️ Batch Processing**: Industry-leading speeds via non-embedding system and session buffer. Fast & Cheap.
