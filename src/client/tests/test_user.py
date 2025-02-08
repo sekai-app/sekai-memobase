@@ -3,9 +3,19 @@ from time import time
 from memobase.error import ServerError
 from memobase.utils import string_to_uuid
 
+CONFIG = """
+language: zh
+"""
+
 
 def test_user_curd_client(api_client):
     a = api_client
+
+    print(api_client.get_config())
+    print(api_client.update_config(CONFIG))
+    c = api_client.get_config()
+    assert c == CONFIG
+
     u = a.add_user()
     print(u)
     ud = a.get_user(u)

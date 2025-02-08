@@ -59,5 +59,6 @@ def test_flush_curd_client(api_client):
     u.flush()
     ps = u.profile()
     print([p.describe for p in ps])
+    print(u.event())
     mb.delete_user(uid)
     print("Deleted user")

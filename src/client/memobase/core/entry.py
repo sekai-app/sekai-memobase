@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import HttpUrl
 from dataclasses import dataclass
 from .blob import BlobData, Blob, BlobType, ChatBlob
-from .user import UserProfile, UserProfileData
+from .user import UserProfile, UserProfileData, UserEventData
 from ..network import unpack_response
 from ..error import ServerError
 from ..utils import LOG
@@ -44,6 +44,18 @@ class MemoBaseClient:
         except ServerError as e:
             LOG.error(f"Healthcheck failed: {e}")
             return False
+        return True
+
+    def get_config(self) -> str:
+        r = unpack_response(self._client.get("/project/profile_config"))
+        return r.data["profile_config"]
+
+    def update_config(self, config: str) -> bool:
+        r = unpack_response(
+            self._client.post(
+                "/project/profile_config", json={"profile_config": config}
+            )
+        )
         return True
 
     def add_user(self, data: dict = None, id=None) -> str:
@@ -131,3 +143,9 @@ class User:
             )
         )
         return True
+
+    def event(self, topk=10) -> list[UserEventData]:
+        r = unpack_response(
+            self.project_client.client.get(f"/users/event/{self.user_id}?topk={topk}")
+        )
+        return [UserEventData.model_validate(e) for e in r.data["events"]]

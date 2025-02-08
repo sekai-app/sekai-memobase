@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from pydantic import BaseModel, UUID4, UUID5
+from pydantic import BaseModel, UUID4, UUID5, Field
 from typing import Optional
 from datetime import datetime
 
@@ -30,3 +30,26 @@ class UserProfileData(BaseModel):
             sub_topic=self.attributes.get("sub_topic", "NONE"),
             content=self.content,
         )
+
+
+class ProfileDelta(BaseModel):
+    content: str = Field(..., description="The profile content")
+    attributes: Optional[dict] = Field(
+        ...,
+        description="User profile attributes in JSON, containing 'topic', 'sub_topic'",
+    )
+
+
+class EventData(BaseModel):
+    profile_delta: list[ProfileDelta] = Field(..., description="List of profile data")
+
+
+class UserEventData(BaseModel):
+    id: UUID4 | UUID5 = Field(..., description="The event's unique identifier")
+    event_data: Optional[EventData] = Field(None, description="User event data in JSON")
+    created_at: datetime = Field(
+        None, description="Timestamp when the event was created"
+    )
+    updated_at: datetime = Field(
+        None, description="Timestamp when the event was last updated"
+    )
