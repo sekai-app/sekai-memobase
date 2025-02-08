@@ -40,8 +40,9 @@ async def extract_topics(
     if not p.ok():
         return p
     project_profiles = p.data()
+    use_language = project_profiles.language or CONFIG.language
     project_profiles_slots = read_out_profile_config(
-        project_profiles, PROMPTS[CONFIG.language]["profile"].CANDIDATE_PROFILE_TOPICS
+        project_profiles, PROMPTS[use_language]["profile"].CANDIDATE_PROFILE_TOPICS
     )
 
     if len(profiles):
@@ -62,14 +63,14 @@ async def extract_topics(
 
     blob_strs = tag_chat_blobs_in_order_xml(blobs)
     p = await llm_complete(
-        PROMPTS[CONFIG.language]["extract"].pack_input(
+        PROMPTS[use_language]["extract"].pack_input(
             already_topics_prompt,
             blob_strs,
-            PROMPTS[CONFIG.language]["profile"].get_prompt(project_profiles_slots),
+            PROMPTS[use_language]["profile"].get_prompt(project_profiles_slots),
         ),
-        system_prompt=PROMPTS[CONFIG.language]["extract"].get_prompt(),
+        system_prompt=PROMPTS[use_language]["extract"].get_prompt(),
         temperature=0.2,  # precise
-        **PROMPTS[CONFIG.language]["extract"].get_kwargs(),
+        **PROMPTS[use_language]["extract"].get_kwargs(),
     )
     if not p.ok():
         return p
@@ -83,6 +84,7 @@ async def extract_topics(
                 "fact_contents": [],
                 "fact_attributes": [],
                 "profiles": profiles,
+                "config": project_profiles,
             }
         )
 
@@ -107,5 +109,6 @@ async def extract_topics(
             "fact_contents": fact_contents,
             "fact_attributes": fact_attributes,
             "profiles": profiles,
+            "config": project_profiles,
         }
     )

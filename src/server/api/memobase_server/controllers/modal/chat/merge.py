@@ -2,6 +2,7 @@ import asyncio
 from ....env import CONFIG, LOG
 from ....models.utils import Promise
 from ....models.response import ProfileData
+from ....env import ProfileConfig
 from ....llms import llm_complete
 from ....prompts.utils import (
     parse_string_into_merge_action,
@@ -13,10 +14,12 @@ async def merge_or_add_new_memos(
     fact_contents: list[str],
     fact_attributes: list[dict],
     profiles: list[ProfileData],
+    config: ProfileConfig,
 ) -> Promise[MergeAddResult]:
     assert len(fact_contents) == len(
         fact_attributes
     ), "Length of fact_contents and fact_attributes must be equal"
+    use_language = config.language or CONFIG.language
     profile_option_results = {
         "add": [],
         "update": [],
@@ -63,15 +66,15 @@ async def merge_or_add_new_memos(
     for dp in facts_to_update:
         old_p: ProfileData = dp["old_profile"]
         task = llm_complete(
-            PROMPTS[CONFIG.language]["merge"].get_input(
+            PROMPTS[use_language]["merge"].get_input(
                 old_p.attributes["topic"],
                 old_p.attributes["sub_topic"],
                 old_p.content,
                 dp["new_profile"]["content"],
             ),
-            system_prompt=PROMPTS[CONFIG.language]["merge"].get_prompt(),
+            system_prompt=PROMPTS[use_language]["merge"].get_prompt(),
             temperature=0.2,  # precise
-            **PROMPTS[CONFIG.language]["merge"].get_kwargs(),
+            **PROMPTS[use_language]["merge"].get_kwargs(),
         )
         merge_tasks.append(task)
 

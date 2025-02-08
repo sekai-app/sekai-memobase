@@ -41,13 +41,17 @@ async def process_blobs(
         fact_contents=extracted_data["fact_contents"],
         fact_attributes=extracted_data["fact_attributes"],
         profiles=extracted_data["profiles"],
+        config=extracted_data["config"],
     )
     if not p.ok():
         return p
     profile_options = p.data()
 
     # 3. Check if we need to organize profiles
-    p = await organize_profiles(profile_options)
+    p = await organize_profiles(
+        profile_options,
+        config=extracted_data["config"],
+    )
     if not p.ok():
         LOG.error(f"Failed to organize profiles: {p.msg()}")
 

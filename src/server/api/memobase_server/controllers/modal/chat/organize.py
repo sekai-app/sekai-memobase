@@ -5,12 +5,15 @@ from ....prompts.types import get_specific_subtopics, attribute_unify
 from ....prompts.utils import parse_string_into_subtopics
 from ....models.utils import Promise
 from ....models.response import ProfileData
-from ....env import CONFIG, LOG
+from ....env import CONFIG, LOG, ProfileConfig
 from ....llms import llm_complete
 
 
-async def organize_profiles(profile_options: MergeAddResult) -> Promise[None]:
+async def organize_profiles(
+    profile_options: MergeAddResult, config: ProfileConfig
+) -> Promise[None]:
     profiles = profile_options["before_profiles"]
+    use_language = config.language or CONFIG.language
     topic_groups = defaultdict(list)
     for p in profiles:
         topic_groups[p.attributes["topic"]].append(p)
@@ -24,7 +27,7 @@ async def organize_profiles(profile_options: MergeAddResult) -> Promise[None]:
         return Promise.resolve(None)
     ps = await asyncio.gather(
         *[
-            organize_profiles_by_topic(group)
+            organize_profiles_by_topic(group, use_language)
             for group in need_to_organize_topics.values()
         ]
     )
@@ -46,7 +49,8 @@ async def organize_profiles(profile_options: MergeAddResult) -> Promise[None]:
 
 
 async def organize_profiles_by_topic(
-    profiles: list[ProfileData],  # profiles in the same topics
+    profiles: list[ProfileData],
+    use_language: str,  # profiles in the same topics
 ) -> Promise[list[AddProfile]]:
     assert (
         len(profiles) > CONFIG.max_profile_subtopics
@@ -59,7 +63,7 @@ async def organize_profiles_by_topic(
     )
     topic = attribute_unify(profiles[0].attributes["topic"])
     suggest_subtopics = get_specific_subtopics(
-        topic, PROMPTS[CONFIG.language]["profile"].CANDIDATE_PROFILE_TOPICS
+        topic, PROMPTS[use_language]["profile"].CANDIDATE_PROFILE_TOPICS
     )
 
     llm_inputs = "\n".join(
@@ -73,11 +77,11 @@ async def organize_profiles_by_topic(
 """
     p = await llm_complete(
         llm_prompt,
-        PROMPTS[CONFIG.language]["organize"].get_prompt(
+        PROMPTS[use_language]["organize"].get_prompt(
             CONFIG.max_profile_subtopics // 2 + 1, suggest_subtopics
         ),
         temperature=0.2,  # precise
-        **PROMPTS[CONFIG.language]["organize"].get_kwargs(),
+        **PROMPTS[use_language]["organize"].get_kwargs(),
     )
     if not p.ok():
         return p

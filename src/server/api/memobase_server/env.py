@@ -57,20 +57,32 @@ class Config:
         with open("config.yaml") as f:
             overwrite_config = yaml.safe_load(f)
             LOG.info(f"Load ./config.yaml")
-        overwrite_config = dataclasses.replace(cls(), **overwrite_config)
+        fields = {field.name for field in dataclasses.fields(cls)}
+        # Filter out any keys from overwrite_config that aren't in the dataclass
+        filtered_config = {k: v for k, v in overwrite_config.items() if k in fields}
+        overwrite_config = dataclasses.replace(cls(), **filtered_config)
         LOG.info(f"{overwrite_config}")
         return overwrite_config
 
 
 @dataclass
 class ProfileConfig:
+    language: Literal["en", "zh"] = None
     additional_user_profiles: list[dict] = field(default_factory=list)
     overwrite_user_profiles: Optional[list[dict]] = None
+
+    def __post_init__(self):
+        if self.language not in ["en", "zh"]:
+            self.language = None
 
     @classmethod
     def load_config_string(cls, config_string: str) -> "Config":
         overwrite_config = yaml.safe_load(config_string)
-        overwrite_config = dataclasses.replace(cls(), **overwrite_config)
+        # Get all field names from the dataclass
+        fields = {field.name for field in dataclasses.fields(cls)}
+        # Filter out any keys from overwrite_config that aren't in the dataclass
+        filtered_config = {k: v for k, v in overwrite_config.items() if k in fields}
+        overwrite_config = dataclasses.replace(cls(), **filtered_config)
         return overwrite_config
 
 
