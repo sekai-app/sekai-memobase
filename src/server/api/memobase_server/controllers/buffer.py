@@ -19,7 +19,7 @@ from .modal import BLOBS_PROCESS
 async def insert_blob_to_buffer(
     user_id: str, project_id: str, blob_id: str, blob_data: Blob
 ) -> Promise[None]:
-    p = await detect_buffer_idle_or_not(user_id, blob_data.type, project_id)
+    p = await detect_buffer_idle_or_not(user_id, project_id, blob_data.type)
     if not p.ok():
         return p
 
@@ -34,7 +34,7 @@ async def insert_blob_to_buffer(
         session.add(buffer)
         session.commit()
 
-    p = await detect_buffer_full_or_not(user_id, blob_data.type, project_id)
+    p = await detect_buffer_full_or_not(user_id, project_id, blob_data.type)
     if not p.ok():
         return p
     return Promise.resolve(None)
