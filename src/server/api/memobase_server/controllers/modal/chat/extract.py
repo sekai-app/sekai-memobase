@@ -8,7 +8,11 @@ from ....prompts.utils import (
     attribute_unify,
     parse_string_into_profiles,
 )
+from ....prompts.types import read_out_profile_config
 from ...profile import get_user_profiles
+from ...project import get_project_profile_config
+
+# from ...project impor
 from .types import FactResponse, PROMPTS
 
 
@@ -24,14 +28,21 @@ def merge_by_topic_sub_topics(new_facts: list[FactResponse]):
 
 
 async def extract_topics(
-    user_id: str, blob_ids: list[str], blobs: list[Blob]
+    user_id: str, project_id: str, blob_ids: list[str], blobs: list[Blob]
 ) -> Promise[dict]:
     assert len(blob_ids) == len(blobs), "Length of blob_ids and blobs must be equal"
     assert all(b.type == BlobType.chat for b in blobs), "All blobs must be chat blobs"
-    p = await get_user_profiles(user_id)
+    p = await get_user_profiles(user_id, project_id)
     if not p.ok():
         return p
     profiles = p.data().profiles
+    p = await get_project_profile_config(project_id)
+    if not p.ok():
+        return p
+    project_profiles = p.data()
+    project_profiles_slots = read_out_profile_config(
+        project_profiles, PROMPTS[CONFIG.language]["profile"].CANDIDATE_PROFILE_TOPICS
+    )
 
     if len(profiles):
         already_topics_subtopics = sorted(
@@ -52,7 +63,9 @@ async def extract_topics(
     blob_strs = tag_chat_blobs_in_order_xml(blobs)
     p = await llm_complete(
         PROMPTS[CONFIG.language]["extract"].pack_input(
-            already_topics_prompt, blob_strs
+            already_topics_prompt,
+            blob_strs,
+            PROMPTS[CONFIG.language]["profile"].get_prompt(project_profiles_slots),
         ),
         system_prompt=PROMPTS[CONFIG.language]["extract"].get_prompt(),
         temperature=0.2,  # precise
