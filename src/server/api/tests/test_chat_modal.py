@@ -151,6 +151,14 @@ async def test_chat_buffer_modal(db_env, mock_extract_llm_complete):
     assert len(p.data().profiles) == 4
     print(p.data())
 
+    p = await controllers.profile.truncate_profiles(p.data(), topk=2)
+    assert p.ok()
+    assert len(p.data().profiles) == 2
+
+    p = await controllers.event.get_user_events(u_id, DEFAULT_PROJECT_ID)
+    assert p.ok()
+    assert len(p.data().events) == 1
+
     p = await controllers.buffer.get_buffer_capacity(
         u_id, DEFAULT_PROJECT_ID, BlobType.chat
     )
@@ -230,11 +238,12 @@ async def test_chat_merge_modal(
     p = await controllers.profile.get_user_profiles(u_id, DEFAULT_PROJECT_ID)
     assert p.ok() and len(p.data().profiles) == len(PROFILES) + 2
     profiles = p.data().profiles
-    profiles = sorted(profiles[-2:], key=lambda x: x.content)
-    assert profiles[-1].attributes == {"topic": "interest", "sub_topic": "foods"}
-    assert profiles[-1].content == "user likes Chinese and Japanese food"
-    assert profiles[-2].attributes == {"topic": "education", "sub_topic": "level"}
-    assert profiles[-2].content == "High School"
+    profiles = sorted(profiles, key=lambda x: x.content)
+
+    assert profiles[-1].attributes == {"topic": "interest", "sub_topic": "sports"}
+    assert profiles[-1].content == "user likes to play basketball"
+    assert profiles[-2].attributes == {"topic": "interest", "sub_topic": "foods"}
+    assert profiles[-2].content == "user likes Chinese and Japanese food"
 
     p = await controllers.user.delete_user(u_id, DEFAULT_PROJECT_ID)
     assert p.ok()

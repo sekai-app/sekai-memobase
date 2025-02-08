@@ -167,6 +167,43 @@ def test_blob_api_curd(client, db_env):
 
 
 @pytest.mark.asyncio
+async def test_api_project(client, db_env):
+    response = client.get(f"{PREFIX}/project/profile_config")
+    d = response.json()
+    print(d)
+    assert response.status_code == 200
+    assert d["errno"] == 0
+    before_config = d["data"]["profile_config"]
+
+    response = client.post(
+        f"{PREFIX}/project/profile_config", json={"profile_config": "a: 1"}
+    )
+    d = response.json()
+    print(d)
+
+    response = client.get(f"{PREFIX}/project/profile_config")
+    d = response.json()
+    print(d)
+    assert d["data"]["profile_config"] == "a: 1"
+
+    response = client.post(
+        f"{PREFIX}/project/profile_config", json={"profile_config": before_config}
+    )
+    d = response.json()
+
+    response = client.get(f"{PREFIX}/project/profile_config")
+    d = response.json()
+    print(d)
+
+    response = client.post(
+        f"{PREFIX}/project/profile_config", json={"profile_config": "a: ["}
+    )
+    d = response.json()
+    print(d)
+    assert d["errno"] != 0
+
+
+@pytest.mark.asyncio
 async def test_api_user_profile(client, db_env):
     response = client.post(f"{PREFIX}/users", json={"data": {"test": 1}})
     d = response.json()
@@ -256,6 +293,13 @@ async def test_api_user_flush_buffer(client, db_env, mock_llm_complete):
     assert d["errno"] == 0
     assert len(d["data"]["profiles"]) == 1
     assert [dp["content"] for dp in d["data"]["profiles"]] == ["Gus"]
+
+    response = client.get(f"{PREFIX}/users/event/{u_id}?topk=5")
+    d = response.json()
+    assert response.status_code == 200
+    assert d["errno"] == 0
+    assert len(d["data"]["events"]) == 1
+    print(d)
 
     response = client.delete(f"{PREFIX}/users/{u_id}")
     d = response.json()
