@@ -15,6 +15,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+class ContanstTable:
+    topic = "topic"
+    sub_topic = "sub_topic"
+    update_hits = "update_hits"
+
+
 class TelemetryKeyName:
     insert_blob_request = "insert_blob_request"
     insert_blob_success_request = "insert_blob_success_request"
