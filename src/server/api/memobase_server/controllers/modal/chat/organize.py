@@ -10,7 +10,9 @@ from ....llms import llm_complete
 
 
 async def organize_profiles(
-    profile_options: MergeAddResult, config: ProfileConfig
+    project_id: str,
+    profile_options: MergeAddResult,
+    config: ProfileConfig,
 ) -> Promise[None]:
     profiles = profile_options["before_profiles"]
     use_language = config.language or CONFIG.language
@@ -27,7 +29,7 @@ async def organize_profiles(
         return Promise.resolve(None)
     ps = await asyncio.gather(
         *[
-            organize_profiles_by_topic(group, use_language)
+            organize_profiles_by_topic(project_id, group, use_language)
             for group in need_to_organize_topics.values()
         ]
     )
@@ -49,6 +51,7 @@ async def organize_profiles(
 
 
 async def organize_profiles_by_topic(
+    project_id: str,
     profiles: list[ProfileData],
     use_language: str,  # profiles in the same topics
 ) -> Promise[list[AddProfile]]:
@@ -76,6 +79,7 @@ async def organize_profiles_by_topic(
 {llm_inputs}
 """
     p = await llm_complete(
+        project_id,
         llm_prompt,
         PROMPTS[use_language]["organize"].get_prompt(
             CONFIG.max_profile_subtopics // 2 + 1, suggest_subtopics

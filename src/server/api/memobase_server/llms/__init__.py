@@ -14,7 +14,12 @@ assert CONFIG.llm_style in FACTORIES, f"Unsupported LLM style: {CONFIG.llm_style
 
 # TODO: add TPM/Rate limiter
 async def llm_complete(
-    prompt, system_prompt=None, history_messages=[], json_mode=False, **kwargs
+    project_id,
+    prompt,
+    system_prompt=None,
+    history_messages=[],
+    json_mode=False,
+    **kwargs,
 ) -> Promise[str | dict]:
     if json_mode:
         kwargs["response_format"] = {"type": "json_object"}
@@ -37,8 +42,12 @@ async def llm_complete(
     )
     out_tokens = len(get_encoded_tokens(results))
 
-    await capture_int_key(TelemetryKeyName.llm_input_tokens, in_tokens)
-    await capture_int_key(TelemetryKeyName.llm_output_tokens, out_tokens)
+    await capture_int_key(
+        TelemetryKeyName.llm_input_tokens, in_tokens, project_id=project_id
+    )
+    await capture_int_key(
+        TelemetryKeyName.llm_output_tokens, out_tokens, project_id=project_id
+    )
 
     if not json_mode:
         return Promise.resolve(results)

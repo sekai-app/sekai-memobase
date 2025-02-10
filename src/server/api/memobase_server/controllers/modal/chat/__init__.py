@@ -38,6 +38,7 @@ async def process_blobs(
         )
     # 2. Merge it to thw whole profile
     p = await merge_or_add_new_memos(
+        project_id,
         fact_contents=extracted_data["fact_contents"],
         fact_attributes=extracted_data["fact_attributes"],
         profiles=extracted_data["profiles"],
@@ -49,6 +50,7 @@ async def process_blobs(
 
     # 3. Check if we need to organize profiles
     p = await organize_profiles(
+        project_id,
         profile_options,
         config=extracted_data["config"],
     )
@@ -57,6 +59,7 @@ async def process_blobs(
 
     # 4. Re-summary profiles if any slot is too big
     p = await re_summary(
+        project_id,
         add_profile=profile_options["add"],
         update_profile=profile_options["update"],
     )

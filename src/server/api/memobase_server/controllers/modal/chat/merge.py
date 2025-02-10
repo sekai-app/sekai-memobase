@@ -11,6 +11,7 @@ from .types import UpdateResponse, PROMPTS, AddProfile, UpdateProfile, MergeAddR
 
 
 async def merge_or_add_new_memos(
+    project_id: str,
     fact_contents: list[str],
     fact_attributes: list[dict],
     profiles: list[ProfileData],
@@ -66,6 +67,7 @@ async def merge_or_add_new_memos(
     for dp in facts_to_update:
         old_p: ProfileData = dp["old_profile"]
         task = llm_complete(
+            project_id,
             PROMPTS[use_language]["merge"].get_input(
                 old_p.attributes["topic"],
                 old_p.attributes["sub_topic"],

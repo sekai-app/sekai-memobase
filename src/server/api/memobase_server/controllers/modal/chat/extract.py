@@ -63,6 +63,7 @@ async def extract_topics(
 
     blob_strs = tag_chat_blobs_in_order_xml(blobs)
     p = await llm_complete(
+        project_id,
         PROMPTS[use_language]["extract"].pack_input(
             already_topics_prompt,
             blob_strs,

@@ -10,23 +10,25 @@ from .types import UpdateProfile, AddProfile
 
 
 async def re_summary(
+    project_id: str,
     add_profile: list[AddProfile],
     update_profile: list[UpdateProfile],
 ) -> Promise[None]:
-    add_tasks = [summary_memo(ap) for ap in add_profile]
+    add_tasks = [summary_memo(project_id, ap) for ap in add_profile]
     await asyncio.gather(*add_tasks)
-    update_tasks = [summary_memo(up) for up in update_profile]
+    update_tasks = [summary_memo(project_id, up) for up in update_profile]
     ps = await asyncio.gather(*update_tasks)
     if not all([p.ok() for p in ps]):
         return Promise.reject("Failed to re-summary profiles")
     return Promise.resolve(None)
 
 
-async def summary_memo(content_pack: dict) -> Promise[None]:
+async def summary_memo(project_id: str, content_pack: dict) -> Promise[None]:
     content = content_pack["content"]
     if len(get_encoded_tokens(content)) <= CONFIG.max_pre_profile_token_size:
         return Promise.resolve(None)
     r = await llm_complete(
+        project_id,
         content_pack["content"],
         system_prompt=summary_profile.get_prompt(),
         temperature=0.2,  # precise
