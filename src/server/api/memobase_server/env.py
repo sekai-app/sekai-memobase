@@ -15,6 +15,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+class ProjectStatus:
+    active = "active"
+    suspended = "suspended"
+
+
+USAGE_TOKEN_LIMIT_MAP = {
+    ProjectStatus.active: int(os.getenv("USAGE_TOKEN_LIMIT_ACTIVE", -1)),
+}
+
+
 class ContanstTable:
     topic = "topic"
     sub_topic = "sub_topic"
