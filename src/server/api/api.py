@@ -199,7 +199,9 @@ async def insert_blob(
     if usage_token_limit >= 0 and (usage_token_limit < sum(today_token_costs)):
         return Promise.reject(
             CODE.SERVICE_UNAVAILABLE,
-            f"Your project reach Memobase token limit today, quota: {usage_token_limit}, used: {sum(today_token_costs)}",
+            f"Your project reaches Memobase token limit today. "
+            f"quota: {usage_token_limit}, used: {sum(today_token_costs)}. "
+            "\nhttps://www.memobase.io/en/pricing for more information.",
         ).to_response(res.IdResponse)
 
     p = await controllers.blob.insert_blob(user_id, project_id, blob_data)
