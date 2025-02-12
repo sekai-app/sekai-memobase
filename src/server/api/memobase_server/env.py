@@ -73,6 +73,8 @@ class Config:
         with open("config.yaml") as f:
             overwrite_config = yaml.safe_load(f)
             LOG.info(f"Load ./config.yaml")
+        if overwrite_config is None:
+            return cls()
         fields = {field.name for field in dataclasses.fields(cls)}
         # Filter out any keys from overwrite_config that aren't in the dataclass
         filtered_config = {k: v for k, v in overwrite_config.items() if k in fields}
@@ -94,6 +96,8 @@ class ProfileConfig:
     @classmethod
     def load_config_string(cls, config_string: str) -> "Config":
         overwrite_config = yaml.safe_load(config_string)
+        if overwrite_config is None:
+            return cls()
         # Get all field names from the dataclass
         fields = {field.name for field in dataclasses.fields(cls)}
         # Filter out any keys from overwrite_config that aren't in the dataclass
