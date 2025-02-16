@@ -1,3 +1,4 @@
+import time
 import memobase_server.env
 
 # Done setting up env
@@ -23,6 +24,7 @@ from memobase_server.models.blob import BlobType
 from memobase_server.models.utils import Promise
 from memobase_server.models import response as res
 from memobase_server import controllers
+from memobase_server.telemetry import telemetry_manager, CounterMetricName, HistogramMetricName
 from memobase_server.env import (
     LOG,
     TelemetryKeyName,
@@ -37,7 +39,6 @@ from memobase_server.auth.token import (
     get_project_status,
 )
 from memobase_server import utils
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -309,6 +310,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
         if not request.url.path.startswith("/api"):
             return await call_next(request)
         if request.url.path.startswith("/api/v1/healthcheck"):
+            telemetry_manager.increment_counter_metric(CounterMetricName.HEALTHCHECK, 1, {"source_ip": request.client.host})
             return await call_next(request)
         auth_token = request.headers.get("Authorization")
         if not auth_token or not auth_token.startswith("Bearer "):
@@ -335,7 +337,28 @@ class AuthMiddleware(BaseHTTPMiddleware):
                 )
             request.state.memobase_project_id = p.data()
         # await capture_int_key(TelemetryKeyName.has_request)
+        telemetry_manager.increment_counter_metric(
+            CounterMetricName.REQUEST,
+            1,
+            {
+                "project_id": request.state.memobase_project_id,
+                "source_ip": request.client.host,
+                "path": request.url.path,
+                "method": request.method,
+             },
+        )
+        start_time = time.time()
         response = await call_next(request)
+        telemetry_manager.record_histogram_metric(
+            HistogramMetricName.REQUEST_LATENCY_MS,
+            (time.time() - start_time) * 1000,
+            {
+                "project_id": request.state.memobase_project_id,
+                "source_ip": request.client.host,
+                "path": request.url.path,
+                "method": request.method,
+            },
+        )
         return response
 
     def is_valid_root(self, token: str) -> bool:
