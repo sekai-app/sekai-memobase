@@ -24,7 +24,11 @@ from memobase_server.models.blob import BlobType
 from memobase_server.models.utils import Promise
 from memobase_server.models import response as res
 from memobase_server import controllers
-from memobase_server.telemetry import telemetry_manager, CounterMetricName, HistogramMetricName
+from memobase_server.telemetry import (
+    telemetry_manager,
+    CounterMetricName,
+    HistogramMetricName,
+)
 from memobase_server.env import (
     LOG,
     TelemetryKeyName,
@@ -39,6 +43,7 @@ from memobase_server.auth.token import (
     get_project_status,
 )
 from memobase_server import utils
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -256,11 +261,11 @@ async def get_user_profile(
     ),
     max_token_size: int = Query(
         None,
-        description="Max Character length of total profile content, default is all",
+        description="Max token size of returned profile content, default is all",
     ),
     prefer_topics: list[str] = Query(
         None,
-        description="Use topics to filter profiles, default is all",
+        description="Rank prefer topics at first to try to keep them in filtering, default order is by updated time",
     ),
 ) -> res.UserProfileResponse:
     """Get the real-time user profiles for long term memory"""
@@ -314,7 +319,9 @@ class AuthMiddleware(BaseHTTPMiddleware):
         if not request.url.path.startswith("/api"):
             return await call_next(request)
         if request.url.path.startswith("/api/v1/healthcheck"):
-            telemetry_manager.increment_counter_metric(CounterMetricName.HEALTHCHECK, 1, {"source_ip": request.client.host})
+            telemetry_manager.increment_counter_metric(
+                CounterMetricName.HEALTHCHECK, 1, {"source_ip": request.client.host}
+            )
             return await call_next(request)
         auth_token = request.headers.get("Authorization")
         if not auth_token or not auth_token.startswith("Bearer "):
@@ -349,7 +356,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
                 "source_ip": request.client.host,
                 "path": request.url.path,
                 "method": request.method,
-             },
+            },
         )
         start_time = time.time()
         response = await call_next(request)
