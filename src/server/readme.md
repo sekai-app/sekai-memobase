@@ -20,7 +20,7 @@
 >
 > You must fill the OpenAI API Key in `llm_api_key` of `config.yaml`
 >
-> Or you can change `llm_base_url` to any OpenAI-SDK-Compatible service(via [vllm](https://github.com/vllm-project/vllm), [Ollama](https://github.com/ollama/ollama?tab=readme-ov-file),...)
+> Or you can change `llm_base_url` to any OpenAI-SDK-Compatible service(via [vllm](https://github.com/vllm-project/vllm), [Ollama](../../assets/tutorials/ollama+memobase/readme.md),...)
 
 
 

@@ -79,7 +79,7 @@ Memobase can provide you structured user profiles of users, check out the [resul
 
 - **🎯 Memory for User, not Agent**: Define and control exactly what user information your AI captures. 
 - ➡️ **Time-aware Memory**: In Memobase, specific date will be saved in profiles so your AI won't be affected by outdated information. Also, you can check out [Memobase event](./assets/episodic_memory.py) for sequential events (*i.e.* episodic memory)
-- **🔄 Scalable Profiling**: User profiles evolve naturally through conversation with controllable memory size. 
+- **🖼️ Contorllable Memory**: Among all types of memory, only some may enhance your product experience. Memobase offers a flexible configuration for you to [design the profile](https://docs.memobase.io/features/customization/profile).
 - **🔌 Easy Integration**: Minimal code changes to integrate with your existing LLM stack with API, [Python](https://pypi.org/project/memobase/)/[Node](./src/client/memobase-ts/readme.md)/[Go](./src/client/memobase-go/readme.md) SDK.
 - **⚡️ Batch Processing**: Industry-leading speeds via non-embedding system and session buffer. Fast & Cheap.
 - **🚀 Production Ready**: Battle-tested by our partners in production.
@@ -113,7 +113,9 @@ Here's a step-by-step guide and breakdown for you.
 
 > [!TIP]
 >
-> You can use [this quick start script](./assets/quickstart.py). Or you can keep things super easy by using [OpenAI SDK with Memobase.](https://docs.memobase.io/features/openai)
+> You can just run this equivalent [quickstart script](./assets/quickstart.py)
+>
+> Or you can keep things super easy by using [OpenAI SDK with Memobase.](https://docs.memobase.io/features/openai), [Ollama with Memobase](./assets/tutorials/ollama+memobase)
 
 ### 1. Make sure you're connected
 
@@ -183,6 +185,10 @@ In Memobase, we don't memoize users in [hot path](https://langchain-ai.github.io
 
 When the buffer zone becomes too large (e.g., 1024 tokens) or remains idle for an extended period (e.g., 1 hour), Memobase will flush the entire buffer into memory.  Alternatively, you can use `flush()` manually decide when to flush, such as when a chat session is closed in your app.
 </details>
+
+### What's next?
+
+You may want to explore the [customization](https://docs.memobase.io/features/customization/profile) of Memobase to make sure the system works as your expectation.
 
 
 
