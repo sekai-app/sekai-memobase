@@ -25,7 +25,7 @@ DB_ENGINE = create_engine(
     DATABASE_URL,
     pool_size=50,  # Reasonable default, adjust based on your needs
     max_overflow=30,  # Allow 10 connections beyond pool_size
-    pool_recycle=3600,  # Recycle connections after 1 hour
+    pool_recycle=600,  # Recycle connections after 10 minutes
     pool_pre_ping=True,  # Verify connections before using
     pool_timeout=30,  # Wait up to 30 seconds for available connection
 )
