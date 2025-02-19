@@ -41,6 +41,8 @@ services:
       - REDIS_URL=redis://:${REDIS_PASSWORD}@memobase-server-redis:6379/0
       - ACCESS_TOKEN=${ACCESS_TOKEN}
       - PROJECT_ID=${PROJECT_ID}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       memobase-server-db:
         condition: service_healthy
