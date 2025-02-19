@@ -194,6 +194,8 @@ Remember the following:
 Following is a conversation between the user and the assistant. You have to extract/infer the relevant facts and preferences from the conversation and return them in the list format as shown above.
 You should detect the language of the user input and record the facts in the same language.
 If you do not find anything relevant facts, user memories, and preferences in the below conversation, just return "NONE" or "NO FACTS".
+
+Only extract the attributes with actual values, if the user does not provide any value, do not extract it.
 """
 
 
