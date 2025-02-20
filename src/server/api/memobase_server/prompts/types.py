@@ -17,7 +17,11 @@ class UserProfileTopic:
     def __post_init__(self):
         self.topic = attribute_unify(self.topic)
         self.sub_topics = [
-            ({"name": st, "description": None} if isinstance(st, str) else st)
+            (
+                {"name": st, "description": None}
+                if isinstance(st, str)
+                else {"name": st["name"], "description": st.get("description", None)}
+            )
             for st in self.sub_topics
         ]
         for st in self.sub_topics:

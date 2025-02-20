@@ -35,6 +35,7 @@ def get_message_timestamp(
     message: OpenAICompatibleMessage, fallback_blob_timestamp: datetime
 ):
     fallback_blob_timestamp = fallback_blob_timestamp or datetime.now()
+    fallback_blob_timestamp = fallback_blob_timestamp.astimezone()
     return (
         message.created_at
         if message.created_at
@@ -70,7 +71,7 @@ def get_blob_token_size(blob: Blob):
 
 
 def seconds_from_now(dt: datetime):
-    return (datetime.now(tz=timezone.utc) - dt.replace(tzinfo=timezone.utc)).seconds
+    return (datetime.now().astimezone() - dt.astimezone()).seconds
 
 
 def user_id_lock(scope, lock_timeout=128, blocking_timeout=32):
