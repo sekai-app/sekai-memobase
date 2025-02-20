@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 python:3.11-slim-buster AS build
+FROM python:3.11-slim-buster AS build
 
 
 WORKDIR /app
