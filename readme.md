@@ -191,7 +191,7 @@ When the buffer zone becomes too large (e.g., 1024 tokens) or remains idle for a
 ### What's next?
 
 - You may want to explore the [customization](https://docs.memobase.io/features/customization/profile) of Memobase to make sure the system works as your expectation.
-- If you want to test Memobase on your own data, we offers a [script](./docs/experiments/chat_sessions) that allows you to set multiple chat sessions and see how the memory grows.
+- If you want to test Memobase on your own data, we offer a [script](./docs/experiments/chat_sessions) that allows you to set multiple chat sessions and see how the memory grows.
 
 
 
