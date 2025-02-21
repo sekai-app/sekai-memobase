@@ -40,7 +40,7 @@ Memobase is a **user profile-based memory system** designed to bring long-term u
 
 
 
-Memobase can provide you structured user profiles of users, check out the [result](./docs/experiments/900-chats/readme.md) from a 900-turns real-world chatting:
+Memobase can provide you structured user profiles of users, check out the [result](./docs/experiments/900-chats/readme.md) (compared with [mem0](https://github.com/mem0ai/mem0)) from a 900-turns real-world chatting:
 
 
 
@@ -75,10 +75,12 @@ Memobase can provide you structured user profiles of users, check out the [resul
 
 </details>
 
+
+
 ## Core Features
 
 - **🎯 Memory for User, not Agent**: Define and control exactly what user information your AI captures. 
-- ➡️ **Time-aware Memory**: In Memobase, specific date will be saved in profiles so your AI won't be affected by outdated information. Also, you can check out [Memobase event](./assets/episodic_memory.py) for sequential events (*i.e.* episodic memory)
+- ➡️ **Time-aware Memory**: Memobase saves specific dates in profiles to prevent outdated information from affecting your AI. Check [Memobase event](./assets/episodic_memory.py) for sequential events (episodic memory).
 - **🖼️ Contorllable Memory**: Among all types of memory, only some may enhance your product experience. Memobase offers a flexible configuration for you to [design the profile](https://docs.memobase.io/features/customization/profile).
 - **🔌 Easy Integration**: Minimal code changes to integrate with your existing LLM stack with API, [Python](https://pypi.org/project/memobase/)/[Node](./src/client/memobase-ts/readme.md)/[Go](./src/client/memobase-go/readme.md) SDK.
 - **⚡️ Batch Processing**: Industry-leading speeds via non-embedding system and session buffer. Fast & Cheap.
@@ -188,7 +190,8 @@ When the buffer zone becomes too large (e.g., 1024 tokens) or remains idle for a
 
 ### What's next?
 
-You may want to explore the [customization](https://docs.memobase.io/features/customization/profile) of Memobase to make sure the system works as your expectation.
+- You may want to explore the [customization](https://docs.memobase.io/features/customization/profile) of Memobase to make sure the system works as your expectation.
+- If you want to test Memobase on your own data, we offers a [script](./docs/experiments/chat_sessions) that allows you to set multiple chat sessions and see how the memory grows.
 
 
 
