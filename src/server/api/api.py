@@ -267,12 +267,20 @@ async def get_user_profile(
         None,
         description="Rank prefer topics at first to try to keep them in filtering, default order is by updated time",
     ),
+    only_topics: list[str] = Query(
+        None,
+        description="Only return profiles with these topics, default is all",
+    ),
 ) -> res.UserProfileResponse:
     """Get the real-time user profiles for long term memory"""
     project_id = request.state.memobase_project_id
     p = await controllers.profile.get_user_profiles(user_id, project_id)
     p = await controllers.profile.truncate_profiles(
-        p.data(), prefer_topics=prefer_topics, topk=topk, max_token_size=max_token_size
+        p.data(),
+        prefer_topics=prefer_topics,
+        topk=topk,
+        max_token_size=max_token_size,
+        only_topics=only_topics,
     )
     return p.to_response(res.UserProfileResponse)
 
@@ -314,37 +322,55 @@ async def get_user_events(
     return p.to_response(res.UserEventsDataResponse)
 
 
+# @router.get("/users/context/{user_id}", tags=["context"])
+# async def get_user_context(
+#     request: Request,
+#     user_id: str = Path(..., description="The ID of the user"),
+#     max_token_size: int = Query(
+#         1000,
+#         description="Max token size of returned Context",
+#     ),
+#     prefer_topics: list[str] = Query(
+#         None,
+#         description="Rank prefer topics at first to try to keep them in filtering, default order is by updated time",
+#     ),
+# ) -> res.UserContextDataResponse:
+#     project_id = request.state.memobase_project_id
+#     p = await controllers.context.get_user_context(
+#         user_id, project_id, max_token_size, prefer_topics
+#     )
+#     return p.to_response(res.UserContextDataResponse)
+
+
 class AuthMiddleware(BaseHTTPMiddleware):
     PATH_MAPPINGS = {
-        "/api/v1/users/blobs/": "/api/v1/users/blobs",
-        "/api/v1/users/profile/": "/api/v1/users/profile", 
-        "/api/v1/users/": "/api/v1/users",
-        "/api/v1/blobs/insert/": "/api/v1/blobs/insert",
-        "/api/v1/blobs/": "/api/v1/blobs",
-        "/api/v1/users/buffer/": "/api/v1/users/buffer",
-        "/api/v1/users/event/": "/api/v1/users/event"
+        "/api/v1/users/blobs": "/api/v1/users/blobs",
+        "/api/v1/users/profile": "/api/v1/users/profile",
+        "/api/v1/users": "/api/v1/users",
+        "/api/v1/blobs/insert": "/api/v1/blobs/insert",
+        "/api/v1/blobs": "/api/v1/blobs",
+        "/api/v1/users/buffer": "/api/v1/users/buffer",
+        "/api/v1/users/event": "/api/v1/users/event",
     }
 
     def normalize_path(self, path: str) -> str:
         """Remove dynamic path parameters to get normalized path for metrics"""
         if not path.startswith("/api/v1"):
             return path
-            
+
         for prefix, normalized in self.PATH_MAPPINGS.items():
             if path.startswith(prefix):
                 return normalized
-                
+
         return path
 
     async def dispatch(self, request, call_next):
         if not request.url.path.startswith("/api"):
             return await call_next(request)
-            
+
         if request.url.path.startswith("/api/v1/healthcheck"):
             telemetry_manager.increment_counter_metric(
-                CounterMetricName.HEALTHCHECK, 
-                1, 
-                {"source_ip": request.client.host}
+                CounterMetricName.HEALTHCHECK, 1, {"source_ip": request.client.host}
             )
             return await call_next(request)
 
@@ -375,7 +401,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
         # await capture_int_key(TelemetryKeyName.has_request)
 
         normalized_path = self.normalize_path(request.url.path)
-        
+
         telemetry_manager.increment_counter_metric(
             CounterMetricName.REQUEST,
             1,
@@ -386,10 +412,10 @@ class AuthMiddleware(BaseHTTPMiddleware):
                 "method": request.method,
             },
         )
-        
+
         start_time = time.time()
         response = await call_next(request)
-        
+
         telemetry_manager.record_histogram_metric(
             HistogramMetricName.REQUEST_LATENCY_MS,
             (time.time() - start_time) * 1000,

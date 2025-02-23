@@ -87,6 +87,10 @@ class UserEventData(BaseModel):
     )
 
 
+class ContextData(BaseModel):
+    context: str = Field(..., description="Context string")
+
+
 class UserData(BaseModel):
     data: Optional[dict] = Field(None, description="User additional data in JSON")
     id: Optional[UUID] = Field(None, description="User ID in UUIDv4/5")
@@ -161,4 +165,10 @@ class UserProfileResponse(BaseResponse):
 class UserEventsDataResponse(BaseResponse):
     data: Optional[UserEventsData] = Field(
         None, description="Response containing user events"
+    )
+
+
+class UserContextDataResponse(BaseResponse):
+    data: Optional[ContextData] = Field(
+        None, description="Response containing user context"
     )

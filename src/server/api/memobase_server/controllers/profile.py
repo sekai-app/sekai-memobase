@@ -12,6 +12,7 @@ async def truncate_profiles(
     prefer_topics: list[str] = None,
     topk: int = None,
     max_token_size: int = None,
+    only_topics: list[str] = None,
 ) -> Promise[UserProfilesData]:
     profiles.profiles.sort(key=lambda p: p.updated_at, reverse=True)
     if prefer_topics:
@@ -27,6 +28,13 @@ async def truncate_profiles(
             key=lambda p: priority_weights[p.attributes.get("topic")]
         )
         profiles.profiles = priority_profiles + non_priority_profiles
+    if only_topics:
+        s_only_topics = set(only_topics)
+        profiles.profiles = [
+            p
+            for p in profiles.profiles
+            if p.attributes.get("topic").strip() in s_only_topics
+        ]
     if topk:
         profiles.profiles = profiles.profiles[:topk]
     if max_token_size:
