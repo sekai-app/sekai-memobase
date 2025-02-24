@@ -66,14 +66,6 @@ async def get_user_context(
     user_events = p.data()
     event_section = "\n---\n".join([event_str_repr(ed) for ed in user_events.events])
 
-    event_section_tokens = len(get_encoded_tokens(event_section))
-    print(
-        "!!!!",
-        max_profile_token_size,
-        max_event_token_size,
-        profile_section_tokens,
-        event_section_tokens,
-    )
     return Promise.resolve(
         ContextData(context=context_prompt_func(profile_section, event_section))
     )

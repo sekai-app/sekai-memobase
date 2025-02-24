@@ -21,9 +21,9 @@ EXAMPLES = [
 - 前往山洞{tab}用户和尤斐一起前往山洞探索，发现破旧笔记本和遇到野兽，尤斐制服野兽后一起离开，之前还曾在山洞休息
 - 发现出口{tab}用户和尤斐在 2025 年 1 月 4 日下午 3 点 20 分发现了一个类似世外桃源地方的出口。
 """,
-        """- 上岛冒险{tab}用户和尤斐发现一个小岛并降落，小岛上似乎没人; 他们一起进入洞穴探索， 发现破旧笔记本和遇到野兽，尤斐制服野兽后一起离开，之前还曾在山洞休息；从洞穴出来后返回地下的别墅
+        """- 上岛冒险{tab}用户和尤斐发现一个似乎没人的小岛并降落; 他们一起进入洞穴探索， 发现破旧笔记本和遇到野兽，尤斐制服野兽后一起离开，之前还曾在山洞休息，离开并返回地下的别墅
 - 休息{tab}用户和尤斐曾在多处地方休息，包括溪边等，还曾在树林和废弃木屋过夜，2025/01/06 晚上在一个地方休息，第二天准备继续赶路。
-- 逃离{tab}用户和尤斐在 2025 年 1 月 4 日下午 3 点 20 分发现了一个类似世外桃源地方的出口，用户和尤斐乘坐快艇逃离，途中可能遇到过一些情况，比如可能曾遇到大船追捕，还可能遇到狗群。
+- 逃离{tab}用户和尤斐在 2025 年 1 月 4 日下午 3 点 20 分发现了一个类似世外桃源地方的出口，用户和尤斐乘坐快艇逃离，途中可能曾遇到大船追捕，还可能遇到狗群。
 """,
     )
 ]
@@ -71,7 +71,7 @@ Return the new sub_topics and memos in a markdown list format as shown above.
 Remember the following:
 - The final result should have no more than {max_subtopics} sub_topics.
 - You can discard some memos if they're not relevant to the topic.
-
+- Prioritize the most important subtopics at the front.
 
 Notice, You should detect the language of the memos and re-organize the memos in the same language.
 请注意，你需要和输入的memo保持相同的语言输出新的memos.

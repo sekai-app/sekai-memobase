@@ -298,6 +298,9 @@ async def test_chat_organize_modal(
 
     p = await controllers.profile.get_user_profiles(u_id, DEFAULT_PROJECT_ID)
     assert p.ok()
+    from rich import print
+
+    print(p.data())
 
     p = await controllers.user.delete_user(u_id, DEFAULT_PROJECT_ID)
     assert p.ok()
