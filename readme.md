@@ -192,7 +192,7 @@ When the buffer zone becomes too large (e.g., 1024 tokens) or remains idle for a
 
 ### 5. Integrate memory into your prompt
 
-Memobase has a context api to pack everything you need into a simple string, where you can insert it into your prompt directly:
+Memobase has a `context` api to pack everything you need into a simple string, where you can insert it into your prompt directly:
 
 ```python
 print(u.context(max_token_size=500, prefer_topics=["basic_info"]))
@@ -208,6 +208,7 @@ Something like:
 # Below is the latest events of the user:
 2025/02/24 04:25PM:
 - work::meetings: Scheduled a meeting with John.
+...
 </memory>
 Please provide your answer using the information within the <memory> tag at the appropriate time.
 ```
