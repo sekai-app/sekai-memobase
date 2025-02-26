@@ -14,6 +14,8 @@ async def truncate_profiles(
     max_token_size: int = None,
     only_topics: list[str] = None,
 ) -> Promise[UserProfilesData]:
+    if not len(profiles.profiles):
+        return Promise.resolve(profiles)
     profiles.profiles.sort(key=lambda p: p.updated_at, reverse=True)
     if prefer_topics:
         prefer_topics = [t.strip() for t in prefer_topics]
@@ -41,12 +43,14 @@ async def truncate_profiles(
         profiles.profiles = profiles.profiles[:topk]
     if max_token_size:
         current_length = 0
+        use_index = 0
         for max_i, p in enumerate(profiles.profiles):
             single_p = f"{p.attributes.get('topic')}::{p.attributes.get('sub_topic')}: {p.content}"
             current_length += len(get_encoded_tokens(single_p))
             if current_length > max_token_size:
                 break
-        profiles.profiles = profiles.profiles[: max_i + 1]
+            use_index = max_i
+        profiles.profiles = profiles.profiles[: use_index + 1]
     return Promise.resolve(profiles)
 
 
