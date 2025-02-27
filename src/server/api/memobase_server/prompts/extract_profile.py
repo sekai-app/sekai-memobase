@@ -196,13 +196,15 @@ You should detect the language of the user input and record the facts in the sam
 If you do not find anything relevant facts, user memories, and preferences in the below conversation, just return "NONE" or "NO FACTS".
 
 Only extract the attributes with actual values, if the user does not provide any value, do not extract it.
+
+#### Topics Guidelines
+Below is the list of topics and subtopics that you should focus on collecting and extracting:
+{topic_examples}
 """
 
 
-def pack_input(already_input, chat_strs, topic_examples):
-    return f"""#### Topics Guidelines
-{topic_examples}
-#### User Before topics
+def pack_input(already_input, chat_strs):
+    return f"""#### User Before topics
 {already_input}
 #### Chats
 {chat_strs}
@@ -213,13 +215,16 @@ def get_default_profiles() -> str:
     return user_profile_topics.get_prompt()
 
 
-def get_prompt() -> str:
+def get_prompt(topic_examples: str) -> str:
     sys_prompt = CONFIG.system_prompt or DEFAULT_JOB
     examples = "\n\n".join(
         [f"Input: {p[0]}Output:\n{pack_profiles_into_string(p[1])}" for p in EXAMPLES]
     )
     return FACT_RETRIEVAL_PROMPT.format(
-        system_prompt=sys_prompt, examples=examples, tab=CONFIG.llm_tab_separator
+        system_prompt=sys_prompt,
+        examples=examples,
+        tab=CONFIG.llm_tab_separator,
+        topic_examples=topic_examples,
     )
 
 

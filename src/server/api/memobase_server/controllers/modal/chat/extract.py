@@ -75,9 +75,10 @@ async def extract_topics(
         PROMPTS[use_language]["extract"].pack_input(
             already_topics_prompt,
             blob_strs,
-            PROMPTS[use_language]["profile"].get_prompt(project_profiles_slots),
         ),
-        system_prompt=PROMPTS[use_language]["extract"].get_prompt(),
+        system_prompt=PROMPTS[use_language]["extract"].get_prompt(
+            PROMPTS[use_language]["profile"].get_prompt(project_profiles_slots)
+        ),
         temperature=0.2,  # precise
         **PROMPTS[use_language]["extract"].get_kwargs(),
     )

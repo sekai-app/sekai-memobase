@@ -7,6 +7,9 @@ from .utils import (
 from ..connectors import get_redis_client
 from ..env import LOG
 
+CONTEXT_EXPIRE_TIME = 60 * 60 * 24
+BEFORE_EXPIRE_TIME = 10
+
 
 def compute_prompt_hash(system_prompt: str) -> str:
     return hashlib.md5(system_prompt.encode()).hexdigest()
@@ -20,6 +23,9 @@ async def doubao_cache_create_context_and_save(
     async with get_redis_client() as redis_client:
         context_id = await redis_client.get(redis_key)
         if context_id is not None:
+            await redis_client.expire(
+                redis_key, CONTEXT_EXPIRE_TIME - BEFORE_EXPIRE_TIME
+            )
             if isinstance(context_id, bytes):
                 return context_id.decode()
             return context_id
@@ -34,13 +40,15 @@ async def doubao_cache_create_context_and_save(
                 }
             ],
             mode="common_prefix",
-            ttl=60 * 60 * 24,
+            ttl=CONTEXT_EXPIRE_TIME,
         )
     except Exception as e:
         LOG.error(f"Error creating context: {e}")
         return None
     async with get_redis_client() as redis_client:
-        await redis_client.set(redis_key, response.id, ex=60 * 60 * 24 - 10)
+        await redis_client.set(
+            redis_key, response.id, ex=CONTEXT_EXPIRE_TIME - BEFORE_EXPIRE_TIME
+        )
     LOG.info(f"Created context cache for {context_name}")
     return response.id
 
@@ -74,5 +82,5 @@ async def doubao_cache_complete(
         response = await doubao_async_client.context.completions.create(
             model=model, messages=messages, context_id=context_id, timeout=120, **kwargs
         )
-        print(response.usage)
+        LOG.info(f"Cached: {response.usage}")
         return response.choices[0].message.content

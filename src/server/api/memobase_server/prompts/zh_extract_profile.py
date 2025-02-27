@@ -211,13 +211,15 @@ MESSGAE则是对话内容. 理解对话内容并且记住事情发生的时间
 请注意，你要准确地提取和推断用户相关(user)的信息，而非其他方(assistant)的。
 你应该检测用户输入的语言，并用相同的语言记录事实。
 如果在以下对话中没有找到任何相关事实、用户记忆和偏好，你可以返回"NONE"或"NO FACTS"。
+
+#### 主题建议
+以下是一些主题和子主题的建议，你需要参考这些主题和子主题来提取信息。
+{topic_examples}
 """
 
 
-def pack_input(already_input, chat_strs, topic_examples):
-    return f"""#### 主题建议
-{topic_examples}
-#### 已有的主题
+def pack_input(already_input, chat_strs):
+    return f"""#### 已有的主题
 {already_input}
 #### 对话
 {chat_strs}
@@ -228,13 +230,16 @@ def get_default_profiles() -> str:
     return zh_user_profile_topics.get_prompt()
 
 
-def get_prompt() -> str:
+def get_prompt(topic_examples: str) -> str:
     sys_prompt = CONFIG.system_prompt or DEFAULT_JOB
     examples = "\n\n".join(
         [f"Input: {p[0]}Output:\n{pack_profiles_into_string(p[1])}" for p in EXAMPLES]
     )
     return FACT_RETRIEVAL_PROMPT.format(
-        system_prompt=sys_prompt, examples=examples, tab=CONFIG.llm_tab_separator
+        system_prompt=sys_prompt,
+        examples=examples,
+        tab=CONFIG.llm_tab_separator,
+        topic_examples=topic_examples,
     )
 
 
