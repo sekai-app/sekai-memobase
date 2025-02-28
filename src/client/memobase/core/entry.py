@@ -1,4 +1,5 @@
 import os
+import json
 import httpx
 from typing import Optional
 from pydantic import HttpUrl
@@ -135,6 +136,7 @@ class User:
         prefer_topics: list[str] = None,
         only_topics: list[str] = None,
         max_subtopic_size: int = None,
+        topic_limits: dict[str, int] = None,
     ) -> list[UserProfile]:
         params = f"?max_token_size={max_token_size}"
         if prefer_topics:
@@ -145,6 +147,8 @@ class User:
             params += "&".join(only_topics_query)
         if max_subtopic_size:
             params += f"&max_subtopic_size={max_subtopic_size}"
+        if topic_limits:
+            params += f"&topic_limits_json={json.dumps(topic_limits)}"
         r = unpack_response(
             self.project_client.client.get(f"/users/profile/{self.user_id}{params}")
         )
@@ -171,6 +175,7 @@ class User:
         prefer_topics: list[str] = None,
         only_topics: list[str] = None,
         max_subtopic_size: int = None,
+        topic_limits: dict[str, int] = None,
         profile_event_ratio: float = None,
     ) -> str:
         params = f"?max_token_size={max_token_size}"
@@ -182,6 +187,8 @@ class User:
             params += "&".join(only_topics_query)
         if max_subtopic_size:
             params += f"&max_subtopic_size={max_subtopic_size}"
+        if topic_limits:
+            params += f"&topic_limits_json={json.dumps(topic_limits)}"
         if profile_event_ratio:
             params += f"&profile_event_ratio={profile_event_ratio}"
         r = unpack_response(
