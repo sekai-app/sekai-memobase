@@ -134,6 +134,7 @@ class User:
         max_token_size: int = 1000,
         prefer_topics: list[str] = None,
         only_topics: list[str] = None,
+        max_subtopic_size: int = None,
     ) -> list[UserProfile]:
         params = f"?max_token_size={max_token_size}"
         if prefer_topics:
@@ -142,6 +143,8 @@ class User:
         if only_topics:
             only_topics_query = [f"&only_topics={ot}" for ot in only_topics]
             params += "&".join(only_topics_query)
+        if max_subtopic_size:
+            params += f"&max_subtopic_size={max_subtopic_size}"
         r = unpack_response(
             self.project_client.client.get(f"/users/profile/{self.user_id}{params}")
         )
@@ -167,6 +170,8 @@ class User:
         max_token_size: int = 1000,
         prefer_topics: list[str] = None,
         only_topics: list[str] = None,
+        max_subtopic_size: int = None,
+        profile_event_ratio: float = None,
     ) -> str:
         params = f"?max_token_size={max_token_size}"
         if prefer_topics:
@@ -175,6 +180,10 @@ class User:
         if only_topics:
             only_topics_query = [f"&only_topics={ot}" for ot in only_topics]
             params += "&".join(only_topics_query)
+        if max_subtopic_size:
+            params += f"&max_subtopic_size={max_subtopic_size}"
+        if profile_event_ratio:
+            params += f"&profile_event_ratio={profile_event_ratio}"
         r = unpack_response(
             self.project_client.client.get(f"/users/context/{self.user_id}{params}")
         )
