@@ -3,7 +3,7 @@
     "info": {
         "title": "Memobase API",
         "summary": "APIs for Memobase, a user memory system for LLM Apps",
-        "version": "0.0.18"
+        "version": "0.0.21"
     },
     "paths": {
         "/api/v1/healthcheck": {
@@ -582,6 +582,17 @@
                             "title": "Only Topics"
                         },
                         "description": "Only return profiles with these topics, default is all"
+                    },
+                    {
+                        "name": "max_subtopic_size",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "description": "Max subtopic size of the same topic in returned profile, default is all",
+                            "title": "Max Subtopic Size"
+                        },
+                        "description": "Max subtopic size of the same topic in returned profile, default is all"
                     }
                 ],
                 "responses": {
@@ -844,6 +855,29 @@
                             "title": "Only Topics"
                         },
                         "description": "Only return profiles with these topics, default is all"
+                    },
+                    {
+                        "name": "max_subtopic_size",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "description": "Max subtopic size of the same topic in returned Context",
+                            "title": "Max Subtopic Size"
+                        },
+                        "description": "Max subtopic size of the same topic in returned Context"
+                    },
+                    {
+                        "name": "profile_event_ratio",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "description": "Profile event ratio of returned Context",
+                            "default": 0.8,
+                            "title": "Profile Event Ratio"
+                        },
+                        "description": "Profile event ratio of returned Context"
                     }
                 ],
                 "responses": {
