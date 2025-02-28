@@ -271,6 +271,10 @@ async def get_user_profile(
         None,
         description="Only return profiles with these topics, default is all",
     ),
+    max_subtopic_size: int = Query(
+        None,
+        description="Max subtopic size of the same topic in returned profile, default is all",
+    ),
 ) -> res.UserProfileResponse:
     """Get the real-time user profiles for long term memory"""
     project_id = request.state.memobase_project_id
@@ -281,6 +285,7 @@ async def get_user_profile(
         topk=topk,
         max_token_size=max_token_size,
         only_topics=only_topics,
+        max_subtopic_size=max_subtopic_size,
     )
     return p.to_response(res.UserProfileResponse)
 
@@ -344,10 +349,24 @@ async def get_user_context(
         None,
         description="Only return profiles with these topics, default is all",
     ),
+    max_subtopic_size: int = Query(
+        None,
+        description="Max subtopic size of the same topic in returned Context",
+    ),
+    profile_event_ratio: float = Query(
+        0.8,
+        description="Profile event ratio of returned Context",
+    ),
 ) -> res.UserContextDataResponse:
     project_id = request.state.memobase_project_id
     p = await controllers.context.get_user_context(
-        user_id, project_id, max_token_size, prefer_topics, only_topics
+        user_id,
+        project_id,
+        max_token_size,
+        prefer_topics,
+        only_topics,
+        max_subtopic_size,
+        profile_event_ratio,
     )
     return p.to_response(res.UserContextDataResponse)
 

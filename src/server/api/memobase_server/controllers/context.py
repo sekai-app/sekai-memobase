@@ -14,7 +14,8 @@ async def get_user_context(
     max_token_size: int,
     prefer_topics: list[str],
     only_topics: list[str],
-    profile_event_ratio: float = 0.8,
+    max_subtopic_size: int,
+    profile_event_ratio: float,
 ) -> Promise[ContextData]:
     assert 0 < profile_event_ratio <= 1, "profile_event_ratio must be between 0 and 1"
     max_profile_token_size = int(max_token_size * profile_event_ratio)
@@ -30,23 +31,27 @@ async def get_user_context(
     p = await get_user_profiles(user_id, project_id)
     if not p.ok():
         return p
-    user_profiles = p.data()
-    use_profiles = await truncate_profiles(
-        user_profiles,
-        prefer_topics=prefer_topics,
-        only_topics=only_topics,
-        max_token_size=max_profile_token_size,
-    )
-    if not use_profiles.ok():
-        return use_profiles
-    use_profiles = use_profiles.data().profiles
+    if max_profile_token_size > 0:
+        user_profiles = p.data()
+        use_profiles = await truncate_profiles(
+            user_profiles,
+            prefer_topics=prefer_topics,
+            only_topics=only_topics,
+            max_token_size=max_profile_token_size,
+            max_subtopic_size=max_subtopic_size,
+        )
+        if not use_profiles.ok():
+            return use_profiles
+        use_profiles = use_profiles.data().profiles
 
-    profile_section = "- " + "\n- ".join(
-        [
-            f"{p.attributes.get('topic')}::{p.attributes.get('sub_topic')}: {p.content}"
-            for p in use_profiles
-        ]
-    )
+        profile_section = "- " + "\n- ".join(
+            [
+                f"{p.attributes.get('topic')}::{p.attributes.get('sub_topic')}: {p.content}"
+                for p in use_profiles
+            ]
+        )
+    else:
+        profile_section = ""
 
     profile_section_tokens = len(get_encoded_tokens(profile_section))
     max_event_token_size = min(
