@@ -15,6 +15,7 @@ async def get_user_context(
     prefer_topics: list[str],
     only_topics: list[str],
     max_subtopic_size: int,
+    topic_limits: dict[str, int],
     profile_event_ratio: float,
 ) -> Promise[ContextData]:
     assert 0 < profile_event_ratio <= 1, "profile_event_ratio must be between 0 and 1"
@@ -39,6 +40,7 @@ async def get_user_context(
             only_topics=only_topics,
             max_token_size=max_profile_token_size,
             max_subtopic_size=max_subtopic_size,
+            topic_limits=topic_limits,
         )
         if not use_profiles.ok():
             return use_profiles

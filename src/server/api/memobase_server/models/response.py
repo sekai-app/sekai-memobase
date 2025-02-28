@@ -110,6 +110,10 @@ class UserEventsData(BaseModel):
     events: list[UserEventData] = Field(..., description="List of user events")
 
 
+class StrIntData(BaseModel):
+    data: dict[str, int] = Field(..., description="String to int mapping")
+
+
 class QueryData(BaseModel):
     claims: list[ClaimData] = Field(..., description="List of claim data")
     actions: list[ActionData] = Field(..., description="List of action data")

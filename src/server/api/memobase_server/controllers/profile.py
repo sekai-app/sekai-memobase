@@ -14,6 +14,7 @@ async def truncate_profiles(
     max_token_size: int = None,
     only_topics: list[str] = None,
     max_subtopic_size: int = None,
+    topic_limits: dict[str, int] = None,
 ) -> Promise[UserProfilesData]:
     if not len(profiles.profiles):
         return Promise.resolve(profiles)
@@ -40,18 +41,22 @@ async def truncate_profiles(
             for p in profiles.profiles
             if p.attributes.get("topic").strip() in s_only_topics
         ]
-    if max_subtopic_size:
+    if max_subtopic_size or topic_limits:
+        use_topic_limits = topic_limits or {}
+        max_subtopic_size = max_subtopic_size or -1
         _count_subtopics = {}
         filtered_profiles = []
         for p in profiles.profiles:
             name_key = p.attributes.get("topic")
+            this_topic_limit = use_topic_limits.get(name_key, max_subtopic_size)
             if name_key not in _count_subtopics:
                 _count_subtopics[name_key] = 0
             _count_subtopics[name_key] += 1
-            if _count_subtopics[name_key] > max_subtopic_size:
+            if this_topic_limit >= 0 and _count_subtopics[name_key] > this_topic_limit:
                 continue
             filtered_profiles.append(p)
         profiles.profiles = filtered_profiles
+
     if topk:
         profiles.profiles = profiles.profiles[:topk]
     if max_token_size:
