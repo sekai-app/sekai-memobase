@@ -593,6 +593,17 @@
                             "title": "Max Subtopic Size"
                         },
                         "description": "Max subtopic size of the same topic in returned profile, default is all"
+                    },
+                    {
+                        "name": "topic_limits_json",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "description": "Set specific subtopic limits for topics in JSON, for example {\"topic1\": 3, \"topic2\": 5}. The limits in this param will override `max_subtopic_size`.",
+                            "title": "Topic Limits Json"
+                        },
+                        "description": "Set specific subtopic limits for topics in JSON, for example {\"topic1\": 3, \"topic2\": 5}. The limits in this param will override `max_subtopic_size`."
                     }
                 ],
                 "responses": {
@@ -866,6 +877,17 @@
                             "title": "Max Subtopic Size"
                         },
                         "description": "Max subtopic size of the same topic in returned Context"
+                    },
+                    {
+                        "name": "topic_limits_json",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "description": "Set specific subtopic limits for topics in JSON, for example {\"topic1\": 3, \"topic2\": 5}. The limits in this param will override `max_subtopic_size`.",
+                            "title": "Topic Limits Json"
+                        },
+                        "description": "Set specific subtopic limits for topics in JSON, for example {\"topic1\": 3, \"topic2\": 5}. The limits in this param will override `max_subtopic_size`."
                     },
                     {
                         "name": "profile_event_ratio",
