@@ -19,12 +19,16 @@ load_dotenv()
 
 
 class ProjectStatus:
+    ultra = "ultra"
+    pro = "pro"
     active = "active"
     suspended = "suspended"
 
 
 USAGE_TOKEN_LIMIT_MAP = {
     ProjectStatus.active: int(os.getenv("USAGE_TOKEN_LIMIT_ACTIVE", -1)),
+    ProjectStatus.pro: int(os.getenv("USAGE_TOKEN_LIMIT_PRO", -1)),
+    ProjectStatus.ultra: int(os.getenv("USAGE_TOKEN_LIMIT_ULTRA", -1)),
 }
 
 
