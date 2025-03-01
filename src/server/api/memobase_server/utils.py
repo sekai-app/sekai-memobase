@@ -10,9 +10,7 @@ from .connectors import get_redis_client, PROJECT_ID
 
 
 def event_str_repr(event: UserEventData) -> str:
-    happened_at = event.created_at.astimezone(CONFIG.timezone).strftime(
-        "%Y/%m/%d %I:%M%p"
-    )
+    happened_at = event.created_at.astimezone(CONFIG.timezone).strftime("%Y/%m/%d")
     event_data = event.event_data
 
     profile_deltas = [
@@ -55,7 +53,7 @@ def get_message_timestamp(
     return (
         message.created_at
         if message.created_at
-        else fallback_blob_timestamp.strftime("%Y/%m/%d %I:%M%p")
+        else fallback_blob_timestamp.strftime("%Y/%m/%d")
     )
 
 
