@@ -1,5 +1,5 @@
 from .utils import exclude_special_kwargs, get_openai_async_client_instance
-from ..env import CONFIG
+from ..env import LOG
 
 
 async def openai_complete(
@@ -16,4 +16,5 @@ async def openai_complete(
     response = await openai_async_client.chat.completions.create(
         model=model, messages=messages, timeout=120, **kwargs
     )
+    LOG.info(f"OpenAI usage: {response.usage}")
     return response.choices[0].message.content

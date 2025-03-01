@@ -3,14 +3,17 @@ Initialize logger, encoder, and config.
 """
 
 import os
+import datetime
 from rich.logging import RichHandler
 import yaml
 import logging
 import tiktoken
 import dataclasses
 from dataclasses import dataclass, field
-from typing import Optional, Literal
+from typing import Optional, Literal, Union
 from dotenv import load_dotenv
+from zoneinfo import ZoneInfo
+from datetime import timezone
 
 load_dotenv()
 
@@ -43,6 +46,11 @@ class TelemetryKeyName:
 class Config:
     # IMPORTANT!
     persistent_chat_blobs: bool = False
+    use_timezone: Optional[
+        Literal[
+            "UTC", "America/New_York", "Europe/London", "Asia/Tokyo", "Asia/Shanghai"
+        ]
+    ] = None
 
     system_prompt: str = None
     buffer_flush_interval: int = 60 * 60  # 1 hour
@@ -81,6 +89,14 @@ class Config:
         overwrite_config = dataclasses.replace(cls(), **filtered_config)
         LOG.info(f"{overwrite_config}")
         return overwrite_config
+
+    @property
+    def timezone(self) -> timezone:
+        if self.use_timezone is None:
+            return datetime.datetime.now().astimezone().tzinfo
+
+        # For named timezones, we need to use the datetime.timezone.ZoneInfo
+        return ZoneInfo(self.use_timezone)
 
 
 @dataclass
