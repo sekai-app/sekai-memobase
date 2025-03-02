@@ -190,9 +190,9 @@ async def insert_blob(
     background_tasks.add_task(
         capture_int_key, TelemetryKeyName.insert_blob_request, project_id=project_id
     )
-    today_token_costs = await asyncio.gather(
-        get_int_key(TelemetryKeyName.llm_input_tokens, project_id),
-        get_int_key(TelemetryKeyName.llm_output_tokens, project_id),
+    this_month_token_costs = await asyncio.gather(
+        get_int_key(TelemetryKeyName.llm_input_tokens, project_id, in_month=True),
+        get_int_key(TelemetryKeyName.llm_output_tokens, project_id, in_month=True),
     )
     p = await get_project_status(project_id)
     if not p.ok():
@@ -203,12 +203,12 @@ async def insert_blob(
             CODE.INTERNAL_SERVER_ERROR, f"Invalid project status: {status}"
         ).to_response(res.IdResponse)
     usage_token_limit = USAGE_TOKEN_LIMIT_MAP[status]
-    if usage_token_limit >= 0 and (usage_token_limit < sum(today_token_costs)):
+    if usage_token_limit >= 0 and (usage_token_limit < sum(this_month_token_costs)):
         return Promise.reject(
             CODE.SERVICE_UNAVAILABLE,
-            f"Your project reaches Memobase token limit today. "
-            f"quota: {usage_token_limit}, used: {sum(today_token_costs)}. "
-            "\nhttps://www.memobase.io/en/pricing for more information.",
+            f"Your project reaches Memobase token limit this month. "
+            f"quota: {usage_token_limit}, used: {sum(this_month_token_costs)}. "
+            "\nhttps://www.memobase.io/pricing for more information.",
         ).to_response(res.IdResponse)
 
     p = await controllers.blob.insert_blob(user_id, project_id, blob_data)
