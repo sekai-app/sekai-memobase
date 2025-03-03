@@ -27,6 +27,7 @@ async def capture_int_key(
         await r_c.incrby(key, value)
         await r_c.incrby(key_month, value)
         await r_c.expire(key, expire_days * 24 * 60 * 60)
+        await r_c.expire(key_month, 30 * expire_days * 24 * 60 * 60)
 
 
 async def get_int_key(
