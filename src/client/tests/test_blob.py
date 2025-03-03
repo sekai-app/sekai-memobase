@@ -41,7 +41,7 @@ def test_flush_curd_client(api_client):
     mb = api_client
     uid = mb.add_user({"me": "test"})
     u = mb.get_user(uid)
-    print(u.profile())
+    print(u.profile(need_json=True))
     u.insert(
         ChatBlob(
             messages=[
@@ -58,6 +58,7 @@ def test_flush_curd_client(api_client):
     )
     u.flush()
     ps = u.profile()
+    print(u.profile(need_json=True))
     print([p.describe for p in ps])
     print(u.event())
     mb.delete_user(uid)

@@ -6,6 +6,8 @@ from datetime import datetime
 
 @dataclass
 class UserProfile:
+    id: str
+    created_at: datetime
     updated_at: datetime
     topic: str
     sub_topic: str

@@ -1,6 +1,7 @@
 import os
 import json
 import httpx
+from collections import defaultdict
 from typing import Optional
 from pydantic import HttpUrl
 from dataclasses import dataclass
@@ -9,6 +10,18 @@ from .user import UserProfile, UserProfileData, UserEventData
 from ..network import unpack_response
 from ..error import ServerError
 from ..utils import LOG
+
+
+def profiles_to_json(profiles: list[UserProfile]) -> dict:
+    results = defaultdict(dict)
+    for p in profiles:
+        results[p.topic][p.sub_topic] = {
+            "id": p.id,
+            "content": p.content,
+            "created_at": p.created_at,
+            "updated_at": p.updated_at,
+        }
+    return dict(results)
 
 
 @dataclass
@@ -137,6 +150,7 @@ class User:
         only_topics: list[str] = None,
         max_subtopic_size: int = None,
         topic_limits: dict[str, int] = None,
+        need_json: bool = False,
     ) -> list[UserProfile]:
         params = f"?max_token_size={max_token_size}"
         if prefer_topics:
@@ -153,7 +167,10 @@ class User:
             self.project_client.client.get(f"/users/profile/{self.user_id}{params}")
         )
         data = r.data["profiles"]
-        return [UserProfileData.model_validate(p).to_ds() for p in data]
+        ds_profiles = [UserProfileData.model_validate(p).to_ds() for p in data]
+        if need_json:
+            return profiles_to_json(ds_profiles)
+        return ds_profiles
 
     def delete_profile(self, profile_id: str) -> bool:
         r = unpack_response(
