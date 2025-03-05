@@ -1,5 +1,6 @@
 import re
 import json
+import difflib
 from ..env import LOG, CONFIG
 from ..models.response import AIUserProfiles, AIUserProfile
 from ..models.blob import ChatBlob
@@ -7,6 +8,17 @@ from ..utils import get_blob_str
 
 LIST_INT_PATTERN = re.compile(r"\[\d+(?:,\s*\d+)*\]")
 INT_INT_PATTERN = re.compile(r"\[(\d+)\]")
+
+EXCLUDE_PROFILE_VALUES = [
+    "未提及",
+    "不清楚",
+    "用户未提及",
+    "对话未提及",
+    "unknown",
+    "not mentioned",
+    "not mentioned by user",
+    "not mentioned in the conversation",
+]
 
 
 def tag_chat_blobs_in_order_xml(
@@ -139,6 +151,16 @@ def pack_profiles_into_string(profiles: AIUserProfiles) -> str:
     return "\n".join(lines)
 
 
+def meaningless_profile_memo(memo: str) -> bool:
+    maybe_meaningless = difflib.get_close_matches(
+        memo.strip().lower(), EXCLUDE_PROFILE_VALUES
+    )
+    if len(maybe_meaningless) > 0:
+        LOG.info(f"Meaningless profile memo: {memo}")
+        return True
+    return False
+
+
 def parse_string_into_profiles(response: str) -> AIUserProfiles:
     lines = response.split("\n")
     lines = [l.strip() for l in lines if l.strip()]
@@ -155,6 +177,8 @@ def parse_line_into_profile(line: str) -> AIUserProfile | None:
     if not len(parts) == 3:
         return None
     topic, sub_topic, memo = parts
+    if meaningless_profile_memo(memo):
+        return None
     return AIUserProfile(
         topic=attribute_unify(topic),
         sub_topic=attribute_unify(sub_topic),
@@ -182,4 +206,5 @@ def parse_line_into_subtopic(line: str) -> dict:
 
 if __name__ == "__main__":
     print(parse_line_into_profile("- basic_info::name::Gus"))
-    print(parse_string_into_merge_action("- REPLACE::G"))
+    print(parse_line_into_profile("- basic_info::name::从未提及过"))
+    # print(parse_string_into_merge_action("- REPLACE::G"))
