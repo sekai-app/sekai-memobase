@@ -10,14 +10,27 @@ LIST_INT_PATTERN = re.compile(r"\[\d+(?:,\s*\d+)*\]")
 INT_INT_PATTERN = re.compile(r"\[(\d+)\]")
 
 EXCLUDE_PROFILE_VALUES = [
+    # Chinese variations
     "未提及",
     "不清楚",
     "用户未提及",
     "对话未提及",
+    "未知",
+    "不详",
+    "没有提到",
+    "没有说明",
+    "无法确定",
+    # English variations
     "unknown",
     "not mentioned",
     "not mentioned by user",
     "not mentioned in the conversation",
+    "unclear",
+    "unspecified",
+    "not specified",
+    "not determined",
+    "no information",
+    "n/a",
 ]
 
 
