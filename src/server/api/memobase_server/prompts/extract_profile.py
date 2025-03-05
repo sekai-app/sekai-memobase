@@ -207,6 +207,7 @@ Don't record the topics and subtopics that are not mentioned in the following co
 
 def pack_input(already_input, chat_strs):
     return f"""#### User Before topics
+If the conversation mentions the same topic/subtopic again, please consider using the following topic/subtopic naming:
 {already_input}
 #### Chats
 {chat_strs}

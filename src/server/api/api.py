@@ -211,17 +211,23 @@ async def insert_blob(
             "\nhttps://www.memobase.io/pricing for more information.",
         ).to_response(res.IdResponse)
 
-    p = await controllers.blob.insert_blob(user_id, project_id, blob_data)
-    if not p.ok():
-        return p.to_response(res.IdResponse)
+    try:
+        p = await controllers.blob.insert_blob(user_id, project_id, blob_data)
+        if not p.ok():
+            return p.to_response(res.IdResponse)
 
-    # TODO if single user insert too fast will cause random order insert to buffer
-    # So no background task for insert buffer yet
-    pb = await controllers.buffer.insert_blob_to_buffer(
-        user_id, project_id, p.data().id, blob_data.to_blob()
-    )
-    if not pb.ok():
-        return pb.to_response(res.IdResponse)
+        # TODO if single user insert too fast will cause random order insert to buffer
+        # So no background task for insert buffer yet
+        pb = await controllers.buffer.insert_blob_to_buffer(
+            user_id, project_id, p.data().id, blob_data.to_blob()
+        )
+        if not pb.ok():
+            return pb.to_response(res.IdResponse)
+    except Exception as e:
+        LOG.error(f"Error inserting blob: {e}")
+        return Promise.reject(
+            CODE.INTERNAL_SERVER_ERROR, f"Error inserting blob: {e}"
+        ).to_response(res.IdResponse)
 
     background_tasks.add_task(
         capture_int_key,
