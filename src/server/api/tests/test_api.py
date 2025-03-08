@@ -265,6 +265,13 @@ async def test_api_user_profile(client, db_env):
     assert len(d["data"]["profiles"]) == 1
     assert d["data"]["profiles"][0]["id"] == id2
 
+    response = client.get(f"{PREFIX}/project/billing")
+    d = response.json()
+    assert response.status_code == 200
+    assert d["errno"] == 0
+    assert d["data"]["token_left_month"] is None
+    assert d["data"]["token_cost_month"] >= 0
+
     response = client.delete(f"{PREFIX}/users/{u_id}")
     d = response.json()
     assert response.status_code == 200

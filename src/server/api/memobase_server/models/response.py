@@ -123,6 +123,13 @@ class ProfileConfigData(BaseModel):
     profile_config: str = Field(..., description="Profile config string")
 
 
+class BillingData(BaseModel):
+    token_left_month: Optional[int] = Field(
+        None, description="Token left for this month"
+    )
+    token_cost_month: int = Field(..., description="Token cost for this month")
+
+
 # API response format
 class BaseResponse(BaseModel):
     data: Optional[dict] = Field(None, description="Response data payload")
@@ -175,4 +182,10 @@ class UserEventsDataResponse(BaseResponse):
 class UserContextDataResponse(BaseResponse):
     data: Optional[ContextData] = Field(
         None, description="Response containing user context"
+    )
+
+
+class BillingResponse(BaseResponse):
+    data: Optional[BillingData] = Field(
+        None, description="Response containing token left"
     )
