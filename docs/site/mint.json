@@ -68,6 +68,12 @@
       ]
     },
     {
+      "group": "Practices",
+      "pages": [
+        "practices/tips"
+      ]
+    },
+    {
       "group": "API Reference",
       "pages": [
         "api-reference/overview",

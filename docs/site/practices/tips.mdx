@@ -1,0 +1,97 @@
+---
+title: Tips to Use Memobase
+---
+
+## Memory Configuration
+
+In simple terms, Memobase can provide user profile memory for your users. You can configure a secondary tag:
+
+```yaml
+- topic: "Gaming"
+  description: "Track the gaming preferences/achievements of the user."
+  sub_topics:
+      - name: "FPS"
+        description: "Games like CSGO, Valorant, etc."
+      - name: "LOL"
+        ...
+- topic: "Whatever"
+  sub_topics:
+    ...
+```
+Memobase will generate user profile preferences based on your configuration.
+Refer to [Customization](/features/customization/profile) for more details.
+
+## How to Integrate Memory?
+
+We provide the `profile` API and `context` API:
+
+- `profile` API: This API returns a JSON that includes the user profile for each sub-topic. You need to assemble it into a string to include it in the prompt. Generally, a portion of the System Prompt is reserved for the Memobase profile.
+- `context` API: This API returns a string with a prompt hint, which you can directly integrate into the prompt.
+
+Refer to [Using Memobase Memory](#using-memobase-memory) for more details.
+
+## User System Management
+
+Users in Memobase do not need to correspond one-to-one with your actual users. One of your actual users can correspond to multiple Memobase users if a user in your application has multiple segmented memories:
+
+- AI Role-Playing: Each agent should have independent memory for the user, so one user might have dozens of corresponding Memobase users for the various role agents they have interacted with.
+- AI Companionship + AI Education: You might provide a unified agent for the user, in which case your user can correspond one-to-one with Memobase.
+
+In summary, it is best to maintain a one-to-many design when recording the relationship between your user ID and Memobase user ID.
+
+## Inserting Conversations into Memobase
+
+Memobase is working on multi-modal user data, currently focusing on conversation data:
+
+- You can set the AI's `alias` when inserting a conversation, and Memobase will involve specific role names in the memory.
+
+```json
+{
+    "role": "assistant",
+    "content": "Hi, nice to meet you, Gus!",
+    "alias": "HerAI",
+}
+```
+
+- You can set the message time in any format, and Memobase will follow your time settings to attempt to build memory.
+
+```json
+{
+    "role": "user",
+    "content": "Hello, I'm Gus",
+    "created_at": "2025-01-14",
+}
+```
+
+[demo script](https://github.com/memodb-io/memobase/blob/main/assets/quickstart.py)
+
+## Using Memobase Memory
+
+Memobase supports user profile memory and event sequences. You can obtain user memory in two ways:
+
+### Profile-Only
+
+[API](https://docs.memobase.io/api-reference/profiles/profile#parameter-user-id), User profile data structure, you need to consider:
+
+- What is the acceptable length of the Memory context? Common lengths are 500 tokens or 1000 tokens. Excessive Memory length may affect your AI's business performance. You can control the maximum context size using `max_token_size`.
+  - Memobase is a two-level profile system, and you can control the maximum number of sub-topics for each topic by setting `max_subtopic_size`.
+- What are the most important parts of the profile for you? Some applications care about `basic_info`, some about `relationship`, and others about `education_background`. You can adjust by considering the following parameters:
+  - `only_topics`: Only certain topics recorded in Memobase profiles are needed for your product.
+  - `prefer_topics`: The most important topics in Memobase profiles for you, ensuring they are always retained in Memory.
+
+### Context
+
+[API](https://docs.memobase.io/api-reference/prompt/get_context), Directly returns the user's personalized context, which you can directly place in the prompt.
+
+The parameters for the Context API are similar to those for the Profile API, except that Context automatically assembles the profile and recent events into a string, with a built-in prompt indicating it is a memory:
+
+```
+<memory>
+# Below is the user profile:
+{profile}
+
+# Below is the latest events of the user:
+{event}
+</memory>
+Please provide your answer using the information within the <memory> tag at the appropriate time.
+```
