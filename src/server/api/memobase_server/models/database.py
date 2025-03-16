@@ -27,12 +27,21 @@ from sqlalchemy.orm import (
 from sqlalchemy.sql import func
 from sqlalchemy import event
 from .blob import BlobType
-from ..env import ProjectStatus
+from ..env import ProjectStatus, BillingStatus, BILLING_REFILL_AMOUNT_MAP
 from sqlalchemy.orm.attributes import get_history
 
 REG = registry()
 DEFAULT_PROJECT_ID = "__root__"
 DEFAULT_PROJECT_SECRET = "__root__"
+
+
+def next_month_first_day() -> datetime:
+    today = datetime.now()
+    # If we're in the last month of the year, move to January of next year
+    if today.month == 12:
+        return datetime(today.year + 1, 1, 1)
+    # Otherwise, move to the first day of next month
+    return datetime(today.year, today.month + 1, 1)
 
 
 @dataclass
@@ -57,6 +66,69 @@ class Base:
 
 
 @REG.mapped_as_dataclass
+class Billing(Base):
+    __tablename__ = "billings"
+
+    # Specific columns
+
+    usage_left: Mapped[Optional[int]] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+    refill_amount: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+
+    next_refill_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), nullable=True, default_factory=next_month_first_day
+    )
+
+    billing_status: Mapped[str] = mapped_column(
+        VARCHAR(16), nullable=False, default=BillingStatus.free
+    )
+    # Relationships
+    related_projects: Mapped[list["ProjectBilling"]] = relationship(
+        "ProjectBilling",
+        back_populates="billing",
+        cascade="all, delete-orphan",
+        init=False,
+    )
+
+    __table_args__ = (PrimaryKeyConstraint("id"),)
+
+
+@REG.mapped_as_dataclass
+class ProjectBilling:
+    __tablename__ = "project_billings"
+
+    project_id: Mapped[str] = mapped_column(
+        VARCHAR(64),
+        ForeignKey("projects.project_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
+    billing_id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("billings.id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), server_default=func.now(), init=False
+    )
+
+    # Relationships
+    project: Mapped["Project"] = relationship(
+        "Project", back_populates="billing_link", init=False
+    )
+    billing: Mapped[Billing] = relationship(
+        "Billing", back_populates="related_projects", init=False
+    )
+
+    __table_args__ = (
+        PrimaryKeyConstraint("project_id", "billing_id"),
+        Index("idx_project_billings_project_id", "project_id"),
+        Index("idx_project_billings_billing_id", "billing_id"),
+    )
+
+
+@REG.mapped_as_dataclass
 class Project(Base):
     __tablename__ = "projects"
 
@@ -69,6 +141,13 @@ class Project(Base):
 
     related_users: Mapped[list["User"]] = relationship(
         "User", back_populates="project", cascade="all, delete-orphan", init=False
+    )
+
+    billing_link: Mapped[list[ProjectBilling]] = relationship(
+        "ProjectBilling",
+        back_populates="project",
+        cascade="all, delete-orphan",
+        init=False,
     )
 
     __table_args__ = (
@@ -89,7 +168,18 @@ class Project(Base):
                 profile_config=None,
             )
             session.add(root_project)
-            session.commit()
+        if_project_billing = (
+            session.query(ProjectBilling)
+            .filter_by(project_id=DEFAULT_PROJECT_ID)
+            .one_or_none()
+        )
+        if if_project_billing is None:
+            billing = Billing(usage_left=None, refill_amount=None)
+            session.add(billing)
+            session.add(
+                ProjectBilling(project_id=DEFAULT_PROJECT_ID, billing_id=billing.id)
+            )
+        session.commit()
         return root_project
 
 
