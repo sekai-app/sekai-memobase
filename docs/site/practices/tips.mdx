@@ -30,6 +30,14 @@ We provide the `profile` API and `context` API:
 
 Refer to [Using Memobase Memory](#using-memobase-memory) for more details.
 
+## When to `flush`?
+Memobase won't update the memory immediately, it will only update when one of the following conditions is met:
+- `buffer` is too big. Memobase will track the size of the unprocessed messages for user, if it exceeds the limit, Memobase will flush the buffer to the database.
+- `buffer` is idle for a long time. Memobase will flush the buffer to the database after a period of inactivity.
+- You call `flush` API manually.
+
+Normally, you should call `flush` API right after a chat session is closed.
+
 ## User System Management
 
 Users in Memobase do not need to correspond one-to-one with your actual users. One of your actual users can correspond to multiple Memobase users if a user in your application has multiple segmented memories:
