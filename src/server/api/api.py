@@ -34,9 +34,8 @@ from memobase_server.env import (
     LOG,
     TelemetryKeyName,
     ProjectStatus,
-    BILLING_REFILL_AMOUNT_MAP,
 )
-from memobase_server.telemetry.capture_key import capture_int_key, get_int_key
+from memobase_server.telemetry.capture_key import capture_int_key
 from uvicorn.config import LOGGING_CONFIG
 from memobase_server.auth.token import (
     parse_project_id,
@@ -204,11 +203,10 @@ async def insert_blob(
     billing = p.data()
 
     if billing.token_left is not None and billing.token_left < 0:
-        usage_token_limit = BILLING_REFILL_AMOUNT_MAP[billing.billing_status]
         return Promise.reject(
             CODE.SERVICE_UNAVAILABLE,
             f"Your project reaches Memobase token limit, "
-            f"quota: {usage_token_limit}, this project used: {billing.project_token_cost_month}. "
+            f"Left: {billing.token_left}, this project used: {billing.project_token_cost_month}. "
             f"Your quota will be refilled on {billing.next_refill_at}. "
             "\nhttps://www.memobase.io/pricing for more information.",
         ).to_response(res.IdResponse)

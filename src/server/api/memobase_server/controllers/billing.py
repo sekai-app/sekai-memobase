@@ -8,7 +8,14 @@ from ..models.database import (
 from ..models.response import CODE, IdData, IdsData, UserProfilesData, BillingData
 from ..connectors import Session
 from ..telemetry.capture_key import get_int_key, capture_int_key
-from ..env import LOG, CONFIG, TelemetryKeyName, USAGE_TOKEN_LIMIT_MAP
+from ..env import (
+    LOG,
+    CONFIG,
+    TelemetryKeyName,
+    USAGE_TOKEN_LIMIT_MAP,
+    BILLING_REFILL_AMOUNT_MAP,
+    BillingStatus,
+)
 from datetime import datetime, date
 
 
@@ -32,20 +39,21 @@ async def get_project_billing(project_id: str) -> Promise[BillingData]:
         this_month_token_costs_out = await get_int_key(
             TelemetryKeyName.llm_output_tokens, project_id, in_month=True
         )
-        billing_status = billing.billing_status
         usage_left_this_billing = billing.usage_left
 
         next_refill_date = billing.next_refill_at
         today = datetime.now(next_refill_date.tzinfo)
-        if today > next_refill_date:
-            usage_left_this_billing = billing.refill_amount
+        if (
+            today > next_refill_date
+            and usage_left_this_billing is not None
+            and usage_left_this_billing < BILLING_REFILL_AMOUNT_MAP[BillingStatus.free]
+        ):
+            usage_left_this_billing = BILLING_REFILL_AMOUNT_MAP[BillingStatus.free]
 
             billing.next_refill_at = next_month_first_day()
             billing.usage_left = usage_left_this_billing
             session.commit()
-
     billing_data = BillingData(
-        billing_status=billing_status,
         token_left=usage_left_this_billing,
         next_refill_at=next_refill_date,
         project_token_cost_month=this_month_token_costs_in + this_month_token_costs_out,
@@ -87,7 +95,6 @@ async def fallback_billing_data(project_id: str) -> Promise[BillingData]:
 
     return Promise.resolve(
         BillingData(
-            billing_status=status,
             token_left=this_month_left_tokens,
             next_refill_at=next_month,
             project_token_cost_month=this_month_token_costs,
@@ -102,7 +109,7 @@ async def project_cost_token_billing(
         TelemetryKeyName.llm_input_tokens, input_tokens, project_id=project_id
     )
     await capture_int_key(
-        TelemetryKeyName.llm_output_tokens, input_tokens, project_id=project_id
+        TelemetryKeyName.llm_output_tokens, output_tokens, project_id=project_id
     )
     with Session() as session:
         _billing = (
@@ -116,6 +123,5 @@ async def project_cost_token_billing(
 
         if billing.usage_left is not None:
             billing.usage_left -= input_tokens + output_tokens
-        session.commit()
-        print(billing.usage_left, billing.refill_amount, billing.billing_status)
+            session.commit()
     return Promise.resolve(None)

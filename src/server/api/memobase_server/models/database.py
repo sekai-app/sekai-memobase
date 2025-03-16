@@ -74,15 +74,11 @@ class Billing(Base):
     usage_left: Mapped[Optional[int]] = mapped_column(
         Integer,
         nullable=True,
+        default_factory=lambda: BILLING_REFILL_AMOUNT_MAP[BillingStatus.free],
     )
-    refill_amount: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
 
     next_refill_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), nullable=True, default_factory=next_month_first_day
-    )
-
-    billing_status: Mapped[str] = mapped_column(
-        VARCHAR(16), nullable=False, default=BillingStatus.free
     )
     # Relationships
     related_projects: Mapped[list["ProjectBilling"]] = relationship(
@@ -174,7 +170,7 @@ class Project(Base):
             .one_or_none()
         )
         if if_project_billing is None:
-            billing = Billing(usage_left=None, refill_amount=None)
+            billing = Billing(usage_left=BILLING_REFILL_AMOUNT_MAP[BillingStatus.free])
             session.add(billing)
             session.add(
                 ProjectBilling(project_id=DEFAULT_PROJECT_ID, billing_id=billing.id)

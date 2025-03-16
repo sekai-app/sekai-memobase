@@ -124,11 +124,12 @@ class ProfileConfigData(BaseModel):
 
 
 class BillingData(BaseModel):
-    billing_status: str = Field(..., description="Billing status")
-    token_left: Optional[int] = Field(None, description="Token left for this month")
+    token_left: Optional[int] = Field(None, description="Total token left")
 
     next_refill_at: Optional[datetime] = Field(None, description="Next refill time")
-    project_token_cost_month: int = Field(..., description="Token cost for this month")
+    project_token_cost_month: int = Field(
+        ..., description="Token cost of this project for this month"
+    )
 
 
 # API response format
