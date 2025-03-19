@@ -47,6 +47,23 @@ User didn't provide any birthday
             "memo": "1999/04/30",
         },
     },
+    {
+        "input": """## Update Instruction
+Always keep the latest goal and remove the old one.
+
+## User Topic
+work, goal
+
+## Old Memo
+Want to be a software engineer
+## New Memo
+Want to start a startup
+""",
+        "response": {
+            "action": "UPDATE",
+            "memo": "Start a startup",
+        },
+    },
 ]
 
 MERGE_FACTS_PROMPT = """You are a smart memo manager which controls the memory/figure of a user.
@@ -59,19 +76,29 @@ start with '- ' and following is 'UPDATE', '{tab}' and then the final MEMO.
 There are some guidelines about how to update the memo:
 ## replace the old one
 The old memo is considered outdated and should be replaced with the new memo, or the new memo is conflicting with the old memo:
-**Example**:
+<example>
 {example_replace}
+</example>
 
 ## merge the memos
 Note that MERGE should be selected as long as there is information in the old memo that is not included in the new memo.
 The old and new memo tell different parts of the same story and should be merged together:
-**Example**:
+<example>
 {example_merge}
+</example>
 
 ## keep the old one
 If the new memo has no information added or containing nothing useful, you should keep the old memo.
-**Example**:
+<example>
 {example_keep}
+</example>
+
+## special case
+User may give you instructions in '## Update Instruction' section to update the memo in a certain way.
+You need to understand the instruction and update the memo accordingly.
+<example>
+{example_special}
+</example>
 
 Understand the memos wisely, you are allowed to infer the information from the new memo and old memo to decide the final memo.
 Follow the instruction mentioned below:
@@ -82,8 +109,12 @@ Follow the instruction mentioned below:
 """
 
 
-def get_input(topic, subtopic, old_memo, new_memo):
-    return f"""
+def get_input(topic, subtopic, old_memo, new_memo, update_instruction=None):
+    header = ""
+    if update_instruction:
+        header = f"""## Update Instruction
+{update_instruction}"""
+    return f"""{header}
 ## User Topic
 {topic}, {subtopic}
 ## Old Memo
@@ -94,12 +125,12 @@ def get_input(topic, subtopic, old_memo, new_memo):
 
 
 def get_prompt() -> str:
-    example_add = f"""INPUT:
+    example_replace = f"""INPUT:
 {EXAMPLES[0]['input']}
 OUTPUT:
 {pack_merge_action_into_string(EXAMPLES[0]['response'])}
 """
-    example_update = f"""INPUT:
+    example_merge = f"""INPUT:
 {EXAMPLES[1]['input']}
 OUTPUT:
 {pack_merge_action_into_string(EXAMPLES[1]['response'])}
@@ -109,10 +140,16 @@ OUTPUT:
 OUTPUT:
 {pack_merge_action_into_string(EXAMPLES[2]['response'])}
 """
+    example_special = f"""INPUT:
+{EXAMPLES[3]['input']}
+OUTPUT:
+{pack_merge_action_into_string(EXAMPLES[3]['response'])}
+"""
     return MERGE_FACTS_PROMPT.format(
-        example_replace=example_add,
-        example_merge=example_update,
+        example_replace=example_replace,
+        example_merge=example_merge,
         example_keep=example_keep,
+        example_special=example_special,
         tab=CONFIG.llm_tab_separator,
     )
 

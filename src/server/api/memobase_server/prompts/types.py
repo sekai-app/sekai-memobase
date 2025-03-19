@@ -5,7 +5,14 @@ from typing import TypedDict, Optional
 from ..env import CONFIG, LOG, ProfileConfig
 from .utils import attribute_unify
 
-SubTopic = TypedDict("SubTopic", {"name": str, "description": Optional[str]})
+SubTopic = TypedDict(
+    "SubTopic",
+    {
+        "name": str,
+        "description": Optional[str],
+        "update_description": Optional[str],
+    },
+)
 
 
 @dataclass
@@ -18,9 +25,13 @@ class UserProfileTopic:
         self.topic = attribute_unify(self.topic)
         self.sub_topics = [
             (
-                {"name": st, "description": None}
+                {"name": st, "description": None, "update_description": None}
                 if isinstance(st, str)
-                else {"name": st["name"], "description": st.get("description", None)}
+                else {
+                    "name": st["name"],
+                    "description": st.get("description", None),
+                    "update_description": st.get("update_description", None),
+                }
             )
             for st in self.sub_topics
         ]

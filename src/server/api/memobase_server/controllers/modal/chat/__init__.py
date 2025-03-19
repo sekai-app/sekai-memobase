@@ -28,6 +28,7 @@ async def process_blobs(
         fact_attributes=extracted_data["fact_attributes"],
         profiles=extracted_data["profiles"],
         config=extracted_data["config"],
+        total_profiles=extracted_data["total_profiles"],
     )
     if not p.ok():
         return p

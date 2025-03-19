@@ -44,6 +44,23 @@ EXAMPLES = [
             "memo": "1999/04/30",
         },
     },
+    {
+        "input": """## 更新说明
+总是保持最新的目标并删除旧的目标。
+
+## 用户主题
+工作, 目标
+
+## 旧备忘录
+想成为一名软件工程师
+## 新备忘录
+想创办一家初创公司
+""",
+        "response": {
+            "action": "UPDATE",
+            "memo": "想创办一家初创公司",
+        },
+    },
 ]
 
 MERGE_FACTS_PROMPT = """你是一个智能备忘录管理器，负责控制用户的记忆/形象。
@@ -56,19 +73,28 @@ MERGE_FACTS_PROMPT = """你是一个智能备忘录管理器，负责控制用�
 以下是如何生成最终的备忘录的指导原则：
 ## 替换旧备忘录
 如果新备忘录与旧备忘录完全冲突，你应该用新的备忘录替换旧的备忘录。
-**示例**：
+<example>
 {example_replace}
+</example>
 
 ## 合并备忘录
 如果旧备忘录中包含新备忘录中没有的信息，你应该将旧备忘录和新备忘录合并。
 你需要总结新旧备忘录的内容，以便在最终备忘录中包含充分的信息。
-**示例**：
+<example>
 {example_merge}
+</example>
 
 ## 保持旧备忘录
 如果新备忘录中没有新的信息或者不包含任何有效信息，你应该保持旧的备忘录不变。
-**示例**：
+<example>
 {example_keep}
+</example>
+
+## 特殊情况
+用户可能会在'## 更新说明'部分给出更新备忘录的指令，你需要理解这些指令并按照指令更新备忘录。
+<example>
+{example_special}
+</example>
 
 
 理解备忘录，你可以从新备忘录和旧备忘录中推断信息以决定正确的操作。
@@ -80,8 +106,12 @@ MERGE_FACTS_PROMPT = """你是一个智能备忘录管理器，负责控制用�
 """
 
 
-def get_input(topic, subtopic, old_memo, new_memo):
-    return f"""
+def get_input(topic, subtopic, old_memo, new_memo, update_instruction=None):
+    header = ""
+    if update_instruction:
+        header = f"""## 更新说明
+{update_instruction}"""
+    return f"""{header}
 ## 用户主题
 {topic}, {subtopic}
 ## 旧备忘录
@@ -92,12 +122,12 @@ def get_input(topic, subtopic, old_memo, new_memo):
 
 
 def get_prompt() -> str:
-    example_add = f"""INPUT:
+    example_replace = f"""INPUT:
 {EXAMPLES[0]['input']}
 OUTPUT:
 {pack_merge_action_into_string(EXAMPLES[0]['response'])}
 """
-    example_update = f"""INPUT:
+    example_merge = f"""INPUT:
 {EXAMPLES[1]['input']}
 OUTPUT:
 {pack_merge_action_into_string(EXAMPLES[1]['response'])}
@@ -107,10 +137,16 @@ OUTPUT:
 OUTPUT:
 {pack_merge_action_into_string(EXAMPLES[2]['response'])}
 """
+    example_special = f"""INPUT:
+{EXAMPLES[3]['input']}
+OUTPUT:
+{pack_merge_action_into_string(EXAMPLES[3]['response'])}
+"""
     return MERGE_FACTS_PROMPT.format(
-        example_replace=example_add,
-        example_merge=example_update,
+        example_replace=example_replace,
+        example_merge=example_merge,
         example_keep=example_keep,
+        example_special=example_special,
         tab=CONFIG.llm_tab_separator,
     )
 

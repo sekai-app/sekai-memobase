@@ -1,3 +1,7 @@
+from fastapi import BackgroundTasks, Request
+from fastapi import Path, Body
+import traceback
+
 from .. import controllers
 
 from ..env import LOG, TelemetryKeyName
@@ -5,8 +9,6 @@ from ..models.response import CODE
 from ..models.utils import Promise
 from ..models import response as res
 from ..telemetry.capture_key import capture_int_key
-from fastapi import BackgroundTasks, Request
-from fastapi import Path, Body
 
 
 async def insert_blob(
@@ -47,7 +49,7 @@ async def insert_blob(
         if not pb.ok():
             return pb.to_response(res.IdResponse)
     except Exception as e:
-        LOG.error(f"Error inserting blob: {e}")
+        LOG.error(f"Error inserting blob: {e}, {traceback.format_exc()}")
         return Promise.reject(
             CODE.INTERNAL_SERVER_ERROR, f"Error inserting blob: {e}"
         ).to_response(res.IdResponse)

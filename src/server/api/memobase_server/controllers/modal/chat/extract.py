@@ -112,6 +112,7 @@ async def extract_topics(
                 "fact_attributes": [],
                 "profiles": profiles,
                 "config": project_profiles,
+                "total_profiles": project_profiles_slots,
             }
         )
 
@@ -143,5 +144,6 @@ async def extract_topics(
             "fact_attributes": fact_attributes,
             "profiles": profiles,
             "config": project_profiles,
+            "total_profiles": project_profiles_slots,
         }
     )

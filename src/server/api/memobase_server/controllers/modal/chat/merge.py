@@ -7,6 +7,7 @@ from ....llms import llm_complete
 from ....prompts.utils import (
     parse_string_into_merge_action,
 )
+from ....prompts.types import UserProfileTopic
 from .types import UpdateResponse, PROMPTS, AddProfile, UpdateProfile, MergeAddResult
 
 
@@ -16,11 +17,21 @@ async def merge_or_add_new_memos(
     fact_attributes: list[dict],
     profiles: list[ProfileData],
     config: ProfileConfig,
+    total_profiles: list[UserProfileTopic],
 ) -> Promise[MergeAddResult]:
     assert len(fact_contents) == len(
         fact_attributes
     ), "Length of fact_contents and fact_attributes must be equal"
-    use_language = config.language or CONFIG.language
+    USE_LANGUAGE = config.language or CONFIG.language
+    TOPIC_SUBTOPIC_DESCRIPTIONS = {
+        (p.topic, sp["name"]): {
+            "description": sp["description"],
+            "update_description": sp["update_description"],
+        }
+        for p in total_profiles
+        for sp in p.sub_topics
+    }
+
     profile_option_results = {
         "add": [],
         "update": [],
@@ -67,17 +78,25 @@ async def merge_or_add_new_memos(
     merge_tasks = []
     for dp in facts_to_update:
         old_p: ProfileData = dp["old_profile"]
+        slot_description = TOPIC_SUBTOPIC_DESCRIPTIONS.get(
+            (
+                old_p.attributes[ContanstTable.topic],
+                old_p.attributes[ContanstTable.sub_topic],
+            ),
+            {"description": None, "update_description": None},
+        )
         task = llm_complete(
             project_id,
-            PROMPTS[use_language]["merge"].get_input(
+            PROMPTS[USE_LANGUAGE]["merge"].get_input(
                 old_p.attributes[ContanstTable.topic],
                 old_p.attributes[ContanstTable.sub_topic],
                 old_p.content,
                 dp["new_profile"]["content"],
+                update_instruction=slot_description["update_description"],
             ),
-            system_prompt=PROMPTS[use_language]["merge"].get_prompt(),
+            system_prompt=PROMPTS[USE_LANGUAGE]["merge"].get_prompt(),
             temperature=0.2,  # precise
-            **PROMPTS[use_language]["merge"].get_kwargs(),
+            **PROMPTS[USE_LANGUAGE]["merge"].get_kwargs(),
         )
         merge_tasks.append(task)
 
