@@ -334,6 +334,15 @@ Or Just [email us](mailto:contact@memobase.io) ❤️
 
 
 
+
+
+## Contribute
+
+- Check out our [Roadmap](./Roadmap.md) first, make sure Memobase is something you're interested in :)
+- Go through [Contributing](./CONTRIBUTING.md) document to setup and contribute to Memobase.
+
+
+
 ## License
 
 This project is licensed under the Apache 2.0 License - see the [LICENSE](https://github.com/memodb-io/memobase/blob/main/LICENSE) file for details.
