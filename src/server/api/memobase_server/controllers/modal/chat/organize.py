@@ -15,7 +15,12 @@ async def organize_profiles(
     config: ProfileConfig,
 ) -> Promise[None]:
     profiles = profile_options["before_profiles"]
-    use_language = config.language or CONFIG.language
+    USE_LANGUAGE = config.language or CONFIG.language
+    STRICT_MODE = (
+        config.profile_strict_mode
+        if config.profile_strict_mode is not None
+        else CONFIG.profile_strict_mode
+    )
     topic_groups = defaultdict(list)
     for p in profiles:
         topic_groups[p.attributes[ContanstTable.topic]].append(p)
@@ -29,7 +34,7 @@ async def organize_profiles(
         return Promise.resolve(None)
     ps = await asyncio.gather(
         *[
-            organize_profiles_by_topic(project_id, group, use_language)
+            organize_profiles_by_topic(project_id, group, USE_LANGUAGE)
             for group in need_to_organize_topics.values()
         ]
     )
@@ -53,7 +58,7 @@ async def organize_profiles(
 async def organize_profiles_by_topic(
     project_id: str,
     profiles: list[ProfileData],
-    use_language: str,  # profiles in the same topics
+    USE_LANGUAGE: str,  # profiles in the same topics
 ) -> Promise[list[AddProfile]]:
     assert (
         len(profiles) > CONFIG.max_profile_subtopics
@@ -67,7 +72,7 @@ async def organize_profiles_by_topic(
     )
     topic = attribute_unify(profiles[0].attributes[ContanstTable.topic])
     suggest_subtopics = get_specific_subtopics(
-        topic, PROMPTS[use_language]["profile"].CANDIDATE_PROFILE_TOPICS
+        topic, PROMPTS[USE_LANGUAGE]["profile"].CANDIDATE_PROFILE_TOPICS
     )
 
     llm_inputs = "\n".join(
@@ -82,11 +87,11 @@ async def organize_profiles_by_topic(
     p = await llm_complete(
         project_id,
         llm_prompt,
-        PROMPTS[use_language]["organize"].get_prompt(
+        PROMPTS[USE_LANGUAGE]["organize"].get_prompt(
             CONFIG.max_profile_subtopics // 2 + 1, suggest_subtopics
         ),
         temperature=0.2,  # precise
-        **PROMPTS[use_language]["organize"].get_kwargs(),
+        **PROMPTS[USE_LANGUAGE]["organize"].get_kwargs(),
     )
     if not p.ok():
         return p

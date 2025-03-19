@@ -166,7 +166,7 @@ FACT_RETRIEVAL_PROMPT = """{system_prompt}
 ### 输入
 #### 主题建议
 这个章节里会放一些主题和子主题的建议，你需要参考这些主题和子主题来提取信息。
-如果你认为有必要，可以创建自己的主题/子主题，任何有助于评估用户状态的信息都是受欢迎的。
+如果你认为有必要，可以创建自己的主题/子主题，除非用户明确要求不要创建新的主题/子主题。
 #### 已有的主题
 这个章节中会放用户已经与助手分享的主题和子主题
 如果对话中再次提到相同的主题/子主题，请考虑使用相同的主题/子主题。
@@ -217,8 +217,12 @@ MESSGAE则是对话内容. 理解对话内容并且记住事情发生的时间
 """
 
 
-def pack_input(already_input, chat_strs):
-    return f"""#### 已有的主题
+def pack_input(already_input, chat_strs, strict_mode: bool = False):
+    header = ""
+    if strict_mode:
+        header = "不要提取#### 主题建议中没出现的主题/子主题， 否则你的回答是无效的！"
+    return f"""{header}
+#### 已有的主题
 如果提取相关的主题/子主题，请考虑使用下面的主题/子主题命名:
 {already_input}
 
@@ -235,7 +239,16 @@ def get_default_profiles() -> str:
 def get_prompt(topic_examples: str) -> str:
     sys_prompt = CONFIG.system_prompt or DEFAULT_JOB
     examples = "\n\n".join(
-        [f"Input: {p[0]}Output:\n{pack_profiles_into_string(p[1])}" for p in EXAMPLES]
+        [
+            f"""<example>
+<input>{p[0]}</input>
+<output>
+{pack_profiles_into_string(p[1])}
+</output>
+</example>
+"""
+            for p in EXAMPLES
+        ]
     )
     return FACT_RETRIEVAL_PROMPT.format(
         system_prompt=sys_prompt,

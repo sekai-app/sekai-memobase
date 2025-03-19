@@ -153,7 +153,7 @@ FACT_RETRIEVAL_PROMPT = """{system_prompt}
 ### Input
 #### Topics Guidelines
 You'll be given some topics and subtopics that you should focus on collecting and extracting.
-You can create your own topics/sub_topics if you find it necessary.
+You can create your own topics/sub_topics if you find it necessary, unless the user requests to not to create new topics/sub_topics.
 #### User Before Topics
 You will be given the topics and subtopics that the user has already shared with the assistant.
 Consider use the same topic/subtopic if it's mentioned in the conversation again.
@@ -200,15 +200,17 @@ Only extract the attributes with actual values, if the user does not provide any
 #### Topics Guidelines
 Below is the list of topics and subtopics that you should focus on collecting and extracting:
 {topic_examples}
-
-Don't record the topics and subtopics that are not mentioned in the following conversation.
 """
 
 
-def pack_input(already_input, chat_strs):
-    return f"""#### User Before topics
-If the conversation mentions the same topic/subtopic again, please consider using the following topic/subtopic naming:
+def pack_input(already_input, chat_strs, strict_mode: bool = False):
+    header = ""
+    if strict_mode:
+        header = "Don't extract topics/subtopics that are not mentioned in #### Topics Guidelines, otherwise your answer is invalid!"
+    return f"""{header}
+#### User Before topics
 {already_input}
+Don't output the topics and subtopics that are not mentioned in the following conversation.
 #### Chats
 {chat_strs}
 """
@@ -221,7 +223,16 @@ def get_default_profiles() -> str:
 def get_prompt(topic_examples: str) -> str:
     sys_prompt = CONFIG.system_prompt or DEFAULT_JOB
     examples = "\n\n".join(
-        [f"Input: {p[0]}Output:\n{pack_profiles_into_string(p[1])}" for p in EXAMPLES]
+        [
+            f"""<example>
+<input>{p[0]}</input>
+<output>
+{pack_profiles_into_string(p[1])}
+</output>
+</example>
+"""
+            for p in EXAMPLES
+        ]
     )
     return FACT_RETRIEVAL_PROMPT.format(
         system_prompt=sys_prompt,
@@ -236,4 +247,4 @@ def get_kwargs() -> dict:
 
 
 if __name__ == "__main__":
-    print(get_prompt())
+    print(get_prompt(get_default_profiles()))

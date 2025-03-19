@@ -40,23 +40,39 @@ async def extract_topics(
     if not p.ok():
         return p
     project_profiles = p.data()
-    use_language = project_profiles.language or CONFIG.language
-    project_profiles_slots = read_out_profile_config(
-        project_profiles, PROMPTS[use_language]["profile"].CANDIDATE_PROFILE_TOPICS
+    USE_LANGUAGE = project_profiles.language or CONFIG.language
+    STRICT_MODE = (
+        project_profiles.profile_strict_mode
+        if project_profiles.profile_strict_mode is not None
+        else CONFIG.profile_strict_mode
     )
 
+    project_profiles_slots = read_out_profile_config(
+        project_profiles, PROMPTS[USE_LANGUAGE]["profile"].CANDIDATE_PROFILE_TOPICS
+    )
+    if STRICT_MODE:
+        allowed_topic_subtopics = set()
+        for p in project_profiles_slots:
+            for st in p.sub_topics:
+                allowed_topic_subtopics.add(
+                    (attribute_unify(p.topic), attribute_unify(st["name"]))
+                )
+
     if len(profiles):
-        already_topics_subtopics = sorted(
-            set(
-                [
-                    (
-                        p.attributes[ContanstTable.topic],
-                        p.attributes[ContanstTable.sub_topic],
-                    )
-                    for p in profiles
-                ]
-            )
+        already_topics_subtopics = set(
+            [
+                (
+                    attribute_unify(p.attributes[ContanstTable.topic]),
+                    attribute_unify(p.attributes[ContanstTable.sub_topic]),
+                )
+                for p in profiles
+            ]
         )
+        if STRICT_MODE:
+            already_topics_subtopics = (
+                already_topics_subtopics - allowed_topic_subtopics
+            )
+        already_topics_subtopics = sorted(already_topics_subtopics)
         already_topics_prompt = "\n".join(
             [
                 f"- {topic}{CONFIG.llm_tab_separator}{sub_topic}"
@@ -72,15 +88,16 @@ async def extract_topics(
     blob_strs = tag_chat_blobs_in_order_xml(blobs)
     p = await llm_complete(
         project_id,
-        PROMPTS[use_language]["extract"].pack_input(
+        PROMPTS[USE_LANGUAGE]["extract"].pack_input(
             already_topics_prompt,
             blob_strs,
+            strict_mode=STRICT_MODE,
         ),
-        system_prompt=PROMPTS[use_language]["extract"].get_prompt(
-            PROMPTS[use_language]["profile"].get_prompt(project_profiles_slots)
+        system_prompt=PROMPTS[USE_LANGUAGE]["extract"].get_prompt(
+            PROMPTS[USE_LANGUAGE]["profile"].get_prompt(project_profiles_slots)
         ),
         temperature=0.2,  # precise
-        **PROMPTS[use_language]["extract"].get_kwargs(),
+        **PROMPTS[USE_LANGUAGE]["extract"].get_kwargs(),
     )
     if not p.ok():
         return p
@@ -107,6 +124,12 @@ async def extract_topics(
     fact_attributes = []
 
     for nf in new_facts:
+        if STRICT_MODE:
+            if (
+                nf[ContanstTable.topic],
+                nf[ContanstTable.sub_topic],
+            ) not in allowed_topic_subtopics:
+                continue
         fact_contents.append(nf["memo"])
         fact_attributes.append(
             {
