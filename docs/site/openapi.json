@@ -3,17 +3,22 @@
 	"info": {
 		"title": "Memobase API",
 		"summary": "APIs for Memobase, a user memory system for LLM Apps",
-		"version": "0.0.28"
+		"version": "0.0.29"
 	},
-	"servers": [{
-		"url": "https://api.memobase.dev"
-	}, {
-		"url": "https://api.memboase.cn"
-	}],
+	"servers": [
+		{
+			"url": "https://api.memobase.dev"
+		},
+		{
+			"url": "https://api.memboase.cn"
+		}
+	],
 	"paths": {
 		"/api/v1/healthcheck": {
 			"get": {
-				"tags": ["chore"],
+				"tags": [
+					"chore"
+				],
 				"summary": "Healthcheck",
 				"description": "Check if your memobase is set up correctly",
 				"operationId": "healthcheck_api_v1_healthcheck_get",
@@ -29,24 +34,30 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nassert memobase.ping()\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nawait client.ping();\n",
-					"label": "JavaScript"
-				}, {
-					"lang": "Go",
-					"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\nok := client.Ping()\nif !ok {\n    panic(\"Failed to connect to Memobase\")\n}\n",
-					"label": "Go"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nassert memobase.ping()\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nawait client.ping();\n",
+						"label": "JavaScript"
+					},
+					{
+						"lang": "Go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\nok := client.Ping()\nif !ok {\n    panic(\"Failed to connect to Memobase\")\n}\n",
+						"label": "Go"
+					}
+				]
 			}
 		},
 		"/api/v1/project/profile_config": {
 			"get": {
-				"tags": ["project"],
+				"tags": [
+					"project"
+				],
 				"summary": "Get Project Profile Config String",
 				"operationId": "get_project_profile_config_string_api_v1_project_profile_config_get",
 				"responses": {
@@ -61,18 +72,23 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nconfig = memobase.get_config()\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nconst config = await client.getConfig();\n",
-					"label": "JavaScript"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nconfig = memobase.get_config()\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nconst config = await client.getConfig();\n",
+						"label": "JavaScript"
+					}
+				]
 			},
 			"post": {
-				"tags": ["project"],
+				"tags": [
+					"project"
+				],
 				"summary": "Update Project Profile Config",
 				"operationId": "update_project_profile_config_api_v1_project_profile_config_post",
 				"requestBody": {
@@ -108,20 +124,25 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nmemobase.update_config('your_profile_config')\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nawait client.updateConfig('your_profile_config');\n",
-					"label": "JavaScript"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nmemobase.update_config('your_profile_config')\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nawait client.updateConfig('your_profile_config');\n",
+						"label": "JavaScript"
+					}
+				]
 			}
 		},
 		"/api/v1/project/billing": {
 			"get": {
-				"tags": ["project"],
+				"tags": [
+					"project"
+				],
 				"summary": "Get Project Billing",
 				"operationId": "get_project_billing_api_v1_project_billing_get",
 				"responses": {
@@ -140,7 +161,9 @@
 		},
 		"/api/v1/users": {
 			"post": {
-				"tags": ["user"],
+				"tags": [
+					"user"
+				],
 				"summary": "Create User",
 				"description": "Create a new user with additional data",
 				"operationId": "create_user_api_v1_users_post",
@@ -177,37 +200,45 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nuid = client.add_user({\"ANY\": \"DATA\"})\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nconst userId = await client.addUser({ANY: \"DATA\"});\n",
-					"label": "JavaScript"
-				}, {
-					"lang": "Go",
-					"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/google/uuid\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Generate a UUID for the user\nuserID := uuid.New().String()\n\n// Create user with some data\ndata := map[string]interface{}{\"ANY\": \"DATA\"}\nresultID, err := client.AddUser(data, userID)\nif err != nil {\n    panic(err)\n}\n",
-					"label": "Go"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nuid = client.add_user({\"ANY\": \"DATA\"})\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nconst userId = await client.addUser({ANY: \"DATA\"});\n",
+						"label": "JavaScript"
+					},
+					{
+						"lang": "Go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/google/uuid\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Generate a UUID for the user\nuserID := uuid.New().String()\n\n// Create user with some data\ndata := map[string]interface{}{\"ANY\": \"DATA\"}\nresultID, err := client.AddUser(data, userID)\nif err != nil {\n    panic(err)\n}\n",
+						"label": "Go"
+					}
+				]
 			}
 		},
 		"/api/v1/users/{user_id}": {
 			"get": {
-				"tags": ["user"],
+				"tags": [
+					"user"
+				],
 				"summary": "Get User",
 				"operationId": "get_user_api_v1_users__user_id__get",
-				"parameters": [{
-					"name": "user_id",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"type": "string",
-						"description": "The ID of the user to retrieve",
-						"title": "User Id"
-					},
-					"description": "The ID of the user to retrieve"
-				}],
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user to retrieve",
+							"title": "User Id"
+						},
+						"description": "The ID of the user to retrieve"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "Successful Response",
@@ -230,35 +261,43 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nconst user = await client.getUser(userId);\n",
-					"label": "JavaScript"
-				}, {
-					"lang": "Go",
-					"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user by ID\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n",
-					"label": "Go"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nconst user = await client.getUser(userId);\n",
+						"label": "JavaScript"
+					},
+					{
+						"lang": "Go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user by ID\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n",
+						"label": "Go"
+					}
+				]
 			},
 			"put": {
-				"tags": ["user"],
+				"tags": [
+					"user"
+				],
 				"summary": "Update User",
 				"operationId": "update_user_api_v1_users__user_id__put",
-				"parameters": [{
-					"name": "user_id",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"type": "string",
-						"description": "The ID of the user to update",
-						"title": "User Id"
-					},
-					"description": "The ID of the user to update"
-				}],
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user to update",
+							"title": "User Id"
+						},
+						"description": "The ID of the user to update"
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -293,35 +332,43 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nclient.update_user(uid, {\"ANY\": \"NEW_DATA\"})\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nawait client.updateUser(userId, {ANY: \"NEW_DATA\"});\n",
-					"label": "JavaScript"
-				}, {
-					"lang": "Go",
-					"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Update user data\nnewData := map[string]interface{}{\"ANY\": \"NEW_DATA\"}\nerr = client.UpdateUser(userID, newData)\nif err != nil {\n    panic(err)\n}\n",
-					"label": "Go"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nclient.update_user(uid, {\"ANY\": \"NEW_DATA\"})\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nawait client.updateUser(userId, {ANY: \"NEW_DATA\"});\n",
+						"label": "JavaScript"
+					},
+					{
+						"lang": "Go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Update user data\nnewData := map[string]interface{}{\"ANY\": \"NEW_DATA\"}\nerr = client.UpdateUser(userID, newData)\nif err != nil {\n    panic(err)\n}\n",
+						"label": "Go"
+					}
+				]
 			},
 			"delete": {
-				"tags": ["user"],
+				"tags": [
+					"user"
+				],
 				"summary": "Delete User",
 				"operationId": "delete_user_api_v1_users__user_id__delete",
-				"parameters": [{
-					"name": "user_id",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"type": "string",
-						"description": "The ID of the user to delete",
-						"title": "User Id"
-					},
-					"description": "The ID of the user to delete"
-				}],
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user to delete",
+							"title": "User Id"
+						},
+						"description": "The ID of the user to delete"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "Successful Response",
@@ -344,68 +391,79 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nclient.delete_user(uid)\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nawait client.deleteUser(userId);\n",
-					"label": "JavaScript"
-				}, {
-					"lang": "Go",
-					"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Delete user\nerr = client.DeleteUser(userID)\nif err != nil {\n    panic(err)\n}\n",
-					"label": "Go"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nclient.delete_user(uid)\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nawait client.deleteUser(userId);\n",
+						"label": "JavaScript"
+					},
+					{
+						"lang": "Go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Delete user\nerr = client.DeleteUser(userID)\nif err != nil {\n    panic(err)\n}\n",
+						"label": "Go"
+					}
+				]
 			}
 		},
 		"/api/v1/users/blobs/{user_id}/{blob_type}": {
 			"get": {
-				"tags": ["user"],
+				"tags": [
+					"user"
+				],
 				"summary": "Get User All Blobs",
 				"operationId": "get_user_all_blobs_api_v1_users_blobs__user_id___blob_type__get",
-				"parameters": [{
-					"name": "user_id",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"type": "string",
-						"description": "The ID of the user to fetch blobs for",
-						"title": "User Id"
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user to fetch blobs for",
+							"title": "User Id"
+						},
+						"description": "The ID of the user to fetch blobs for"
 					},
-					"description": "The ID of the user to fetch blobs for"
-				}, {
-					"name": "blob_type",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"$ref": "#/components/schemas/BlobType",
+					{
+						"name": "blob_type",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/BlobType",
+							"description": "The type of blobs to retrieve"
+						},
 						"description": "The type of blobs to retrieve"
 					},
-					"description": "The type of blobs to retrieve"
-				}, {
-					"name": "page",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "integer",
-						"description": "Page number for pagination, starting from 0",
-						"default": 0,
-						"title": "Page"
+					{
+						"name": "page",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Page number for pagination, starting from 0",
+							"default": 0,
+							"title": "Page"
+						},
+						"description": "Page number for pagination, starting from 0"
 					},
-					"description": "Page number for pagination, starting from 0"
-				}, {
-					"name": "page_size",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "integer",
-						"description": "Number of items per page, default is 10",
-						"default": 10,
-						"title": "Page Size"
-					},
-					"description": "Number of items per page, default is 10"
-				}],
+					{
+						"name": "page_size",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Number of items per page, default is 10",
+							"default": 10,
+							"title": "Page Size"
+						},
+						"description": "Number of items per page, default is 10"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "Successful Response",
@@ -428,37 +486,45 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\nfrom memobase.core.types import BlobType\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nuser = memobase.get_user('user_id')\nblobs = user.get_all(BlobType.CHAT)\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient, BlobType } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nconst user = client.getUser('user_id');\nconst blobs = await user.getAll(BlobType.Enum.chat);\n",
-					"label": "JavaScript"
-				}, {
-					"lang": "Go",
-					"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Get all blobs\nblobs, err := user.GetAll(blob.ChatType)\nif err != nil {\n    panic(err)\n}\n",
-					"label": "Go"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\nfrom memobase.core.types import BlobType\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nuser = memobase.get_user('user_id')\nblobs = user.get_all(BlobType.CHAT)\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient, BlobType } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nconst user = client.getUser('user_id');\nconst blobs = await user.getAll(BlobType.Enum.chat);\n",
+						"label": "JavaScript"
+					},
+					{
+						"lang": "Go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Get all blobs\nblobs, err := user.GetAll(blob.ChatType)\nif err != nil {\n    panic(err)\n}\n",
+						"label": "Go"
+					}
+				]
 			}
 		},
 		"/api/v1/blobs/insert/{user_id}": {
 			"post": {
-				"tags": ["blob"],
+				"tags": [
+					"blob"
+				],
 				"summary": "Insert Blob",
 				"operationId": "insert_blob_api_v1_blobs_insert__user_id__post",
-				"parameters": [{
-					"name": "user_id",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"type": "string",
-						"description": "The ID of the user to insert the blob for",
-						"title": "User Id"
-					},
-					"description": "The ID of the user to insert the blob for"
-				}],
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user to insert the blob for",
+							"title": "User Id"
+						},
+						"description": "The ID of the user to insert the blob for"
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -492,47 +558,56 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\nfrom memobase import ChatBlob\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nb = ChatBlob(messages=[\n    {\n        \"role\": \"user\",\n        \"content\": \"Hi, I'm here again\"\n    },\n    {\n        \"role\": \"assistant\",\n        \"content\": \"Hi, Gus! How can I help you?\"\n    }\n])\nu = client.get_user(uid)\nbid = u.insert(b)\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient, Blob, BlobType } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nconst blobId = await user.insert(Blob.parse({\n  type: BlobType.Enum.chat,\n  messages: [\n    {\n      role: 'user',\n      content: 'Hi, I'm here again'\n    },\n    {\n      role: 'assistant',\n      content: 'Hi, Gus! How can I help you?'\n    }\n  ]\n}));\n",
-					"label": "JavaScript"
-				}, {
-					"lang": "Go",
-					"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Create chat blob\nchatBlob := &blob.ChatBlob{\n    BaseBlob: blob.BaseBlob{\n        Type: blob.ChatType,\n    },\n    Messages: []blob.OpenAICompatibleMessage{\n        {\n            Role:    \"user\",\n            Content: \"Hi, I'm here again\",\n        },\n        {\n            Role:    \"assistant\",\n            Content: \"Hi, Gus! How can I help you?\",\n        },\n    },\n}\n\n// Insert blob\nblobID, err := user.Insert(chatBlob)\nif err != nil {\n    panic(err)\n}\n",
-					"label": "Go"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\nfrom memobase import ChatBlob\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nb = ChatBlob(messages=[\n    {\n        \"role\": \"user\",\n        \"content\": \"Hi, I'm here again\"\n    },\n    {\n        \"role\": \"assistant\",\n        \"content\": \"Hi, Gus! How can I help you?\"\n    }\n])\nu = client.get_user(uid)\nbid = u.insert(b)\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient, Blob, BlobType } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nconst blobId = await user.insert(Blob.parse({\n  type: BlobType.Enum.chat,\n  messages: [\n    {\n      role: 'user',\n      content: 'Hi, I'm here again'\n    },\n    {\n      role: 'assistant',\n      content: 'Hi, Gus! How can I help you?'\n    }\n  ]\n}));\n",
+						"label": "JavaScript"
+					},
+					{
+						"lang": "Go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Create chat blob\nchatBlob := &blob.ChatBlob{\n    BaseBlob: blob.BaseBlob{\n        Type: blob.ChatType,\n    },\n    Messages: []blob.OpenAICompatibleMessage{\n        {\n            Role:    \"user\",\n            Content: \"Hi, I'm here again\",\n        },\n        {\n            Role:    \"assistant\",\n            Content: \"Hi, Gus! How can I help you?\",\n        },\n    },\n}\n\n// Insert blob\nblobID, err := user.Insert(chatBlob)\nif err != nil {\n    panic(err)\n}\n",
+						"label": "Go"
+					}
+				]
 			}
 		},
 		"/api/v1/blobs/{user_id}/{blob_id}": {
 			"get": {
-				"tags": ["blob"],
+				"tags": [
+					"blob"
+				],
 				"summary": "Get Blob",
 				"operationId": "get_blob_api_v1_blobs__user_id___blob_id__get",
-				"parameters": [{
-					"name": "user_id",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"type": "string",
-						"description": "The ID of the user",
-						"title": "User Id"
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user",
+							"title": "User Id"
+						},
+						"description": "The ID of the user"
 					},
-					"description": "The ID of the user"
-				}, {
-					"name": "blob_id",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"type": "string",
-						"description": "The ID of the blob to retrieve",
-						"title": "Blob Id"
-					},
-					"description": "The ID of the blob to retrieve"
-				}],
+					{
+						"name": "blob_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the blob to retrieve",
+							"title": "Blob Id"
+						},
+						"description": "The ID of the blob to retrieve"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "Successful Response",
@@ -555,45 +630,54 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\nb = u.get(bid)\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nconst blob = await user.get(blobId);\n",
-					"label": "JavaScript"
-				}, {
-					"lang": "Go",
-					"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Get blob\nblob, err := user.Get(blobID)\nif err != nil {\n    panic(err)\n}\n\n// If it's a chat blob, you can access its messages\nif chatBlob, ok := blob.(*blob.ChatBlob); ok {\n    messages := chatBlob.Messages\n    // Process messages\n}\n",
-					"label": "Go"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\nb = u.get(bid)\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nconst blob = await user.get(blobId);\n",
+						"label": "JavaScript"
+					},
+					{
+						"lang": "Go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Get blob\nblob, err := user.Get(blobID)\nif err != nil {\n    panic(err)\n}\n\n// If it's a chat blob, you can access its messages\nif chatBlob, ok := blob.(*blob.ChatBlob); ok {\n    messages := chatBlob.Messages\n    // Process messages\n}\n",
+						"label": "Go"
+					}
+				]
 			},
 			"delete": {
-				"tags": ["blob"],
+				"tags": [
+					"blob"
+				],
 				"summary": "Delete Blob",
 				"operationId": "delete_blob_api_v1_blobs__user_id___blob_id__delete",
-				"parameters": [{
-					"name": "user_id",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"type": "string",
-						"description": "The ID of the user",
-						"title": "User Id"
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user",
+							"title": "User Id"
+						},
+						"description": "The ID of the user"
 					},
-					"description": "The ID of the user"
-				}, {
-					"name": "blob_id",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"type": "string",
-						"description": "The ID of the blob to delete",
-						"title": "Blob Id"
-					},
-					"description": "The ID of the blob to delete"
-				}],
+					{
+						"name": "blob_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the blob to delete",
+							"title": "Blob Id"
+						},
+						"description": "The ID of the blob to delete"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "Successful Response",
@@ -616,104 +700,118 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\nu.delete(bid)\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nawait user.delete(blobId);\n",
-					"label": "JavaScript"
-				}, {
-					"lang": "Go",
-					"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Delete blob\nerr = user.Delete(blobID)\nif err != nil {\n    panic(err)\n}\n",
-					"label": "Go"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\nu.delete(bid)\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nawait user.delete(blobId);\n",
+						"label": "JavaScript"
+					},
+					{
+						"lang": "Go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Delete blob\nerr = user.Delete(blobID)\nif err != nil {\n    panic(err)\n}\n",
+						"label": "Go"
+					}
+				]
 			}
 		},
 		"/api/v1/users/profile/{user_id}": {
 			"get": {
-				"tags": ["profile"],
+				"tags": [
+					"profile"
+				],
 				"summary": "Get User Profile",
 				"description": "Get the real-time user profiles for long term memory",
 				"operationId": "get_user_profile_api_v1_users_profile__user_id__get",
-				"parameters": [{
-					"name": "user_id",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"type": "string",
-						"description": "The ID of the user to get profiles for",
-						"title": "User Id"
-					},
-					"description": "The ID of the user to get profiles for"
-				}, {
-					"name": "topk",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "integer",
-						"description": "Number of profiles to retrieve, default is all",
-						"title": "Topk"
-					},
-					"description": "Number of profiles to retrieve, default is all"
-				}, {
-					"name": "max_token_size",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "integer",
-						"description": "Max token size of returned profile content, default is all",
-						"title": "Max Token Size"
-					},
-					"description": "Max token size of returned profile content, default is all"
-				}, {
-					"name": "prefer_topics",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "array",
-						"items": {
-							"type": "string"
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user to get profiles for",
+							"title": "User Id"
 						},
-						"description": "Rank prefer topics at first to try to keep them in filtering, default order is by updated time",
-						"title": "Prefer Topics"
+						"description": "The ID of the user to get profiles for"
 					},
-					"description": "Rank prefer topics at first to try to keep them in filtering, default order is by updated time"
-				}, {
-					"name": "only_topics",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "array",
-						"items": {
-							"type": "string"
+					{
+						"name": "topk",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Number of profiles to retrieve, default is all",
+							"title": "Topk"
 						},
-						"description": "Only return profiles with these topics, default is all",
-						"title": "Only Topics"
+						"description": "Number of profiles to retrieve, default is all"
 					},
-					"description": "Only return profiles with these topics, default is all"
-				}, {
-					"name": "max_subtopic_size",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "integer",
-						"description": "Max subtopic size of the same topic in returned profile, default is all",
-						"title": "Max Subtopic Size"
+					{
+						"name": "max_token_size",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Max token size of returned profile content, default is all",
+							"title": "Max Token Size"
+						},
+						"description": "Max token size of returned profile content, default is all"
 					},
-					"description": "Max subtopic size of the same topic in returned profile, default is all"
-				}, {
-					"name": "topic_limits_json",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "string",
-						"description": "Set specific subtopic limits for topics in JSON, for example {\"topic1\": 3, \"topic2\": 5}. The limits in this param will override `max_subtopic_size`.",
-						"title": "Topic Limits Json"
+					{
+						"name": "prefer_topics",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"description": "Rank prefer topics at first to try to keep them in filtering, default order is by updated time",
+							"title": "Prefer Topics"
+						},
+						"description": "Rank prefer topics at first to try to keep them in filtering, default order is by updated time"
 					},
-					"description": "Set specific subtopic limits for topics in JSON, for example {\"topic1\": 3, \"topic2\": 5}. The limits in this param will override `max_subtopic_size`."
-				}],
+					{
+						"name": "only_topics",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"description": "Only return profiles with these topics, default is all",
+							"title": "Only Topics"
+						},
+						"description": "Only return profiles with these topics, default is all"
+					},
+					{
+						"name": "max_subtopic_size",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Max subtopic size of the same topic in returned profile, default is all",
+							"title": "Max Subtopic Size"
+						},
+						"description": "Max subtopic size of the same topic in returned profile, default is all"
+					},
+					{
+						"name": "topic_limits_json",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"description": "Set specific subtopic limits for topics in JSON, for example {\"topic1\": 3, \"topic2\": 5}. The limits in this param will override `max_subtopic_size`.",
+							"title": "Topic Limits Json"
+						},
+						"description": "Set specific subtopic limits for topics in JSON, for example {\"topic1\": 3, \"topic2\": 5}. The limits in this param will override `max_subtopic_size`."
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "Successful Response",
@@ -736,47 +834,56 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\np = u.profile()\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nconst profiles = await user.profile();\n",
-					"label": "JavaScript"
-				}, {
-					"lang": "Go",
-					"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Get profile\nprofiles, err := user.Profile()\nif err != nil {\n    panic(err)\n}\n",
-					"label": "Go"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\np = u.profile()\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nconst profiles = await user.profile();\n",
+						"label": "JavaScript"
+					},
+					{
+						"lang": "Go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Get profile\nprofiles, err := user.Profile()\nif err != nil {\n    panic(err)\n}\n",
+						"label": "Go"
+					}
+				]
 			}
 		},
 		"/api/v1/users/buffer/{user_id}/{buffer_type}": {
 			"post": {
-				"tags": ["buffer"],
+				"tags": [
+					"buffer"
+				],
 				"summary": "Flush Buffer",
 				"description": "Get the real-time user profiles for long term memory",
 				"operationId": "flush_buffer_api_v1_users_buffer__user_id___buffer_type__post",
-				"parameters": [{
-					"name": "user_id",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"type": "string",
-						"description": "The ID of the user",
-						"title": "User Id"
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user",
+							"title": "User Id"
+						},
+						"description": "The ID of the user"
 					},
-					"description": "The ID of the user"
-				}, {
-					"name": "buffer_type",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"$ref": "#/components/schemas/BlobType",
+					{
+						"name": "buffer_type",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/BlobType",
+							"description": "The type of buffer to flush"
+						},
 						"description": "The type of buffer to flush"
-					},
-					"description": "The type of buffer to flush"
-				}],
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "Successful Response",
@@ -799,48 +906,57 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu.flush()\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient, BlobType } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nawait user.flush(BlobType.Enum.chat);\n",
-					"label": "JavaScript"
-				}, {
-					"lang": "Go",
-					"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Flush buffer\nerr = user.Flush(blob.ChatType)\nif err != nil {\n    panic(err)\n}\n",
-					"label": "Go"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu.flush()\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient, BlobType } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nawait user.flush(BlobType.Enum.chat);\n",
+						"label": "JavaScript"
+					},
+					{
+						"lang": "Go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Flush buffer\nerr = user.Flush(blob.ChatType)\nif err != nil {\n    panic(err)\n}\n",
+						"label": "Go"
+					}
+				]
 			}
 		},
 		"/api/v1/users/profile/{user_id}/{profile_id}": {
 			"delete": {
-				"tags": ["profile"],
+				"tags": [
+					"profile"
+				],
 				"summary": "Delete User Profile",
 				"description": "Get the real-time user profiles for long term memory",
 				"operationId": "delete_user_profile_api_v1_users_profile__user_id___profile_id__delete",
-				"parameters": [{
-					"name": "user_id",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"type": "string",
-						"description": "The ID of the user",
-						"title": "User Id"
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user",
+							"title": "User Id"
+						},
+						"description": "The ID of the user"
 					},
-					"description": "The ID of the user"
-				}, {
-					"name": "profile_id",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"type": "string",
-						"description": "The ID of the profile to delete",
-						"title": "Profile Id"
-					},
-					"description": "The ID of the profile to delete"
-				}],
+					{
+						"name": "profile_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the profile to delete",
+							"title": "Profile Id"
+						},
+						"description": "The ID of the profile to delete"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "Successful Response",
@@ -863,58 +979,68 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nmemobase.delete_profile('user_id', 'profile_id')\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nawait client.deleteProfile('user_id', 'profile_id');\n",
-					"label": "JavaScript"
-				}, {
-					"lang": "Go",
-					"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Delete profile\nerr = user.DeleteProfile(profileID)\nif err != nil {\n    panic(err)\n}\n",
-					"label": "Go"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nmemobase.delete_profile('user_id', 'profile_id')\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nawait client.deleteProfile('user_id', 'profile_id');\n",
+						"label": "JavaScript"
+					},
+					{
+						"lang": "Go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Delete profile\nerr = user.DeleteProfile(profileID)\nif err != nil {\n    panic(err)\n}\n",
+						"label": "Go"
+					}
+				]
 			}
 		},
 		"/api/v1/users/event/{user_id}": {
 			"get": {
-				"tags": ["event"],
+				"tags": [
+					"event"
+				],
 				"summary": "Get User Events",
 				"operationId": "get_user_events_api_v1_users_event__user_id__get",
-				"parameters": [{
-					"name": "user_id",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"type": "string",
-						"description": "The ID of the user",
-						"title": "User Id"
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user",
+							"title": "User Id"
+						},
+						"description": "The ID of the user"
 					},
-					"description": "The ID of the user"
-				}, {
-					"name": "topk",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "integer",
-						"description": "Number of events to retrieve, default is 10",
-						"default": 10,
-						"title": "Topk"
+					{
+						"name": "topk",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Number of events to retrieve, default is 10",
+							"default": 10,
+							"title": "Topk"
+						},
+						"description": "Number of events to retrieve, default is 10"
 					},
-					"description": "Number of events to retrieve, default is 10"
-				}, {
-					"name": "max_token_size",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "integer",
-						"description": "Max token size of returned events",
-						"title": "Max Token Size"
-					},
-					"description": "Max token size of returned events"
-				}],
+					{
+						"name": "max_token_size",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Max token size of returned events",
+							"title": "Max Token Size"
+						},
+						"description": "Max token size of returned events"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "Successful Response",
@@ -937,101 +1063,114 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nevents = u.event(topk=10, max_token_size=1000)\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nconst events = await user.event();\n",
-					"label": "JavaScript"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nevents = u.event(topk=10, max_token_size=1000)\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nconst events = await user.event();\n",
+						"label": "JavaScript"
+					}
+				]
 			}
 		},
 		"/api/v1/users/context/{user_id}": {
 			"get": {
-				"tags": ["context"],
+				"tags": [
+					"context"
+				],
 				"summary": "Get User Context",
 				"operationId": "get_user_context_api_v1_users_context__user_id__get",
-				"parameters": [{
-					"name": "user_id",
-					"in": "path",
-					"required": true,
-					"schema": {
-						"type": "string",
-						"description": "The ID of the user",
-						"title": "User Id"
-					},
-					"description": "The ID of the user"
-				}, {
-					"name": "max_token_size",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "integer",
-						"description": "Max token size of returned Context",
-						"default": 1000,
-						"title": "Max Token Size"
-					},
-					"description": "Max token size of returned Context"
-				}, {
-					"name": "prefer_topics",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "array",
-						"items": {
-							"type": "string"
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user",
+							"title": "User Id"
 						},
-						"description": "Rank prefer topics at first to try to keep them in filtering, default order is by updated time",
-						"title": "Prefer Topics"
+						"description": "The ID of the user"
 					},
-					"description": "Rank prefer topics at first to try to keep them in filtering, default order is by updated time"
-				}, {
-					"name": "only_topics",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "array",
-						"items": {
-							"type": "string"
+					{
+						"name": "max_token_size",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Max token size of returned Context",
+							"default": 1000,
+							"title": "Max Token Size"
 						},
-						"description": "Only return profiles with these topics, default is all",
-						"title": "Only Topics"
+						"description": "Max token size of returned Context"
 					},
-					"description": "Only return profiles with these topics, default is all"
-				}, {
-					"name": "max_subtopic_size",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "integer",
-						"description": "Max subtopic size of the same topic in returned Context",
-						"title": "Max Subtopic Size"
+					{
+						"name": "prefer_topics",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"description": "Rank prefer topics at first to try to keep them in filtering, default order is by updated time",
+							"title": "Prefer Topics"
+						},
+						"description": "Rank prefer topics at first to try to keep them in filtering, default order is by updated time"
 					},
-					"description": "Max subtopic size of the same topic in returned Context"
-				}, {
-					"name": "topic_limits_json",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "string",
-						"description": "Set specific subtopic limits for topics in JSON, for example {\"topic1\": 3, \"topic2\": 5}. The limits in this param will override `max_subtopic_size`.",
-						"title": "Topic Limits Json"
+					{
+						"name": "only_topics",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"description": "Only return profiles with these topics, default is all",
+							"title": "Only Topics"
+						},
+						"description": "Only return profiles with these topics, default is all"
 					},
-					"description": "Set specific subtopic limits for topics in JSON, for example {\"topic1\": 3, \"topic2\": 5}. The limits in this param will override `max_subtopic_size`."
-				}, {
-					"name": "profile_event_ratio",
-					"in": "query",
-					"required": false,
-					"schema": {
-						"type": "number",
-						"description": "Profile event ratio of returned Context",
-						"default": 0.8,
-						"title": "Profile Event Ratio"
+					{
+						"name": "max_subtopic_size",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Max subtopic size of the same topic in returned Context",
+							"title": "Max Subtopic Size"
+						},
+						"description": "Max subtopic size of the same topic in returned Context"
 					},
-					"description": "Profile event ratio of returned Context"
-				}],
+					{
+						"name": "topic_limits_json",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"description": "Set specific subtopic limits for topics in JSON, for example {\"topic1\": 3, \"topic2\": 5}. The limits in this param will override `max_subtopic_size`.",
+							"title": "Topic Limits Json"
+						},
+						"description": "Set specific subtopic limits for topics in JSON, for example {\"topic1\": 3, \"topic2\": 5}. The limits in this param will override `max_subtopic_size`."
+					},
+					{
+						"name": "profile_event_ratio",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "number",
+							"description": "Profile event ratio of returned Context",
+							"default": 0.8,
+							"title": "Profile Event Ratio"
+						},
+						"description": "Profile event ratio of returned Context"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "Successful Response",
@@ -1054,15 +1193,18 @@
 						}
 					}
 				},
-				"x-code-samples": [{
-					"lang": "Python",
-					"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\ncontext = u.context()\n",
-					"label": "Python"
-				}, {
-					"lang": "JavaScript",
-					"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nconst context = await user.context();\n",
-					"label": "JavaScript"
-				}]
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\ncontext = u.context()\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nconst context = await user.context();\n",
+						"label": "JavaScript"
+					}
+				]
 			}
 		}
 	},
@@ -1071,11 +1213,14 @@
 			"BaseResponse": {
 				"properties": {
 					"data": {
-						"anyOf": [{
-							"type": "object"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"type": "object"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"title": "Data",
 						"description": "Response data payload"
 					},
@@ -1097,21 +1242,27 @@
 			"BillingData": {
 				"properties": {
 					"token_left": {
-						"anyOf": [{
-							"type": "integer"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"type": "integer"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"title": "Token Left",
 						"description": "Total token left"
 					},
 					"next_refill_at": {
-						"anyOf": [{
-							"type": "string",
-							"format": "date-time"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "date-time"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"title": "Next Refill At",
 						"description": "Next refill time"
 					},
@@ -1122,17 +1273,22 @@
 					}
 				},
 				"type": "object",
-				"required": ["project_token_cost_month"],
+				"required": [
+					"project_token_cost_month"
+				],
 				"title": "BillingData"
 			},
 			"BillingResponse": {
 				"properties": {
 					"data": {
-						"anyOf": [{
-							"$ref": "#/components/schemas/BillingData"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/BillingData"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"description": "Response containing token left"
 					},
 					"errno": {
@@ -1160,44 +1316,59 @@
 						"title": "Blob Data"
 					},
 					"fields": {
-						"anyOf": [{
-							"type": "object"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"type": "object"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"title": "Fields"
 					},
 					"created_at": {
-						"anyOf": [{
-							"type": "string",
-							"format": "date-time"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "date-time"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"title": "Created At"
 					},
 					"updated_at": {
-						"anyOf": [{
-							"type": "string",
-							"format": "date-time"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "date-time"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"title": "Updated At"
 					}
 				},
 				"type": "object",
-				"required": ["blob_type", "blob_data"],
+				"required": [
+					"blob_type",
+					"blob_data"
+				],
 				"title": "BlobData"
 			},
 			"BlobDataResponse": {
 				"properties": {
 					"data": {
-						"anyOf": [{
-							"$ref": "#/components/schemas/BlobData"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/BlobData"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"description": "Response containing blob data"
 					},
 					"errno": {
@@ -1217,12 +1388,32 @@
 			},
 			"BlobType": {
 				"type": "string",
-				"enum": ["chat", "doc", "image", "code", "transcript"],
+				"enum": [
+					"chat",
+					"doc",
+					"image",
+					"code",
+					"transcript"
+				],
 				"title": "BlobType"
 			},
 			"CODE": {
 				"type": "integer",
-				"enum": [0, 400, 401, 403, 404, 405, 409, 422, 500, 501, 502, 503, 504],
+				"enum": [
+					0,
+					400,
+					401,
+					403,
+					404,
+					405,
+					409,
+					422,
+					500,
+					501,
+					502,
+					503,
+					504
+				],
 				"title": "CODE"
 			},
 			"ContextData": {
@@ -1234,7 +1425,9 @@
 					}
 				},
 				"type": "object",
-				"required": ["context"],
+				"required": [
+					"context"
+				],
 				"title": "ContextData"
 			},
 			"EventData": {
@@ -1249,7 +1442,9 @@
 					}
 				},
 				"type": "object",
-				"required": ["profile_delta"],
+				"required": [
+					"profile_delta"
+				],
 				"title": "EventData"
 			},
 			"HTTPValidationError": {
@@ -1268,29 +1463,37 @@
 			"IdData": {
 				"properties": {
 					"id": {
-						"anyOf": [{
-							"type": "string",
-							"format": "uuid4"
-						}, {
-							"type": "string",
-							"format": "uuid5"
-						}],
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "uuid4"
+							},
+							{
+								"type": "string",
+								"format": "uuid5"
+							}
+						],
 						"title": "Id",
 						"description": "The UUID identifier"
 					}
 				},
 				"type": "object",
-				"required": ["id"],
+				"required": [
+					"id"
+				],
 				"title": "IdData"
 			},
 			"IdResponse": {
 				"properties": {
 					"data": {
-						"anyOf": [{
-							"$ref": "#/components/schemas/IdData"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/IdData"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"description": "Response containing a single ID"
 					},
 					"errno": {
@@ -1312,13 +1515,16 @@
 				"properties": {
 					"ids": {
 						"items": {
-							"anyOf": [{
-								"type": "string",
-								"format": "uuid4"
-							}, {
-								"type": "string",
-								"format": "uuid5"
-							}]
+							"anyOf": [
+								{
+									"type": "string",
+									"format": "uuid4"
+								},
+								{
+									"type": "string",
+									"format": "uuid5"
+								}
+							]
 						},
 						"type": "array",
 						"title": "Ids",
@@ -1326,17 +1532,22 @@
 					}
 				},
 				"type": "object",
-				"required": ["ids"],
+				"required": [
+					"ids"
+				],
 				"title": "IdsData"
 			},
 			"IdsResponse": {
 				"properties": {
 					"data": {
-						"anyOf": [{
-							"$ref": "#/components/schemas/IdsData"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/IdsData"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"description": "Response containing multiple IDs"
 					},
 					"errno": {
@@ -1363,17 +1574,22 @@
 					}
 				},
 				"type": "object",
-				"required": ["profile_config"],
+				"required": [
+					"profile_config"
+				],
 				"title": "ProfileConfigData"
 			},
 			"ProfileConfigDataResponse": {
 				"properties": {
 					"data": {
-						"anyOf": [{
-							"$ref": "#/components/schemas/ProfileConfigData"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/ProfileConfigData"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"description": "Response containing profile config data"
 					},
 					"errno": {
@@ -1394,13 +1610,16 @@
 			"ProfileData": {
 				"properties": {
 					"id": {
-						"anyOf": [{
-							"type": "string",
-							"format": "uuid4"
-						}, {
-							"type": "string",
-							"format": "uuid5"
-						}],
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "uuid4"
+							},
+							{
+								"type": "string",
+								"format": "uuid5"
+							}
+						],
 						"title": "Id",
 						"description": "The profile's unique identifier"
 					},
@@ -1422,17 +1641,23 @@
 						"description": "Timestamp when the profile was last updated"
 					},
 					"attributes": {
-						"anyOf": [{
-							"type": "object"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"type": "object"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"title": "Attributes",
 						"description": "User profile attributes in JSON, containing 'topic', 'sub_topic'"
 					}
 				},
 				"type": "object",
-				"required": ["id", "content"],
+				"required": [
+					"id",
+					"content"
+				],
 				"title": "ProfileData"
 			},
 			"ProfileDelta": {
@@ -1443,27 +1668,36 @@
 						"description": "The profile content"
 					},
 					"attributes": {
-						"anyOf": [{
-							"type": "object"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"type": "object"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"title": "Attributes",
 						"description": "User profile attributes in JSON, containing 'topic', 'sub_topic'"
 					}
 				},
 				"type": "object",
-				"required": ["content", "attributes"],
+				"required": [
+					"content",
+					"attributes"
+				],
 				"title": "ProfileDelta"
 			},
 			"UserContextDataResponse": {
 				"properties": {
 					"data": {
-						"anyOf": [{
-							"$ref": "#/components/schemas/ContextData"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/ContextData"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"description": "Response containing user context"
 					},
 					"errno": {
@@ -1484,44 +1718,57 @@
 			"UserData": {
 				"properties": {
 					"data": {
-						"anyOf": [{
-							"type": "object"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"type": "object"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"title": "Data",
 						"description": "User additional data in JSON"
 					},
 					"id": {
-						"anyOf": [{
-							"type": "string",
-							"format": "uuid4"
-						}, {
-							"type": "string",
-							"format": "uuid5"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "uuid4"
+							},
+							{
+								"type": "string",
+								"format": "uuid5"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"title": "Id",
 						"description": "User ID in UUIDv4/5"
 					},
 					"created_at": {
-						"anyOf": [{
-							"type": "string",
-							"format": "date-time"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "date-time"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"title": "Created At",
 						"description": "Timestamp when the user was created"
 					},
 					"updated_at": {
-						"anyOf": [{
-							"type": "string",
-							"format": "date-time"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "date-time"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"title": "Updated At",
 						"description": "Timestamp when the user was last updated"
 					}
@@ -1532,11 +1779,14 @@
 			"UserDataResponse": {
 				"properties": {
 					"data": {
-						"anyOf": [{
-							"$ref": "#/components/schemas/UserData"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/UserData"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"description": "Response containing user data"
 					},
 					"errno": {
@@ -1557,22 +1807,28 @@
 			"UserEventData": {
 				"properties": {
 					"id": {
-						"anyOf": [{
-							"type": "string",
-							"format": "uuid4"
-						}, {
-							"type": "string",
-							"format": "uuid5"
-						}],
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "uuid4"
+							},
+							{
+								"type": "string",
+								"format": "uuid5"
+							}
+						],
 						"title": "Id",
 						"description": "The event's unique identifier"
 					},
 					"event_data": {
-						"anyOf": [{
-							"$ref": "#/components/schemas/EventData"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/EventData"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"description": "User event data in JSON"
 					},
 					"created_at": {
@@ -1589,7 +1845,9 @@
 					}
 				},
 				"type": "object",
-				"required": ["id"],
+				"required": [
+					"id"
+				],
 				"title": "UserEventData"
 			},
 			"UserEventsData": {
@@ -1604,17 +1862,22 @@
 					}
 				},
 				"type": "object",
-				"required": ["events"],
+				"required": [
+					"events"
+				],
 				"title": "UserEventsData"
 			},
 			"UserEventsDataResponse": {
 				"properties": {
 					"data": {
-						"anyOf": [{
-							"$ref": "#/components/schemas/UserEventsData"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/UserEventsData"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"description": "Response containing user events"
 					},
 					"errno": {
@@ -1635,11 +1898,14 @@
 			"UserProfileResponse": {
 				"properties": {
 					"data": {
-						"anyOf": [{
-							"$ref": "#/components/schemas/UserProfilesData"
-						}, {
-							"type": "null"
-						}],
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/UserProfilesData"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"description": "Response containing user profiles"
 					},
 					"errno": {
@@ -1669,18 +1935,23 @@
 					}
 				},
 				"type": "object",
-				"required": ["profiles"],
+				"required": [
+					"profiles"
+				],
 				"title": "UserProfilesData"
 			},
 			"ValidationError": {
 				"properties": {
 					"loc": {
 						"items": {
-							"anyOf": [{
-								"type": "string"
-							}, {
-								"type": "integer"
-							}]
+							"anyOf": [
+								{
+									"type": "string"
+								},
+								{
+									"type": "integer"
+								}
+							]
 						},
 						"type": "array",
 						"title": "Location"
@@ -1695,7 +1966,11 @@
 					}
 				},
 				"type": "object",
-				"required": ["loc", "msg", "type"],
+				"required": [
+					"loc",
+					"msg",
+					"type"
+				],
 				"title": "ValidationError"
 			}
 		},
@@ -1706,7 +1981,9 @@
 			}
 		}
 	},
-	"security": [{
-		"BearerAuth": []
-	}]
+	"security": [
+		{
+			"BearerAuth": []
+		}
+	]
 }

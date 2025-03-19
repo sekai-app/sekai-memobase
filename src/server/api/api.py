@@ -42,6 +42,7 @@ from memobase_server.auth.token import (
     get_project_status,
 )
 from memobase_server import utils
+from api_docs import API_X_CODE_DOCS
 
 
 @asynccontextmanager
@@ -55,6 +56,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     lifespan=lifespan,
 )
+
 
 def custom_openapi():
     if app.openapi_schema:
@@ -79,6 +81,7 @@ def custom_openapi():
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
+
 app.openapi = custom_openapi
 
 router = APIRouter(prefix="/api/v1")
@@ -97,58 +100,9 @@ LOGGING_CONFIG["formatters"]["default"]["datefmt"] = "%Y-%m-%d %H:%M:%S"
 LOGGING_CONFIG["formatters"]["access"]["datefmt"] = "%Y-%m-%d %H:%M:%S"
 
 
-@router.get("/healthcheck", tags=["chore"],
-            openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-
-memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-assert memobase.ping()
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript", 
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-
-await client.ping();
-''',
-                    "label": "JavaScript"
-                },
-                {
-                    "lang": "Go",
-                    "source": '''// To use the Go SDK, install the package:
-// go get github.com/memodb-io/memobase/src/client/memobase-go@latest
-
-import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
+@router.get(
+    "/healthcheck", tags=["chore"], openapi_extra=API_X_CODE_DOCS["GET /healthcheck"]
 )
-
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
-
-ok := client.Ping()
-if !ok {
-    panic("Failed to connect to Memobase")
-}
-''',
-                    "label": "Go"
-                }
-            ]})
 async def healthcheck() -> BaseResponse:
     """Check if your memobase is set up correctly"""
     LOG.info("Healthcheck requested")
@@ -165,35 +119,11 @@ async def healthcheck() -> BaseResponse:
     return BaseResponse()
 
 
-@router.post("/project/profile_config", tags=["project"],
-             openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-
-memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-memobase.update_config('your_profile_config')
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript",
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-
-await client.updateConfig('your_profile_config');
-''',
-                    "label": "JavaScript"
-                }
-            ]})
+@router.post(
+    "/project/profile_config",
+    tags=["project"],
+    openapi_extra=API_X_CODE_DOCS["POST /project/profile_config"],
+)
 async def update_project_profile_config(
     request: Request,
     profile_config: res.ProfileConfigData = Body(
@@ -211,35 +141,11 @@ async def update_project_profile_config(
     return p.to_response(res.BaseResponse)
 
 
-@router.get("/project/profile_config", tags=["project"],
-             openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-
-memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-config = memobase.get_config()
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript",
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-
-const config = await client.getConfig();
-''',
-                    "label": "JavaScript"
-                }
-            ]})
+@router.get(
+    "/project/profile_config",
+    tags=["project"],
+    openapi_extra=API_X_CODE_DOCS["GET /project/profile_config"],
+)
 async def get_project_profile_config_string(
     request: Request,
 ) -> res.ProfileConfigDataResponse:
@@ -255,64 +161,11 @@ async def get_project_billing(request: Request) -> res.BillingResponse:
     return p.to_response(res.BillingResponse)
 
 
-@router.post("/users", tags=["user"],
-             openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-uid = client.add_user({"ANY": "DATA"})
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript",
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-
-const userId = await client.addUser({ANY: "DATA"});
-''',
-                    "label": "JavaScript"
-                },
-                {
-                    "lang": "Go",
-                    "source": '''// To use the Go SDK, install the package:
-// go get github.com/memodb-io/memobase/src/client/memobase-go@latest
-
-import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
-    "github.com/google/uuid"
+@router.post(
+    "/users",
+    tags=["user"],
+    openapi_extra=API_X_CODE_DOCS["POST /users"],
 )
-
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
-
-// Generate a UUID for the user
-userID := uuid.New().String()
-
-// Create user with some data
-data := map[string]interface{}{"ANY": "DATA"}
-resultID, err := client.AddUser(data, userID)
-if err != nil {
-    panic(err)
-}
-''',
-                    "label": "Go"
-                }
-            ]})
 async def create_user(
     request: Request,
     user_data: res.UserData = Body(
@@ -325,59 +178,11 @@ async def create_user(
     return p.to_response(res.IdResponse)
 
 
-@router.get("/users/{user_id}", tags=["user"],
-             openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-u = client.get_user(uid)
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript",
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-
-const user = await client.getUser(userId);
-''',
-                    "label": "JavaScript"
-                },
-                {
-                    "lang": "Go",
-                    "source": '''// To use the Go SDK, install the package:
-// go get github.com/memodb-io/memobase/src/client/memobase-go@latest
-
-import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
+@router.get(
+    "/users/{user_id}",
+    tags=["user"],
+    openapi_extra=API_X_CODE_DOCS["GET /users/{user_id}"],
 )
-
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
-
-// Get user by ID
-user, err := client.GetUser(userID)
-if err != nil {
-    panic(err)
-}
-''',
-                    "label": "Go"
-                }
-            ]})
 async def get_user(
     request: Request,
     user_id: str = Path(..., description="The ID of the user to retrieve"),
@@ -387,60 +192,11 @@ async def get_user(
     return p.to_response(res.UserDataResponse)
 
 
-@router.put("/users/{user_id}", tags=["user"],
-             openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-client.update_user(uid, {"ANY": "NEW_DATA"})
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript",
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-
-await client.updateUser(userId, {ANY: "NEW_DATA"});
-''',
-                    "label": "JavaScript"
-                },
-                {
-                    "lang": "Go",
-                    "source": '''// To use the Go SDK, install the package:
-// go get github.com/memodb-io/memobase/src/client/memobase-go@latest
-
-import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
+@router.put(
+    "/users/{user_id}",
+    tags=["user"],
+    openapi_extra=API_X_CODE_DOCS["PUT /users/{user_id}"],
 )
-
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
-
-// Update user data
-newData := map[string]interface{}{"ANY": "NEW_DATA"}
-err = client.UpdateUser(userID, newData)
-if err != nil {
-    panic(err)
-}
-''',
-                    "label": "Go"
-                }
-            ]})
 async def update_user(
     request: Request,
     user_id: str = Path(..., description="The ID of the user to update"),
@@ -451,59 +207,11 @@ async def update_user(
     return p.to_response(res.IdResponse)
 
 
-@router.delete("/users/{user_id}", tags=["user"],
-             openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-client.delete_user(uid)
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript",
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-
-await client.deleteUser(userId);
-''',
-                    "label": "JavaScript"
-                },
-                {
-                    "lang": "Go",
-                    "source": '''// To use the Go SDK, install the package:
-// go get github.com/memodb-io/memobase/src/client/memobase-go@latest
-
-import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
+@router.delete(
+    "/users/{user_id}",
+    tags=["user"],
+    openapi_extra=API_X_CODE_DOCS["DELETE /users/{user_id}"],
 )
-
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
-
-// Delete user
-err = client.DeleteUser(userID)
-if err != nil {
-    panic(err)
-}
-''',
-                    "label": "Go"
-                }
-            ]})
 async def delete_user(
     request: Request,
     user_id: str = Path(..., description="The ID of the user to delete"),
@@ -513,69 +221,11 @@ async def delete_user(
     return p.to_response(BaseResponse)
 
 
-@router.get("/users/blobs/{user_id}/{blob_type}", tags=["user"],
-             openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-from memobase.core.types import BlobType
-
-memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-user = memobase.get_user('user_id')
-blobs = user.get_all(BlobType.CHAT)
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript",
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient, BlobType } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-
-const user = client.getUser('user_id');
-const blobs = await user.getAll(BlobType.Enum.chat);
-''',
-                    "label": "JavaScript"
-                },
-                {
-                    "lang": "Go",
-                    "source": '''// To use the Go SDK, install the package:
-// go get github.com/memodb-io/memobase/src/client/memobase-go@latest
-
-import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
-    "github.com/memodb-io/memobase/src/client/memobase-go/blob"
+@router.get(
+    "/users/blobs/{user_id}/{blob_type}",
+    tags=["user"],
+    openapi_extra=API_X_CODE_DOCS["GET /users/blobs/{user_id}/{blob_type}"],
 )
-
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
-
-// Get user
-user, err := client.GetUser(userID)
-if err != nil {
-    panic(err)
-}
-
-// Get all blobs
-blobs, err := user.GetAll(blob.ChatType)
-if err != nil {
-    panic(err)
-}
-''',
-                    "label": "Go"
-                }
-            ]})
 async def get_user_all_blobs(
     request: Request,
     user_id: str = Path(..., description="The ID of the user to fetch blobs for"),
@@ -590,108 +240,11 @@ async def get_user_all_blobs(
     return p.to_response(res.IdsResponse)
 
 
-@router.post("/blobs/insert/{user_id}", tags=["blob"],
-             openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-from memobase import ChatBlob
-
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-b = ChatBlob(messages=[
-    {
-        "role": "user",
-        "content": "Hi, I'm here again"
-    },
-    {
-        "role": "assistant",
-        "content": "Hi, Gus! How can I help you?"
-    }
-])
-u = client.get_user(uid)
-bid = u.insert(b)
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript",
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient, Blob, BlobType } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-const user = await client.getUser(userId);
-
-const blobId = await user.insert(Blob.parse({
-  type: BlobType.Enum.chat,
-  messages: [
-    {
-      role: 'user',
-      content: 'Hi, I\'m here again'
-    },
-    {
-      role: 'assistant',
-      content: 'Hi, Gus! How can I help you?'
-    }
-  ]
-}));
-''',
-                    "label": "JavaScript"
-                },
-                {
-                    "lang": "Go",
-                    "source": '''// To use the Go SDK, install the package:
-// go get github.com/memodb-io/memobase/src/client/memobase-go@latest
-
-import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
-    "github.com/memodb-io/memobase/src/client/memobase-go/blob"
+@router.post(
+    "/blobs/insert/{user_id}",
+    tags=["blob"],
+    openapi_extra=API_X_CODE_DOCS["POST /blobs/insert/{user_id}"],
 )
-
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
-
-// Get user
-user, err := client.GetUser(userID)
-if err != nil {
-    panic(err)
-}
-
-// Create chat blob
-chatBlob := &blob.ChatBlob{
-    BaseBlob: blob.BaseBlob{
-        Type: blob.ChatType,
-    },
-    Messages: []blob.OpenAICompatibleMessage{
-        {
-            Role:    "user",
-            Content: "Hi, I'm here again",
-        },
-        {
-            Role:    "assistant",
-            Content: "Hi, Gus! How can I help you?",
-        },
-    },
-}
-
-// Insert blob
-blobID, err := user.Insert(chatBlob)
-if err != nil {
-    panic(err)
-}
-''',
-                    "label": "Go"
-                }
-            ]})
 async def insert_blob(
     request: Request,
     user_id: str = Path(..., description="The ID of the user to insert the blob for"),
@@ -743,74 +296,11 @@ async def insert_blob(
     return p.to_response(res.IdResponse)
 
 
-@router.get("/blobs/{user_id}/{blob_id}", tags=["blob"],
-             openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-u = client.get_user(uid)
-b = u.get(bid)
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript",
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-const user = await client.getUser(userId);
-
-const blob = await user.get(blobId);
-''',
-                    "label": "JavaScript"
-                },
-                {
-                    "lang": "Go",
-                    "source": '''// To use the Go SDK, install the package:
-// go get github.com/memodb-io/memobase/src/client/memobase-go@latest
-
-import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
-    "github.com/memodb-io/memobase/src/client/memobase-go/blob"
+@router.get(
+    "/blobs/{user_id}/{blob_id}",
+    tags=["blob"],
+    openapi_extra=API_X_CODE_DOCS["GET /blobs/{user_id}/{blob_id}"],
 )
-
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
-
-// Get user
-user, err := client.GetUser(userID)
-if err != nil {
-    panic(err)
-}
-
-// Get blob
-blob, err := user.Get(blobID)
-if err != nil {
-    panic(err)
-}
-
-// If it's a chat blob, you can access its messages
-if chatBlob, ok := blob.(*blob.ChatBlob); ok {
-    messages := chatBlob.Messages
-    // Process messages
-}
-''',
-                    "label": "Go"
-                }
-            ]})
 async def get_blob(
     request: Request,
     user_id: str = Path(..., description="The ID of the user"),
@@ -821,67 +311,11 @@ async def get_blob(
     return p.to_response(res.BlobDataResponse)
 
 
-@router.delete("/blobs/{user_id}/{blob_id}", tags=["blob"],
-             openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-u = client.get_user(uid)
-u.delete(bid)
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript",
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-const user = await client.getUser(userId);
-
-await user.delete(blobId);
-''',
-                    "label": "JavaScript"
-                },
-                {
-                    "lang": "Go",
-                    "source": '''// To use the Go SDK, install the package:
-// go get github.com/memodb-io/memobase/src/client/memobase-go@latest
-
-import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
+@router.delete(
+    "/blobs/{user_id}/{blob_id}",
+    tags=["blob"],
+    openapi_extra=API_X_CODE_DOCS["DELETE /blobs/{user_id}/{blob_id}"],
 )
-
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
-
-// Get user
-user, err := client.GetUser(userID)
-if err != nil {
-    panic(err)
-}
-
-// Delete blob
-err = user.Delete(blobID)
-if err != nil {
-    panic(err)
-}
-''',
-                    "label": "Go"
-                }
-            ]})
 async def delete_blob(
     request: Request,
     user_id: str = Path(..., description="The ID of the user"),
@@ -892,67 +326,11 @@ async def delete_blob(
     return p.to_response(res.BaseResponse)
 
 
-@router.get("/users/profile/{user_id}", tags=["profile"],
-             openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-u = client.get_user(uid)
-p = u.profile()
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript",
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-const user = await client.getUser(userId);
-
-const profiles = await user.profile();
-''',
-                    "label": "JavaScript"
-                },
-                {
-                    "lang": "Go",
-                    "source": '''// To use the Go SDK, install the package:
-// go get github.com/memodb-io/memobase/src/client/memobase-go@latest
-
-import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
+@router.get(
+    "/users/profile/{user_id}",
+    tags=["profile"],
+    openapi_extra=API_X_CODE_DOCS["GET /users/profile/{user_id}"],
 )
-
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
-
-// Get user
-user, err := client.GetUser(userID)
-if err != nil {
-    panic(err)
-}
-
-// Get profile
-profiles, err := user.Profile()
-if err != nil {
-    panic(err)
-}
-''',
-                    "label": "Go"
-                }
-            ]})
 async def get_user_profile(
     request: Request,
     user_id: str = Path(..., description="The ID of the user to get profiles for"),
@@ -1002,67 +380,11 @@ async def get_user_profile(
     return p.to_response(res.UserProfileResponse)
 
 
-@router.post("/users/buffer/{user_id}/{buffer_type}", tags=["buffer"],
-             openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-u.flush()
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript",
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient, BlobType } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-const user = await client.getUser(userId);
-
-await user.flush(BlobType.Enum.chat);
-''',
-                    "label": "JavaScript"
-                },
-                {
-                    "lang": "Go",
-                    "source": '''// To use the Go SDK, install the package:
-// go get github.com/memodb-io/memobase/src/client/memobase-go@latest
-
-import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
-    "github.com/memodb-io/memobase/src/client/memobase-go/blob"
+@router.post(
+    "/users/buffer/{user_id}/{buffer_type}",
+    tags=["buffer"],
+    openapi_extra=API_X_CODE_DOCS["POST /users/buffer/{user_id}/{buffer_type}"],
 )
-
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
-
-// Get user
-user, err := client.GetUser(userID)
-if err != nil {
-    panic(err)
-}
-
-// Flush buffer
-err = user.Flush(blob.ChatType)
-if err != nil {
-    panic(err)
-}
-''',
-                    "label": "Go"
-                }
-            ]})
 async def flush_buffer(
     request: Request,
     user_id: str = Path(..., description="The ID of the user"),
@@ -1076,65 +398,11 @@ async def flush_buffer(
     return p.to_response(res.BaseResponse)
 
 
-@router.delete("/users/profile/{user_id}/{profile_id}", tags=["profile"],
-             openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-
-memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-memobase.delete_profile('user_id', 'profile_id')
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript",
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-
-await client.deleteProfile('user_id', 'profile_id');
-''',
-                    "label": "JavaScript"
-                },
-                {
-                    "lang": "Go",
-                    "source": '''// To use the Go SDK, install the package:
-// go get github.com/memodb-io/memobase/src/client/memobase-go@latest
-
-import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
+@router.delete(
+    "/users/profile/{user_id}/{profile_id}",
+    tags=["profile"],
+    openapi_extra=API_X_CODE_DOCS["DELETE /users/profile/{user_id}/{profile_id}"],
 )
-
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
-
-// Get user
-user, err := client.GetUser(userID)
-if err != nil {
-    panic(err)
-}
-
-// Delete profile
-err = user.DeleteProfile(profileID)
-if err != nil {
-    panic(err)
-}
-''',
-                    "label": "Go"
-                }
-            ]})
 async def delete_user_profile(
     request: Request,
     user_id: str = Path(..., description="The ID of the user"),
@@ -1146,36 +414,11 @@ async def delete_user_profile(
     return p.to_response(res.IdResponse)
 
 
-@router.get("/users/event/{user_id}", tags=["event"],
-             openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-events = u.event(topk=10, max_token_size=1000)
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript",
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-const user = await client.getUser(userId);
-
-const events = await user.event();
-''',
-                    "label": "JavaScript"
-                }
-            ]})
+@router.get(
+    "/users/event/{user_id}",
+    tags=["event"],
+    openapi_extra=API_X_CODE_DOCS["GET /users/event/{user_id}"],
+)
 async def get_user_events(
     request: Request,
     user_id: str = Path(..., description="The ID of the user"),
@@ -1192,36 +435,11 @@ async def get_user_events(
     return p.to_response(res.UserEventsDataResponse)
 
 
-@router.get("/users/context/{user_id}", tags=["context"],
-             openapi_extra={"x-code-samples": [
-                {
-                    "lang": "Python",
-                    "source": '''# To use the Python SDK, install the package:
-# pip install memobase
-
-from memobase import Memobase
-
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-
-context = u.context()
-''',
-                    "label": "Python"
-                },
-                {
-                    "lang": "JavaScript",
-                    "source": '''// To use the JavaScript SDK, install the package:
-// npm install @memobase/memobase
-
-import { MemoBaseClient } from '@memobase/memobase';
-
-const client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);
-const user = await client.getUser(userId);
-
-const context = await user.context();
-''',
-                    "label": "JavaScript"
-                }
-            ]})
+@router.get(
+    "/users/context/{user_id}",
+    tags=["context"],
+    openapi_extra=API_X_CODE_DOCS["GET /users/context/{user_id}"],
+)
 async def get_user_context(
     request: Request,
     user_id: str = Path(..., description="The ID of the user"),
