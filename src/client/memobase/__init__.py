@@ -1,4 +1,5 @@
 from .core.entry import MemoBaseClient, User, ChatBlob
+from .core.entry import MemoBaseClient as Memobase
 from .core.async_entry import AsyncMemoBaseClient, AsyncUser
 
 __author__ = "memobase.io"

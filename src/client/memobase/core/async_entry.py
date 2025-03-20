@@ -160,6 +160,18 @@ class AsyncUser:
         )
         return True
 
+    async def add_profile(self, content: str, topic: str, sub_topic: str) -> str:
+        r = unpack_response(
+            await self.project_client.client.post(
+                f"/users/profile/{self.user_id}",
+                json={
+                    "content": content,
+                    "attributes": {"topic": topic, "sub_topic": sub_topic},
+                },
+            )
+        )
+        return r.data["id"]
+
     async def profile(
         self,
         max_token_size: int = 1000,
@@ -190,6 +202,20 @@ class AsyncUser:
         if need_json:
             return profiles_to_json(ds_profiles)
         return ds_profiles
+
+    async def update_profile(
+        self, profile_id: str, content: str, topic: str, sub_topic: str
+    ) -> str:
+        r = unpack_response(
+            await self.project_client.client.put(
+                f"/users/profile/{self.user_id}/{profile_id}",
+                json={
+                    "content": content,
+                    "attributes": {"topic": topic, "sub_topic": sub_topic},
+                },
+            )
+        )
+        return True
 
     async def delete_profile(self, profile_id: str) -> bool:
         r = unpack_response(

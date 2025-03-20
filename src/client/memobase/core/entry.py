@@ -143,6 +143,18 @@ class User:
         )
         return True
 
+    def add_profile(self, content: str, topic: str, sub_topic: str) -> str:
+        r = unpack_response(
+            self.project_client.client.post(
+                f"/users/profile/{self.user_id}",
+                json={
+                    "content": content,
+                    "attributes": {"topic": topic, "sub_topic": sub_topic},
+                },
+            )
+        )
+        return r.data["id"]
+
     def profile(
         self,
         max_token_size: int = 1000,
@@ -171,6 +183,20 @@ class User:
         if need_json:
             return profiles_to_json(ds_profiles)
         return ds_profiles
+
+    def update_profile(
+        self, profile_id: str, content: str, topic: str, sub_topic: str
+    ) -> str:
+        r = unpack_response(
+            self.project_client.client.put(
+                f"/users/profile/{self.user_id}/{profile_id}",
+                json={
+                    "content": content,
+                    "attributes": {"topic": topic, "sub_topic": sub_topic},
+                },
+            )
+        )
+        return True
 
     def delete_profile(self, profile_id: str) -> bool:
         r = unpack_response(
