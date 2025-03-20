@@ -39,6 +39,9 @@ class Promise(Generic[D]):
             )
         return self.__data
 
+    def code(self) -> CODE:
+        return self.__errcode
+
     def msg(self) -> str:
         if not self.ok():
             return f"Promise contains error: CODE {self.__errcode}; MSG {self.__errmsg}"

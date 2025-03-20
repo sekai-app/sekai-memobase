@@ -6,7 +6,7 @@ from ..models.response import CODE
 from ..models.utils import Promise
 from ..models import response as res
 from fastapi import Request
-from fastapi import Path, Query
+from fastapi import Path, Query, Body
 
 
 async def get_user_profile(
@@ -67,3 +67,40 @@ async def delete_user_profile(
     project_id = request.state.memobase_project_id
     p = await controllers.profile.delete_user_profile(user_id, project_id, profile_id)
     return p.to_response(res.IdResponse)
+
+
+async def update_user_profile(
+    request: Request,
+    user_id: str = Path(..., description="The ID of the user"),
+    profile_id: str = Path(..., description="The ID of the profile to update"),
+    content: res.ProfileDelta = Body(
+        ..., description="The content of the profile to update"
+    ),
+) -> res.BaseResponse:
+    """Update the real-time user profiles for long term memory"""
+    project_id = request.state.memobase_project_id
+    p = await controllers.profile.update_user_profiles(
+        user_id, project_id, [profile_id], [content.content], [content.attributes]
+    )
+    if p.ok():
+        return Promise.resolve(None).to_response(res.BaseResponse)
+    return Promise.reject(p.code(), p.msg()).to_response(res.BaseResponse)
+
+
+async def add_user_profile(
+    request: Request,
+    user_id: str = Path(..., description="The ID of the user"),
+    content: res.ProfileDelta = Body(
+        ..., description="The content of the profile to add"
+    ),
+) -> res.IdResponse:
+    """Add the real-time user profiles for long term memory"""
+    project_id = request.state.memobase_project_id
+    p = await controllers.profile.add_user_profiles(
+        user_id, project_id, [content.content], [content.attributes]
+    )
+    if p.ok():
+        return Promise.resolve(res.IdData(id=p.data().ids[0])).to_response(
+            res.IdResponse
+        )
+    return Promise.reject(p.code(), p.msg()).to_response(res.IdResponse)

@@ -152,13 +152,17 @@ router.get(
     openapi_extra=API_X_CODE_DOCS["GET /users/profile/{user_id}"],
 )(api_layer.profile.get_user_profile)
 
-
 router.post(
-    "/users/buffer/{user_id}/{buffer_type}",
-    tags=["buffer"],
-    openapi_extra=API_X_CODE_DOCS["POST /users/buffer/{user_id}/{buffer_type}"],
-)(api_layer.buffer.flush_buffer)
+    "/users/profile/{user_id}",
+    tags=["profile"],
+    openapi_extra=API_X_CODE_DOCS["POST /users/profile/{user_id}"],
+)(api_layer.profile.add_user_profile)
 
+router.put(
+    "/users/profile/{user_id}/{profile_id}",
+    tags=["profile"],
+    # openapi_extra=API_X_CODE_DOCS["PUT /users/profile/{user_id}"],
+)(api_layer.profile.update_user_profile)
 
 router.delete(
     "/users/profile/{user_id}/{profile_id}",
@@ -166,6 +170,11 @@ router.delete(
     openapi_extra=API_X_CODE_DOCS["DELETE /users/profile/{user_id}/{profile_id}"],
 )(api_layer.profile.delete_user_profile)
 
+router.post(
+    "/users/buffer/{user_id}/{buffer_type}",
+    tags=["buffer"],
+    openapi_extra=API_X_CODE_DOCS["POST /users/buffer/{user_id}/{buffer_type}"],
+)(api_layer.buffer.flush_buffer)
 
 router.get(
     "/users/event/{user_id}",

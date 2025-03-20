@@ -55,7 +55,6 @@ if !ok {
     ]
 }
 
-
 API_X_CODE_DOCS["POST /project/profile_config"] = {
     "x-code-samples": [
         {
@@ -893,6 +892,44 @@ const user = await client.getUser(userId);
 const context = await user.context();
 """,
             "label": "JavaScript",
+        },
+    ]
+}
+
+API_X_CODE_DOCS["POST /users/profile/{user_id}"] = {
+    "x-code-samples": [
+        {
+            "lang": "Python",
+            "source": """# To use the Python SDK, install the package:
+# pip install memobase
+
+from memobase import Memobase
+
+client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+
+profile_id = u.add_profile("value", "topic", "sub_topic")
+""",
+            "label": "Python",
+        },
+    ]
+}
+
+
+API_X_CODE_DOCS["PUT /users/profile/{user_id}/{profile_id}"] = {
+    "x-code-samples": [
+        {
+            "lang": "Python",
+            "source": """# To use the Python SDK, install the package:
+# pip install memobase
+
+from memobase import Memobase
+
+client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+
+profile_id = u.add_profile("value", "topic", "sub_topic")
+u.update_profile(profile_id, "value2", "topic2", "sub_topic2")
+""",
+            "label": "Python",
         },
     ]
 }
