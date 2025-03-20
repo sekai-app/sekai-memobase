@@ -161,7 +161,7 @@ router.post(
 router.put(
     "/users/profile/{user_id}/{profile_id}",
     tags=["profile"],
-    # openapi_extra=API_X_CODE_DOCS["PUT /users/profile/{user_id}"],
+    openapi_extra=API_X_CODE_DOCS["PUT /users/profile/{user_id}/{profile_id}"],
 )(api_layer.profile.update_user_profile)
 
 router.delete(
