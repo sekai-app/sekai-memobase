@@ -851,6 +851,212 @@
 						"label": "Go"
 					}
 				]
+			},
+			"post": {
+				"tags": [
+					"profile"
+				],
+				"summary": "Add User Profile",
+				"description": "Add the real-time user profiles for long term memory",
+				"operationId": "add_user_profile_api_v1_users_profile__user_id__post",
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user",
+							"title": "User Id"
+						},
+						"description": "The ID of the user"
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ProfileDelta",
+								"description": "The content of the profile to add"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IdResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPValidationError"
+								}
+							}
+						}
+					}
+				},
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nprofile_id = u.add_profile(\"value\", \"topic\", \"sub_topic\")\n",
+						"label": "Python"
+					}
+				]
+			}
+		},
+		"/api/v1/users/profile/{user_id}/{profile_id}": {
+			"put": {
+				"tags": [
+					"profile"
+				],
+				"summary": "Update User Profile",
+				"description": "Update the real-time user profiles for long term memory",
+				"operationId": "update_user_profile_api_v1_users_profile__user_id___profile_id__put",
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user",
+							"title": "User Id"
+						},
+						"description": "The ID of the user"
+					},
+					{
+						"name": "profile_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the profile to update",
+							"title": "Profile Id"
+						},
+						"description": "The ID of the profile to update"
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ProfileDelta",
+								"description": "The content of the profile to update"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BaseResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPValidationError"
+								}
+							}
+						}
+					}
+				},
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nprofile_id = u.add_profile(\"value\", \"topic\", \"sub_topic\")\nu.update_profile(profile_id, \"value2\", \"topic2\", \"sub_topic2\")\n",
+						"label": "Python"
+					}
+				]
+			},
+			"delete": {
+				"tags": [
+					"profile"
+				],
+				"summary": "Delete User Profile",
+				"description": "Get the real-time user profiles for long term memory",
+				"operationId": "delete_user_profile_api_v1_users_profile__user_id___profile_id__delete",
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user",
+							"title": "User Id"
+						},
+						"description": "The ID of the user"
+					},
+					{
+						"name": "profile_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the profile to delete",
+							"title": "Profile Id"
+						},
+						"description": "The ID of the profile to delete"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BaseResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPValidationError"
+								}
+							}
+						}
+					}
+				},
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nmemobase.delete_profile('user_id', 'profile_id')\n",
+						"label": "Python"
+					},
+					{
+						"lang": "JavaScript",
+						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nawait client.deleteProfile('user_id', 'profile_id');\n",
+						"label": "JavaScript"
+					},
+					{
+						"lang": "Go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Delete profile\nerr = user.DeleteProfile(profileID)\nif err != nil {\n    panic(err)\n}\n",
+						"label": "Go"
+					}
+				]
 			}
 		},
 		"/api/v1/users/buffer/{user_id}/{buffer_type}": {
@@ -920,79 +1126,6 @@
 					{
 						"lang": "Go",
 						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Flush buffer\nerr = user.Flush(blob.ChatType)\nif err != nil {\n    panic(err)\n}\n",
-						"label": "Go"
-					}
-				]
-			}
-		},
-		"/api/v1/users/profile/{user_id}/{profile_id}": {
-			"delete": {
-				"tags": [
-					"profile"
-				],
-				"summary": "Delete User Profile",
-				"description": "Get the real-time user profiles for long term memory",
-				"operationId": "delete_user_profile_api_v1_users_profile__user_id___profile_id__delete",
-				"parameters": [
-					{
-						"name": "user_id",
-						"in": "path",
-						"required": true,
-						"schema": {
-							"type": "string",
-							"description": "The ID of the user",
-							"title": "User Id"
-						},
-						"description": "The ID of the user"
-					},
-					{
-						"name": "profile_id",
-						"in": "path",
-						"required": true,
-						"schema": {
-							"type": "string",
-							"description": "The ID of the profile to delete",
-							"title": "Profile Id"
-						},
-						"description": "The ID of the profile to delete"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Successful Response",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/BaseResponse"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/HTTPValidationError"
-								}
-							}
-						}
-					}
-				},
-				"x-code-samples": [
-					{
-						"lang": "Python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nmemobase.delete_profile('user_id', 'profile_id')\n",
-						"label": "Python"
-					},
-					{
-						"lang": "JavaScript",
-						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nawait client.deleteProfile('user_id', 'profile_id');\n",
-						"label": "JavaScript"
-					},
-					{
-						"lang": "Go",
-						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Delete profile\nerr = user.DeleteProfile(profileID)\nif err != nil {\n    panic(err)\n}\n",
 						"label": "Go"
 					}
 				]

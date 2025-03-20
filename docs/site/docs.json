@@ -87,6 +87,8 @@
                 "pages": [
                   "api-reference/profiles/flush",
                   "api-reference/profiles/profile",
+                  "api-reference/profiles/add_profile",
+                  "api-reference/profiles/update_profile",
                   "api-reference/profiles/delete_profile"
                 ]
               },
