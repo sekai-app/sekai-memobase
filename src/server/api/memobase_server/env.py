@@ -91,6 +91,7 @@ class Config:
     overwrite_user_profiles: Optional[list[dict]] = None
     profile_strict_mode: bool = False
     enable_event_summary: bool = True
+    minimum_chats_token_size_for_event_summary: int = 256
 
     # Telemetry
     telemetry_deployment_environment: str = "local"
