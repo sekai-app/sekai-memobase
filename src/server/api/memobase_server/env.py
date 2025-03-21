@@ -28,7 +28,6 @@ class BillingStatus:
 
 BILLING_REFILL_AMOUNT_MAP = {
     BillingStatus.free: int(os.getenv("USAGE_TOKEN_LIMIT_ACTIVE", 0)) or None,
-    BillingStatus.pro: int(os.getenv("USAGE_TOKEN_LIMIT_PRO", 0)) or None,
 }
 
 
@@ -91,6 +90,7 @@ class Config:
     additional_user_profiles: list[dict] = field(default_factory=list)
     overwrite_user_profiles: Optional[list[dict]] = None
     profile_strict_mode: bool = False
+    enable_event_summary: bool = True
 
     # Telemetry
     telemetry_deployment_environment: str = "local"
@@ -175,6 +175,7 @@ class Config:
 @dataclass
 class ProfileConfig:
     language: Literal["en", "zh"] = None
+    enable_event_summary: bool = None
     profile_strict_mode: bool | None = None
     additional_user_profiles: list[dict] = field(default_factory=list)
     overwrite_user_profiles: Optional[list[dict]] = None
