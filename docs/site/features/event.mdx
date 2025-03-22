@@ -1,0 +1,38 @@
+---
+title: User Events
+---
+
+Memobase will track the past key memories and events of the users.
+```python
+from memobase import MemobaseClient, ChatBlob
+
+client = MemobaseClient(api_key="your_api_key")
+uid = client.add_user()
+u = client.get_user(uid)
+
+u.insert(
+    ChatBlob(
+        messages=[{
+                "role": "user",
+                "content": "I'm Gus"
+        }]
+    )
+)
+
+print(u.event())
+```
+
+## What is an event containing?
+An event contains the following information:
+- event summary, `optional`: won't have it if Memobase thinks this event is not important enough.
+- profile slots, `required`: the profile slots that are extracted in this event.
+- created time, `required`
+
+A detailed format is in [here](/api-reference/events/get_events).
+
+### Disable event summary
+If you don't want to the event summary, only need the user profile, you can set `enable_event_summary` to `false` in `config.yaml`:
+```yaml
+enable_event_summary: false
+```
+

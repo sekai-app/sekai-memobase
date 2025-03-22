@@ -1,0 +1,33 @@
+---
+title: Personalized Context
+---
+
+Memobase may extract many kinds of memories from user, for example:
+- User profile
+- User events
+- ...
+
+And all of them are a part of the user's personalized context.
+
+Memobase offers an API to get the personalized context of a user without packing those memories yourself:
+```python
+from memobase import MemobaseClient, ChatBlob
+
+client = MemobaseClient(api_key="your_api_key")
+uid = client.add_user()
+u = client.get_user(uid)
+
+u.insert(
+    ChatBlob(
+        messages=[{
+                "role": "user",
+                "content": "I'm Gus"
+        }]
+    )
+)
+
+print(u.context())
+```
+Detailed params is in [here](/api-reference/prompt/get_context).
+
+

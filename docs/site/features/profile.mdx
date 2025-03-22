@@ -1,5 +1,5 @@
 ---
-title: Customize User Profile
+title: User Profile
 ---
 Memobase is a [user profile](/features#user-profile-as-memory) backend for LLM Apps, that means it tracks the certain slots of user profile and updates them accordingly.
 By default, Memobase has a built-in user profile slots for general use cases.
@@ -33,17 +33,17 @@ If you like to add more slots, you can add them in the `additional_user_profiles
 ```yaml
 additional_user_profiles:
     - topic: "Gaming"
-    description: "Track the gaming preferences/achievements of the user."
-    sub_topics:
+      description: "Track the gaming preferences/achievements of the user."
+      sub_topics:
         - name: "FPS"
         description: "Games like CSGO, Valorant, etc."
         - "LOL"
     - topic: "Whatever"
-    sub_topics:
+      sub_topics:
         - "whatever 1"
         - "whatever 2"
 ```
 Memobase will track the additional slots and fill/update the user profile accordingly.  
 Also, if you like to completely control the slots, you can use `overwrite_user_profiles` to place your own slots.
 
-Check detailed format in [here](/features/customization/full#profile-config)
+Check detailed format of profile slots in [here](/features/profile_desc)

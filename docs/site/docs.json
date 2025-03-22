@@ -25,20 +25,29 @@
           {
             "group": "Features",
             "pages": [
-              "features/openai",
               {
-                "group": "Customization",
+                "group": "User Profile",
                 "pages": [
-                  "features/customization/profile",
-                  "features/customization/full"
+                  "features/profile",
+                  "features/profile_desc"
                 ]
-              }
+              },
+              "features/event",
+              "features/context"
             ]
           },
           {
             "group": "Practices",
             "pages": [
-              "practices/tips"
+              "practices/tips",
+              "practices/openai"
+            ]
+          },
+          {
+            "group": "Referencces",
+            "pages": [
+              "references/full",
+              "references/async_client"
             ]
           }
         ]

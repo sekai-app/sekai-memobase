@@ -1,0 +1,63 @@
+---
+title: Profile Slots
+---
+
+Memobase allows you to customize the profile slots' creation and update.
+
+## Instruct Memobase to create a new profile slot
+For easy understanding, Memobase uses a `topic` and `sub_topics` to describe a profile slot.
+For example
+```yaml
+overwrite_user_profiles:
+    - topic: "work"
+      sub_topics:
+        - "company"
+        - "position"
+        - "department"
+        - "start_date"
+        - "achievements"
+```
+
+But something the topic/sub-topic themselves are not enough for Memobase to understand what you really want to track, 
+you can add more description to them.
+
+```yaml
+overwrite_user_profiles:
+    - topic: "work"
+      sub_topics:
+        ...
+        - name: "start_date"
+          description: "The start date of new job, in format YYYY-MM-DD"
+```
+`description` field is optional, and it will be used to help Memobase to understand what you really want to track.
+
+
+## Instruct Memobase to update a profile slot
+Memobase not only creates those profiles, but also maintains them to be up-to-date.
+That means, we need to update some of the slots when the user provides new information.
+
+For example, if the user tells Memobase that he/she has a new job, we need to update the `work/start_date` profile slot:
+```
+old_date -> "2020-01-01"
+new_date -> "2021-01-01"
+
+update_to -> "2021-01-01"
+```
+
+If you like a certain way of updating, you can add a `update_description` to the profile slot:
+
+For example, if you like to keep the very first start date of the user's work history, you can add the following to your `config.yaml`:
+```yaml
+overwrite_user_profiles:
+    - topic: "work"
+      sub_topics:
+        ...
+        - name: "start_date"
+          update_description: "Alway keep the oldest start date"
+```
+Memobase will try not to update the `work/start_date` profile slot, and keep the oldest start date.
+
+
+
+
+
