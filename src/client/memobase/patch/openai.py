@@ -11,9 +11,8 @@ from ..error import ServerError
 PROMPT = """
 
 --# ADDITIONAL INFO #--
-Below is my information:
-{user_profile}
-Use the information to generate a more personalized response for me.
+{user_context}
+Use the information to generate a more personalized response for user.
 --# DONE #--"""
 
 
@@ -59,14 +58,11 @@ def add_message_to_user(messages: ChatBlob, user: User):
         LOG.error(f"Failed to insert message: {e}")
 
 
-def user_profile_insert(messages, u: User):
-    profiles = u.profile()
-    if not len(profiles):
+def user_context_insert(messages, u: User):
+    context = u.context(max_subtopic_size=4)
+    if not len(context):
         return messages
-    user_profile_string = "\n".join(
-        [f"- {p.topic}/{p.sub_topic}: {p.content}" for p in profiles]
-    )
-    sys_prompt = PROMPT.format(user_profile=user_profile_string)
+    sys_prompt = PROMPT.format(user_context=context)
     if messages[0]["role"] == "system":
         messages[0]["content"] += sys_prompt
     else:
@@ -97,7 +93,7 @@ def _sync_chat(client: OpenAI, mb_client: MemoBaseClient):
                 return (r for r in _create_chat(*args, **kwargs))
 
         u = mb_client.get_or_create_user(user_id)
-        kwargs["messages"] = user_profile_insert(kwargs["messages"], u)
+        kwargs["messages"] = user_context_insert(kwargs["messages"], u)
         response = _create_chat(*args, **kwargs)
 
         if is_streaming:
