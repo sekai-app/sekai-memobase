@@ -33,7 +33,7 @@ async def get_user_context(
         description='Set specific subtopic limits for topics in JSON, for example {"topic1": 3, "topic2": 5}. The limits in this param will override `max_subtopic_size`.',
     ),
     profile_event_ratio: float = Query(
-        0.8,
+        0.6,
         description="Profile event ratio of returned Context",
     ),
 ) -> res.UserContextDataResponse:
@@ -44,7 +44,7 @@ async def get_user_context(
     except Exception as e:
         return Promise.reject(
             CODE.BAD_REQUEST, f"Invalid topic_limits JSON: {e}"
-        ).to_response(res.UserProfileResponse)
+        ).to_response(res.UserContextDataResponse)
     p = await controllers.context.get_user_context(
         user_id,
         project_id,
