@@ -32,6 +32,7 @@ async def summary_memo(project_id: str, content_pack: dict) -> Promise[None]:
         content_pack["content"],
         system_prompt=summary_profile.get_prompt(),
         temperature=0.2,  # precise
+        model=CONFIG.summary_llm_model,
         **summary_profile.get_kwargs(),
     )
     if not r.ok():

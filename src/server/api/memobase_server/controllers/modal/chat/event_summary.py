@@ -32,6 +32,7 @@ async def summary_event(
         chat_section,
         system_prompt=summary_chats_prompt.get_prompt(),
         temperature=0.2,
+        model=CONFIG.summary_llm_model,
         **summary_chats_prompt.get_kwargs(),
     )
     return r

@@ -83,6 +83,8 @@ class Config:
     llm_base_url: str = None
     llm_api_key: str = None
     best_llm_model: str = "gpt-4o-mini"
+    summary_llm_model: str = None
+
     embedding_model: str = "text-embedding-3-small"
     embedding_dim: int = 1536
     embedding_max_token_size: int = 8192

@@ -22,14 +22,16 @@ async def llm_complete(
     system_prompt=None,
     history_messages=[],
     json_mode=False,
+    model=None,
     **kwargs,
 ) -> Promise[str | dict]:
+    use_model = model or CONFIG.best_llm_model
     if json_mode:
         kwargs["response_format"] = {"type": "json_object"}
     try:
         start_time = time.time()
         results = await FACTORIES[CONFIG.llm_style](
-            CONFIG.best_llm_model,
+            use_model,
             prompt,
             system_prompt=system_prompt,
             history_messages=history_messages,

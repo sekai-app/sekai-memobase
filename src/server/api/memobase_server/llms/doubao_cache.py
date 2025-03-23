@@ -82,5 +82,5 @@ async def doubao_cache_complete(
         response = await doubao_async_client.context.completions.create(
             model=model, messages=messages, context_id=context_id, timeout=120, **kwargs
         )
-        LOG.info(f"Cached: {response.usage}")
+        LOG.info(f"Cached {prompt_id} {model} {response.usage}")
         return response.choices[0].message.content

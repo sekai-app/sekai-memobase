@@ -16,5 +16,4 @@ async def openai_complete(
     response = await openai_async_client.chat.completions.create(
         model=model, messages=messages, timeout=120, **kwargs
     )
-    LOG.info(f"OpenAI usage: {response.usage}")
     return response.choices[0].message.content
