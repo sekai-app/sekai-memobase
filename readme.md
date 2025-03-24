@@ -338,7 +338,7 @@ Or Just [email us](mailto:contact@memobase.io) ❤️
 
 ## Contribute
 
-- Check out our [Roadmap](./Roadmap.md) first, make sure Memobase is something you're interested in :)
+- Check out our [Changelog](./Changelog.md) first, make sure the feature you want has not been developed or is currently being planned.:)
 - Go through [Contributing](./CONTRIBUTING.md) document to setup and contribute to Memobase.
 
 
