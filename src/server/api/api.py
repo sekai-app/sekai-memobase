@@ -158,6 +158,11 @@ router.post(
     openapi_extra=API_X_CODE_DOCS["POST /users/profile/{user_id}"],
 )(api_layer.profile.add_user_profile)
 
+router.post(
+    "/users/profile/import/{user_id}",
+    tags=["profile"],
+)(api_layer.profile.import_user_context)
+
 router.put(
     "/users/profile/{user_id}/{profile_id}",
     tags=["profile"],

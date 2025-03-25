@@ -133,6 +133,12 @@ class BillingData(BaseModel):
     )
 
 
+class UserContextImport(BaseModel):
+    context: str = Field(
+        ..., description="The user context you want to import to Memobase"
+    )
+
+
 # API response format
 class BaseResponse(BaseModel):
     data: Optional[dict] = Field(None, description="Response data payload")

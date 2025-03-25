@@ -1,12 +1,13 @@
 import json
-
+from fastapi import Request
+from fastapi import Path, Query, Body
+from datetime import datetime
 from .. import controllers
 
 from ..models.response import CODE
 from ..models.utils import Promise
+from ..models.blob import BlobType
 from ..models import response as res
-from fastapi import Request
-from fastapi import Path, Query, Body
 
 
 async def get_user_profile(
@@ -104,3 +105,61 @@ async def add_user_profile(
             res.IdResponse
         )
     return Promise.reject(p.code(), p.msg()).to_response(res.IdResponse)
+
+
+async def import_user_context(
+    request: Request,
+    user_id: str = Path(..., description="The ID of the user"),
+    content: res.UserContextImport = Body(
+        ..., description="The content of the user context to import"
+    ),
+) -> res.BaseResponse:
+    project_id = request.state.memobase_project_id
+    p = await controllers.billing.get_project_billing(project_id)
+    if not p.ok():
+        return p.to_response(res.IdResponse)
+    billing = p.data()
+
+    if billing.token_left is not None and billing.token_left < 0:
+        return Promise.reject(
+            CODE.SERVICE_UNAVAILABLE,
+            f"Your project reaches Memobase token limit, "
+            f"Left: {billing.token_left}, this project used: {billing.project_token_cost_month}. "
+            f"Your quota will be refilled on {billing.next_refill_at}. "
+            "\nhttps://www.memobase.io/pricing for more information.",
+        ).to_response(res.BaseResponse)
+
+    prompt = f"""Below is my information, please remember them:
+{content.context}
+"""
+    blob_data = res.BlobData(
+        blob_type=BlobType.chat,
+        blob_data={
+            "messages": [
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ]
+        },
+    )
+    p = await controllers.buffer.flush_buffer(user_id, project_id, BlobType.chat)
+    if not p.ok():
+        return p.to_response(res.BaseResponse)
+
+    p = await controllers.blob.insert_blob(user_id, project_id, blob_data)
+    if not p.ok():
+        return p.to_response(res.BaseResponse)
+
+    # TODO if single user insert too fast will cause random order insert to buffer
+    # So no background task for insert buffer yet
+    pb = await controllers.buffer.insert_blob_to_buffer(
+        user_id, project_id, p.data().id, blob_data.to_blob()
+    )
+    if not pb.ok():
+        return pb.to_response(res.BaseResponse)
+
+    p = await controllers.buffer.flush_buffer(user_id, project_id, BlobType.chat)
+    if not p.ok():
+        return p.to_response(res.BaseResponse)
+    return Promise.resolve(None).to_response(res.BaseResponse)
