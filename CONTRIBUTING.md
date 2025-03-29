@@ -88,7 +88,7 @@ If you have questions or need help, please:
 
 - Check existing issues and documentation
 - Create a new issue for discussion
-- Join our [community channel/forum]
+- Join our [Discord](https://discord.com/invite/YdgwU4d9NB)
 
 Thank you for contributing to Memobase!
 
