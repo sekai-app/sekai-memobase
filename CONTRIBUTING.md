@@ -53,23 +53,25 @@ For more detailed information, refer to the [server documentation](https://githu
    git commit -m "feat: add your feature"
    ```
 
+   *[Recommended commit message style](https://www.conventionalcommits.org/en/v1.0.0/)*
+   
 3. Write tests for your changes
 
 4. Update documentation as needed
 
 ## Pull Request Process
 
-1. Rebase your branch onto the latest main:
+1. Rebase your branch onto the latest `dev` branch:
    ```bash
-   git checkout main
-   git pull upstream main
+   git checkout dev
+   git pull upstream dev
    git checkout your-branch
-   git rebase main
+   git rebase dev
    ```
 
 2. Fix up commits to maintain clean history:
    ```bash
-   git rebase -i main
+   git rebase -i dev
    ```
 
 3. Before submitting, ensure:
