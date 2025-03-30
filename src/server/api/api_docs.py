@@ -55,6 +55,24 @@ if !ok {
     ]
 }
 
+API_X_CODE_DOCS["GET /project/billing"] = {
+    "x-code-samples": [
+        {
+            "lang": "Python",
+            "source": """# To use the Python SDK, install the package:
+# pip install memobase
+
+from memobase import Memobase
+
+memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+
+print(memobase.get_usage())
+""",
+            "label": "Python",
+        },
+    ]
+}
+
 API_X_CODE_DOCS["POST /project/profile_config"] = {
     "x-code-samples": [
         {

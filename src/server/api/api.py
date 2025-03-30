@@ -88,7 +88,11 @@ router.get(
 )(api_layer.project.get_project_profile_config_string)
 
 
-router.get("/project/billing", tags=["project"])(api_layer.project.get_project_billing)
+router.get(
+    "/project/billing",
+    tags=["project"],
+    openapi_extra=API_X_CODE_DOCS["GET /project/billing"],
+)(api_layer.project.get_project_billing)
 
 
 router.post(
