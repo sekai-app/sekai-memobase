@@ -60,6 +60,10 @@ class AsyncMemoBaseClient:
             return False
         return True
 
+    async def get_usage(self) -> dict:
+        r = unpack_response(await self._client.get("/project/billing"))
+        return r.data
+
     async def get_config(self) -> str:
         r = unpack_response(await self._client.get("/project/profile_config"))
         return r.data["profile_config"]

@@ -3,7 +3,7 @@
 	"info": {
 		"title": "Memobase API",
 		"summary": "APIs for Memobase, a user memory system for LLM Apps",
-		"version": "0.0.30-alpha1"
+		"version": "0.0.30"
 	},
 	"servers": [
 		{
@@ -156,7 +156,14 @@
 							}
 						}
 					}
-				}
+				},
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nprint(memobase.get_usage())\n",
+						"label": "Python"
+					}
+				]
 			}
 		},
 		"/api/v1/users": {
@@ -1490,6 +1497,18 @@
 							"title": "Profile Event Ratio"
 						},
 						"description": "Profile event ratio of returned Context"
+					},
+					{
+						"name": "require_event_summary",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"description": "Whether to require event summary in returned Context",
+							"default": false,
+							"title": "Require Event Summary"
+						},
+						"description": "Whether to require event summary in returned Context"
 					}
 				],
 				"responses": {

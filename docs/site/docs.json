@@ -66,11 +66,12 @@
             "pages": [
               "api-reference/overview",
               {
-                "group": "Project Config",
+                "group": "Project",
                 "pages": [
                   "api-reference/project/get_profile_config",
                   "api-reference/project/update_profile_config",
-                  "api-reference/utility/healthcheck"
+                  "api-reference/utility/healthcheck",
+                  "api-reference/utility/usage"
                 ]
               },
               {
