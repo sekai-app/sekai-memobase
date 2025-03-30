@@ -194,3 +194,49 @@ func (c *MemoBaseClient) DeleteUser(userID string) error {
 	_, err = network.UnpackResponse(resp)
 	return err
 }
+
+// GetConfig retrieves the project's profile configuration
+func (c *MemoBaseClient) GetConfig() (string, error) {
+	resp, err := c.HTTPClient.Get(fmt.Sprintf("%s/project/profile_config", c.BaseURL))
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	baseResp, err := network.UnpackResponse(resp)
+	if err != nil {
+		return "", err
+	}
+
+	config, ok := baseResp.Data["profile_config"].(string)
+	if !ok {
+		return "", fmt.Errorf("unexpected response format for profile_config")
+	}
+
+	return config, nil
+}
+
+// UpdateConfig updates the project's profile configuration
+func (c *MemoBaseClient) UpdateConfig(config string) error {
+	reqBody := map[string]interface{}{
+		"profile_config": config,
+	}
+
+	jsonData, err := json.Marshal(reqBody)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.HTTPClient.Post(
+		fmt.Sprintf("%s/project/profile_config", c.BaseURL),
+		"application/json",
+		bytes.NewBuffer(jsonData),
+	)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	_, err = network.UnpackResponse(resp)
+	return err
+}
