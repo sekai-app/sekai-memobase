@@ -1,10 +1,12 @@
 import memobase_server.env
+import os
 
 # Done setting up env
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, APIRouter
 from fastapi.openapi.utils import get_openapi
+from fastapi.middleware.cors import CORSMiddleware
 from memobase_server.connectors import (
     close_connection,
     init_redis_pool,
@@ -27,19 +29,37 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# CORS configuration
+USE_CORS = os.environ.get("USE_CORS", "False").lower() == "true"  # Default to False
+API_HOSTS_STR = os.environ.get(
+    "API_HOSTS", "https://api.memobase.dev,https://api.memobase.cn"
+)
+API_HOSTS = [host.strip() for host in API_HOSTS_STR.split(",")]
+
+if USE_CORS:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=API_HOSTS,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
 
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
-    openapi_schema = get_openapi(
+
+    servers: list = []
+    for host in API_HOSTS:
+        servers.append({"url": host})
+
+    openapi_schema = get_openapi(  # type: ignore
         title="Memobase API",
         version=memobase_server.__version__,
         summary="APIs for Memobase, a user memory system for LLM Apps",
         routes=app.routes,
-        servers=[
-            {"url": "https://api.memobase.dev"},
-            {"url": "https://api.memobase.cn"},
-        ],
+        servers=servers,
     )
     openapi_schema["components"]["securitySchemes"] = {
         "BearerAuth": {
@@ -48,24 +68,25 @@ def custom_openapi():
         }
     }
     openapi_schema["security"] = [{"BearerAuth": []}]
-    app.openapi_schema = openapi_schema
+
+    app.openapi_schema = openapi_schema  # type: ignore
     return app.openapi_schema
 
 
 app.openapi = custom_openapi
 
 router = APIRouter(prefix="/api/v1")
-LOGGING_CONFIG["formatters"]["default"][
-    "fmt"
-] = "%(levelprefix)s %(asctime)s %(message)s"
+LOGGING_CONFIG["formatters"]["default"]["fmt"] = (
+    "%(levelprefix)s %(asctime)s %(message)s"
+)
 LOGGING_CONFIG["formatters"]["default"]["datefmt"] = "%Y-%m-%d %H:%M:%S"
 
-LOGGING_CONFIG["formatters"]["default"][
-    "fmt"
-] = "%(levelprefix)s %(asctime)s %(message)s"
-LOGGING_CONFIG["formatters"]["access"][
-    "fmt"
-] = "%(levelprefix)s %(asctime)s %(client_addr)s - %(request_line)s %(status_code)s"
+LOGGING_CONFIG["formatters"]["default"]["fmt"] = (
+    "%(levelprefix)s %(asctime)s %(message)s"
+)
+LOGGING_CONFIG["formatters"]["access"]["fmt"] = (
+    "%(levelprefix)s %(asctime)s %(client_addr)s - %(request_line)s %(status_code)s"
+)
 LOGGING_CONFIG["formatters"]["default"]["datefmt"] = "%Y-%m-%d %H:%M:%S"
 LOGGING_CONFIG["formatters"]["access"]["datefmt"] = "%Y-%m-%d %H:%M:%S"
 
