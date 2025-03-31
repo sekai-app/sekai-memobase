@@ -20,7 +20,13 @@ def event_str_repr(event: UserEventData) -> str:
         profile_delta_str = "\n".join(profile_deltas)
         return f"{happened_at}:\n{profile_delta_str}"
     else:
-        return f"{happened_at}:\n{event_data.event_tip}\n{event_data.event_tags}"
+        if event_data.event_tags:
+            event_tags = "\n".join(
+                [f"- {tag.tag}: {tag.value}" for tag in event_data.event_tags]
+            )
+        else:
+            event_tags = ""
+        return f"{happened_at}:\n{event_data.event_tip}\n{event_tags}"
 
 
 def get_encoded_tokens(content: str) -> list[int]:
