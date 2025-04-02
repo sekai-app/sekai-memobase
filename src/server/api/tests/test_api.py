@@ -458,3 +458,55 @@ async def test_api_user_event(
     d = response.json()
     assert response.status_code == 200
     assert d["errno"] == 0
+
+
+@pytest.mark.asyncio
+async def test_api_project_invalid_profile_config(client, db_env):
+
+    response = client.post(
+        f"{PREFIX}/project/profile_config",
+        json={
+            "profile_config": """
+overwrite_user_profiles:
+  - topic: "Food"
+    sub_topics:
+      - name: "Dietary Preference"
+        description: "xxxxxxxx"
+      - name: "Dietary Restriction"
+        description: "yyyyyyyy"
+"""
+        },
+    )
+    d = response.json()
+    assert d["errno"] == 0
+
+    response = client.post(
+        f"{PREFIX}/project/profile_config",
+        json={
+            "profile_config": """
+
+overwrite_user_profiles:
+  - topic: "Food"
+    sub_topics:
+      - name: "Dietary Preference"
+        description: true
+      - name: "Dietary Restriction"
+        description: "yyyyyyyy"
+"""
+        },
+    )
+    d = response.json()
+    assert d["errno"] != 0
+    print(d["errmsg"])
+
+    response = client.post(
+        f"{PREFIX}/project/profile_config",
+        json={
+            "profile_config": """
+[[[
+"""
+        },
+    )
+    d = response.json()
+    assert d["errno"] != 0
+    print(d["errmsg"])

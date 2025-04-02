@@ -2,6 +2,7 @@ import re
 import json
 import difflib
 from ..env import LOG, CONFIG
+from ..types import attribute_unify
 from ..models.response import AIUserProfiles, AIUserProfile
 from ..models.blob import ChatBlob
 from ..utils import get_blob_str
@@ -44,10 +45,6 @@ def tag_chat_blobs_in_order_xml(
     blobs: list[ChatBlob],
 ):
     return "\n".join(get_blob_str(b) for b in blobs)
-
-
-def attribute_unify(attr: str):
-    return attr.lower().strip().replace(" ", "_")
 
 
 def extract_first_complete_json(s: str):

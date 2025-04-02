@@ -1,5 +1,9 @@
 from ..env import CONFIG, LOG
-from .types import UserProfileTopic, formate_profile_topic, modify_default_user_profile
+from .profile_init_utils import (
+    UserProfileTopic,
+    formate_profile_topic,
+    modify_default_user_profile,
+)
 
 
 CANDIDATE_PROFILE_TOPICS: list[UserProfileTopic] = [
@@ -97,7 +101,7 @@ if CONFIG.language == "zh":
     LOG.info(f"User profiles: \n{get_prompt()}")
 
 if __name__ == "__main__":
-    from .types import export_user_profile_to_yaml
+    from .profile_init_utils import export_user_profile_to_yaml
 
     # print(get_prompt())
     print(export_user_profile_to_yaml(CANDIDATE_PROFILE_TOPICS))

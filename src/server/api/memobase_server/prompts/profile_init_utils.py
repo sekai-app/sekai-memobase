@@ -1,54 +1,7 @@
 import yaml
-from dataclasses import dataclass, field
-from typing import TypedDict, Optional
 
 from ..env import CONFIG, LOG, ProfileConfig
-from .utils import attribute_unify
-
-SubTopic = TypedDict(
-    "SubTopic",
-    {
-        "name": str,
-        "description": Optional[str],
-        "update_description": Optional[str],
-    },
-)
-
-
-@dataclass
-class EventTag:
-    name: str
-    description: Optional[str] = None
-
-    def __post_init__(self):
-        self.name = attribute_unify(self.name)
-        self.description = self.description or ""
-
-
-@dataclass
-class UserProfileTopic:
-    topic: str
-    description: Optional[str] = None
-    sub_topics: list[SubTopic] = field(default_factory=list)
-
-    def __post_init__(self):
-        self.topic = attribute_unify(self.topic)
-        self.sub_topics = [
-            (
-                {"name": st, "description": None, "update_description": None}
-                if isinstance(st, str)
-                else {
-                    "name": st["name"],
-                    "description": st.get("description", None),
-                    "update_description": st.get("update_description", None),
-                }
-            )
-            for st in self.sub_topics
-        ]
-        for st in self.sub_topics:
-            assert isinstance(st["name"], str)
-            assert isinstance(st["description"], (str, type(None)))
-            st["name"] = attribute_unify(st["name"])
+from ..types import UserProfileTopic, EventTag
 
 
 def formate_profile_topic(topic: UserProfileTopic) -> str:
@@ -56,8 +9,7 @@ def formate_profile_topic(topic: UserProfileTopic) -> str:
         return f"- {topic.topic}"
     return f"- {topic.topic} ({topic.description or ''})\n" + "\n".join(
         [
-            f"  - {sp['name']}"
-            + (f"({sp['description']})" if sp.get("description") else "")
+            f"  - {sp.name}" + (f"({sp.description})" if sp.description else "")
             for sp in topic.sub_topics
         ]
     )

@@ -8,7 +8,7 @@ from ....prompts.utils import (
     attribute_unify,
     parse_string_into_profiles,
 )
-from ....prompts.types import read_out_profile_config
+from ....prompts.profile_init_utils import read_out_profile_config
 from ...profile import get_user_profiles
 from ...project import get_project_profile_config
 

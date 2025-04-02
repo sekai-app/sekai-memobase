@@ -1,5 +1,9 @@
 from ..env import CONFIG, LOG
-from .types import UserProfileTopic, formate_profile_topic, modify_default_user_profile
+from .profile_init_utils import (
+    UserProfileTopic,
+    formate_profile_topic,
+    modify_default_user_profile,
+)
 
 
 CANDIDATE_PROFILE_TOPICS: list[UserProfileTopic] = [

@@ -15,10 +15,9 @@ async def update_project_profile_config(
     ),
 ) -> res.BaseResponse:
     project_id = request.state.memobase_project_id
-    if not utils.is_valid_profile_config(profile_config.profile_config):
-        return Promise.reject(CODE.BAD_REQUEST, "Invalid profile config").to_response(
-            BaseResponse
-        )
+    p = utils.is_valid_profile_config(profile_config.profile_config)
+    if not p.ok():
+        return p.to_response(res.BaseResponse)
     p = await controllers.project.update_project_profile_config(
         project_id, profile_config.profile_config
     )

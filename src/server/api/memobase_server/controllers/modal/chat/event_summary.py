@@ -3,8 +3,12 @@ from ...project import get_project_profile_config
 from ....models.utils import Promise
 from ....models.blob import Blob, BlobType
 from ....env import ProfileConfig, ContanstTable, CONFIG
-from ....prompts.utils import tag_chat_blobs_in_order_xml, parse_string_into_subtopics
-from ....prompts.types import read_out_event_tags, attribute_unify
+from ....prompts.utils import (
+    tag_chat_blobs_in_order_xml,
+    parse_string_into_subtopics,
+    attribute_unify,
+)
+from ....prompts.profile_init_utils import read_out_event_tags
 from ....llms import llm_complete
 from ....utils import get_encoded_tokens
 

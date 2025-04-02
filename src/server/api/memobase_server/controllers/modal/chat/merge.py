@@ -7,7 +7,7 @@ from ....llms import llm_complete
 from ....prompts.utils import (
     parse_string_into_merge_action,
 )
-from ....prompts.types import UserProfileTopic
+from ....prompts.profile_init_utils import UserProfileTopic
 from .types import UpdateResponse, PROMPTS, AddProfile, UpdateProfile, MergeAddResult
 
 
@@ -24,9 +24,9 @@ async def merge_or_add_new_memos(
     ), "Length of fact_contents and fact_attributes must be equal"
     USE_LANGUAGE = config.language or CONFIG.language
     TOPIC_SUBTOPIC_DESCRIPTIONS = {
-        (p.topic, sp["name"]): {
-            "description": sp["description"],
-            "update_description": sp["update_description"],
+        (p.topic, sp.name): {
+            "description": sp.description,
+            "update_description": sp.update_description,
         }
         for p in total_profiles
         for sp in p.sub_topics

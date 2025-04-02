@@ -2,10 +2,12 @@ import yaml
 from typing import cast
 from datetime import timezone, datetime
 from functools import wraps
-from .env import ENCODER, LOG, CONFIG
+from pydantic import ValidationError
+from .env import ENCODER, LOG, CONFIG, ProfileConfig
 from .models.blob import Blob, BlobType, ChatBlob, DocBlob, OpenAICompatibleMessage
 from .models.database import GeneralBlob
 from .models.response import UserEventData
+from .models.utils import Promise, CODE
 from .connectors import get_redis_client, PROJECT_ID
 
 
@@ -126,13 +128,14 @@ def user_id_lock(scope, lock_timeout=128, blocking_timeout=32):
     return __user_id_lock
 
 
-def is_valid_profile_config(profile_config: str) -> bool:
+def is_valid_profile_config(profile_config: str) -> Promise[None]:
     # check if the profile config is valid yaml
     try:
-        r = yaml.safe_load(profile_config)
         if len(profile_config) > 65535:
             return False
-        return True
+        ProfileConfig.load_config_string(profile_config)
+        return Promise.resolve(None)
     except yaml.YAMLError as e:
-        LOG.error(f"Invalid profile config: {e}")
-        return False
+        return Promise.reject(CODE.BAD_REQUEST, f"Invalid profile config: {e}")
+    except ValidationError as e:
+        return Promise.reject(CODE.BAD_REQUEST, f"Invalid profile config: {e}")

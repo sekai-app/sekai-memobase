@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 from zoneinfo import ZoneInfo
 from datetime import timezone
 from typeguard import check_type
+from .types import UserProfileTopic
 
 load_dotenv()
 
@@ -167,6 +168,12 @@ class Config:
         LOG.info(f"{overwrite_config}")
         return overwrite_config
 
+    def __post_init__(self):
+        if self.additional_user_profiles:
+            [UserProfileTopic(**up) for up in self.additional_user_profiles]
+        if self.overwrite_user_profiles:
+            [UserProfileTopic(**up) for up in self.overwrite_user_profiles]
+
     @property
     def timezone(self) -> timezone:
         if self.use_timezone is None:
@@ -189,6 +196,10 @@ class ProfileConfig:
     def __post_init__(self):
         if self.language not in ["en", "zh"]:
             self.language = None
+        if self.additional_user_profiles:
+            [UserProfileTopic(**up) for up in self.additional_user_profiles]
+        if self.overwrite_user_profiles:
+            [UserProfileTopic(**up) for up in self.overwrite_user_profiles]
 
     @classmethod
     def load_config_string(cls, config_string: str) -> "Config":

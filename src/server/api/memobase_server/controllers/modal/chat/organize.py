@@ -1,8 +1,8 @@
 import asyncio
 from collections import defaultdict
 from .types import MergeAddResult, PROMPTS, AddProfile
-from ....prompts.types import get_specific_subtopics, attribute_unify
-from ....prompts.utils import parse_string_into_subtopics
+from ....prompts.profile_init_utils import get_specific_subtopics
+from ....prompts.utils import parse_string_into_subtopics, attribute_unify
 from ....models.utils import Promise
 from ....models.response import ProfileData
 from ....env import CONFIG, LOG, ProfileConfig, ContanstTable
