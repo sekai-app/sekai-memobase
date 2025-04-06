@@ -45,7 +45,7 @@ Check out the [docs](https://docs.memobase.io/quickstart) of how to use Memobase
 
 
 
-## Use Memobase core sololy
+## Use Memobase core only
 
 1. If you have existing postgres and reids, you can only launch the Memobase core
 
@@ -63,10 +63,16 @@ Check out the [docs](https://docs.memobase.io/quickstart) of how to use Memobase
    ```
 
 
-## SDKs
 
-- **Python**: `pip install memobase`. 
-- **Typescript**: `npm install @memobase/memobase`. More installations on [here](../client/memobase-ts/readme.md)
+## Development
+
+1. Start a local DB first by `sh script/up-dev.sh`
+2. Open a new terminal window and `cd ./api`
+3. Install python deps: `pip install -r requirements.txt`
+4. To test if you got everything right, run `pytest` to see if all the tests are passed.
+5. Launch Memobase Server in dev mode: `fastapi dev --port 8019`
+
+> `fastapi dev` has hot-reload, so you can just modify the code and test it without relaunch the service.
 
 
 

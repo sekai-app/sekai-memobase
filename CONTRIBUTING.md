@@ -38,7 +38,7 @@ Thank you for your interest in contributing to Memobase! This document provides 
 
 4. Run the server:
 
-For more detailed information, refer to the [server documentation](https://github.com/memodb-io/memobase/blob/main/src/server/readme.md).
+For more detailed information, refer to the [server documentation](./src/server/readme.md#development).
 
 
 ## Development Workflow
