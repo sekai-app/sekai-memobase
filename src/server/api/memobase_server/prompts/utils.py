@@ -7,8 +7,6 @@ from ..models.response import AIUserProfiles, AIUserProfile
 from ..models.blob import ChatBlob
 from ..utils import get_blob_str
 
-LIST_INT_PATTERN = re.compile(r"\[\d+(?:,\s*\d+)*\]")
-INT_INT_PATTERN = re.compile(r"\[(\d+)\]")
 
 EXCLUDE_PROFILE_VALUES = [
     # Chinese variations
@@ -24,7 +22,8 @@ EXCLUDE_PROFILE_VALUES = [
     "无法确定",
     "无相关内容",
     "未明确提及",
-    "无明确信息"
+    "无明确信息",
+    "无符合信息",
     # English variations
     "none",
     "unknown",
@@ -39,6 +38,7 @@ EXCLUDE_PROFILE_VALUES = [
     "n/a",
     "no related content",
     "no related information",
+    "no matched information",
 ]
 
 
