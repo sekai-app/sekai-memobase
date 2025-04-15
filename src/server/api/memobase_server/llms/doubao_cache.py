@@ -1,9 +1,5 @@
 import hashlib
-from .utils import (
-    get_doubao_async_client_instance,
-    exclude_special_kwargs,
-    get_doubao_client_instance,
-)
+from .utils import get_doubao_async_client_instance, exclude_special_kwargs
 from ..connectors import get_redis_client
 from ..env import LOG
 

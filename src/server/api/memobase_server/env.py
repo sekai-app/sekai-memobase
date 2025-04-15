@@ -83,6 +83,8 @@ class Config:
     llm_style: Literal["openai", "doubao_cache"] = "openai"
     llm_base_url: str = None
     llm_api_key: str = None
+    llm_openai_default_query: dict[str, str] = None
+    llm_openai_default_header: dict[str, str] = None
     best_llm_model: str = "gpt-4o-mini"
     summary_llm_model: str = None
 
