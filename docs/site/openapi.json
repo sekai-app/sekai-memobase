@@ -3,7 +3,7 @@
 	"info": {
 		"title": "Memobase API",
 		"summary": "APIs for Memobase, a user memory system for LLM Apps",
-		"version": "0.0.30"
+		"version": "0.0.31"
 	},
 	"servers": [
 		{
@@ -549,7 +549,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IdResponse"
+									"$ref": "#/components/schemas/BlobInsertResponse"
 								}
 							}
 						}
@@ -1158,7 +1158,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/BaseResponse"
+									"$ref": "#/components/schemas/ChatModalAPIResponse"
 								}
 							}
 						}
@@ -1726,6 +1726,72 @@
 				"type": "object",
 				"title": "BlobDataResponse"
 			},
+			"BlobInsertData": {
+				"properties": {
+					"id": {
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "uuid4"
+							},
+							{
+								"type": "string",
+								"format": "uuid5"
+							}
+						],
+						"title": "Id",
+						"description": "The UUID identifier"
+					},
+					"chat_results": {
+						"anyOf": [
+							{
+								"items": {
+									"$ref": "#/components/schemas/ChatModalResponse"
+								},
+								"type": "array"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Chat Results",
+						"description": "List of chat modal data"
+					}
+				},
+				"type": "object",
+				"required": [
+					"id"
+				],
+				"title": "BlobInsertData"
+			},
+			"BlobInsertResponse": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/BlobInsertData"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"description": "Response containing blob insert data"
+					},
+					"errno": {
+						"$ref": "#/components/schemas/CODE",
+						"description": "Error code, 0 means success",
+						"default": 0
+					},
+					"errmsg": {
+						"type": "string",
+						"title": "Errmsg",
+						"description": "Error message, empty when success",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"title": "BlobInsertResponse"
+			},
 			"BlobType": {
 				"type": "string",
 				"enum": [
@@ -1752,9 +1818,143 @@
 					501,
 					502,
 					503,
-					504
+					504,
+					520
 				],
 				"title": "CODE"
+			},
+			"ChatModalAPIResponse": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"items": {
+									"$ref": "#/components/schemas/ChatModalResponse"
+								},
+								"type": "array"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Data",
+						"description": "Response containing chat modal data"
+					},
+					"errno": {
+						"$ref": "#/components/schemas/CODE",
+						"description": "Error code, 0 means success",
+						"default": 0
+					},
+					"errmsg": {
+						"type": "string",
+						"title": "Errmsg",
+						"description": "Error message, empty when success",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"title": "ChatModalAPIResponse"
+			},
+			"ChatModalResponse": {
+				"properties": {
+					"event_id": {
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "uuid4"
+							},
+							{
+								"type": "string",
+								"format": "uuid5"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Event Id",
+						"description": "The event's unique identifier"
+					},
+					"add_profiles": {
+						"anyOf": [
+							{
+								"items": {
+									"anyOf": [
+										{
+											"type": "string",
+											"format": "uuid4"
+										},
+										{
+											"type": "string",
+											"format": "uuid5"
+										}
+									]
+								},
+								"type": "array"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Add Profiles",
+						"description": "List of added profiles' ids"
+					},
+					"update_profiles": {
+						"anyOf": [
+							{
+								"items": {
+									"anyOf": [
+										{
+											"type": "string",
+											"format": "uuid4"
+										},
+										{
+											"type": "string",
+											"format": "uuid5"
+										}
+									]
+								},
+								"type": "array"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Update Profiles",
+						"description": "List of updated profiles' ids"
+					},
+					"delete_profiles": {
+						"anyOf": [
+							{
+								"items": {
+									"anyOf": [
+										{
+											"type": "string",
+											"format": "uuid4"
+										},
+										{
+											"type": "string",
+											"format": "uuid5"
+										}
+									]
+								},
+								"type": "array"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Delete Profiles",
+						"description": "List of deleted profiles' ids"
+					}
+				},
+				"type": "object",
+				"required": [
+					"event_id",
+					"add_profiles",
+					"update_profiles",
+					"delete_profiles"
+				],
+				"title": "ChatModalResponse"
 			},
 			"ContextData": {
 				"properties": {
@@ -1959,7 +2159,14 @@
 			"ProfileConfigData": {
 				"properties": {
 					"profile_config": {
-						"type": "string",
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "null"
+							}
+						],
 						"title": "Profile Config",
 						"description": "Profile config string"
 					}
