@@ -25,7 +25,7 @@ def chat(message, close_session=False, use_users=True):
         messages=[
             {"role": "user", "content": message},
         ],
-        model="gpt-4o",
+        model="gpt-4o-mini",
         stream=stream,
         # 3. Add an unique user string here will trigger memory.
         # Comment this line and this call will just like a normal OpenAI ChatCompletion
@@ -53,5 +53,6 @@ chat("What's my name?", use_users=False)
 
 print("--------Use OpenAI with memory--------")
 chat("I'm Gus, how are you?", close_session=True)
-print("User Profiles:", [p.describe for p in client.get_profile(user_name)])
 chat("What's my name?")
+print("--------Memobase Memory--------")
+print(client.get_memory_prompt(user_name))

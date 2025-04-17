@@ -12,21 +12,29 @@ PROMPT = """
 
 --# ADDITIONAL INFO #--
 {user_context}
-Use the information to generate a more personalized response for user.
+{additional_memory_prompt}
 --# DONE #--"""
 
 
 def openai_memory(
-    openai_client: OpenAI | AsyncOpenAI, mb_client: MemoBaseClient
+    openai_client: OpenAI | AsyncOpenAI,
+    mb_client: MemoBaseClient,
+    additional_memory_prompt: str = "Make sure the user's query needs the memory, otherwise just return the answer directly.",
+    max_context_size: int = 1000,
 ) -> OpenAI | AsyncOpenAI:
     if hasattr(openai_client, "_memobase_patched"):
         return openai_client
 
     openai_client._memobase_patched = True
     openai_client.get_profile = _get_profile(mb_client)
+    openai_client.get_memory_prompt = _get_memory_prompt(
+        mb_client, max_context_size, additional_memory_prompt
+    )
     openai_client.flush = _flush(mb_client)
     if isinstance(openai_client, OpenAI):
-        openai_client.chat.completions.create = _sync_chat(openai_client, mb_client)
+        openai_client.chat.completions.create = _sync_chat(
+            openai_client, mb_client, additional_memory_prompt, max_context_size
+        )
     elif isinstance(openai_client, AsyncOpenAI):
         raise ValueError(f"AsyncOpenAI is not supported yet")
     else:
@@ -40,6 +48,23 @@ def _get_profile(mb_client: MemoBaseClient):
         return mb_client.get_user(uid, no_get=True).profile()
 
     return get_profile
+
+
+def _get_memory_prompt(
+    mb_client: MemoBaseClient,
+    max_context_size: int = 1000,
+    additional_memory_prompt: str = "",
+):
+    def get_memory(u_string) -> list[UserProfile]:
+        uid = string_to_uuid(u_string)
+        u = mb_client.get_user(uid, no_get=True)
+        context = u.context(max_token_size=max_context_size)
+        sys_prompt = PROMPT.format(
+            user_context=context, additional_memory_prompt=additional_memory_prompt
+        )
+        return sys_prompt
+
+    return get_memory
 
 
 def _flush(mb_client: MemoBaseClient):
@@ -58,11 +83,15 @@ def add_message_to_user(messages: ChatBlob, user: User):
         LOG.error(f"Failed to insert message: {e}")
 
 
-def user_context_insert(messages, u: User):
-    context = u.context(max_subtopic_size=4)
+def user_context_insert(
+    messages, u: User, additional_memory_prompt: str, max_context_size: int
+):
+    context = u.context(max_token_size=max_context_size)
     if not len(context):
         return messages
-    sys_prompt = PROMPT.format(user_context=context)
+    sys_prompt = PROMPT.format(
+        user_context=context, additional_memory_prompt=additional_memory_prompt
+    )
     if messages[0]["role"] == "system":
         messages[0]["content"] += sys_prompt
     else:
@@ -70,7 +99,12 @@ def user_context_insert(messages, u: User):
     return messages
 
 
-def _sync_chat(client: OpenAI, mb_client: MemoBaseClient):
+def _sync_chat(
+    client: OpenAI,
+    mb_client: MemoBaseClient,
+    additional_memory_prompt: str,
+    max_context_size: int = 1000,
+):
     _create_chat = client.chat.completions.create
 
     def sync_chat(*args, **kwargs) -> ChatCompletion | Stream[ChatCompletionChunk]:
@@ -81,7 +115,6 @@ def _sync_chat(client: OpenAI, mb_client: MemoBaseClient):
                 return _create_chat(*args, **kwargs)
             else:
                 return (r for r in _create_chat(*args, **kwargs))
-        # TODO support streaming
 
         user_id = string_to_uuid(kwargs.pop("user_id"))
         user_query = kwargs["messages"][-1]
@@ -93,7 +126,9 @@ def _sync_chat(client: OpenAI, mb_client: MemoBaseClient):
                 return (r for r in _create_chat(*args, **kwargs))
 
         u = mb_client.get_or_create_user(user_id)
-        kwargs["messages"] = user_context_insert(kwargs["messages"], u)
+        kwargs["messages"] = user_context_insert(
+            kwargs["messages"], u, additional_memory_prompt, max_context_size
+        )
         response = _create_chat(*args, **kwargs)
 
         if is_streaming:

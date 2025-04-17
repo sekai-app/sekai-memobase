@@ -121,3 +121,36 @@ And Memobase won't repeatedly insert the same messages into the memory.
 
 
 The full script is [here](https://github.com/memodb-io/memobase/blob/main/assets/openai_memory.py)
+
+## Advanced Usage
+### Params 
+When you use the `openai_memory` function, you can pass additional arguments to customize the memory behavior:
+```python
+client = openai_memory(client, mb_client, max_context_size=500)
+```
+`max_context_size` will control the maximum token size of Memory Context will take, default to 1000.
+```python
+client = openai_memory(client, mb_client, additional_memory_prompt="Make sure the user's query needs the memory, otherwise just return the answer directly.")
+```
+`additional_memory_prompt` will control how LLM will use the memory, some examples:
+```python
+additional_memory_prompt="Always use user memory to give a personalized answer"
+additional_memory_prompt="Use memory to dig deeper into the user's query and rewrite the query..."
+```
+
+### Patched Methods
+Once you patch the OpenAI client, you can use the following methods in it:
+```python
+client.get_memory_prompt("userid")
+```
+This method will return the current memory section(including memory, `memory_prompt`) of the user.
+```python
+client.flush("userid")
+```
+This method will flush the memory of the user immediately, Memobase **won't** update the memory right away, if you like to see the updated memory once your message is processed, call this method.
+
+
+
+
+
+
