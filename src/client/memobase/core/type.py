@@ -4,7 +4,7 @@ from ..error import ServerError
 
 
 class BaseResponse(BaseModel):
-    data: Optional[dict]
+    data: Optional[dict | list]
     errmsg: str
     errno: int
 

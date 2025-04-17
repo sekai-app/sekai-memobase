@@ -52,7 +52,9 @@ async def wait_insert_done_then_flush(
     p = await flush_buffer(user_id, project_id, blob_type)
     if not p.ok():
         return p
-    return Promise.resolve([p.data()])
+    if p.data() is not None:
+        return Promise.resolve([p.data()])
+    return Promise.resolve([])
 
 
 async def get_buffer_capacity(
