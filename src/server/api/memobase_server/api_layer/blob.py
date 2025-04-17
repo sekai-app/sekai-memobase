@@ -16,7 +16,7 @@ async def insert_blob(
     user_id: str = Path(..., description="The ID of the user to insert the blob for"),
     blob_data: res.BlobData = Body(..., description="The blob data to insert"),
     background_tasks: BackgroundTasks = BackgroundTasks(),
-) -> res.IdResponse:
+) -> res.BlobInsertResponse:
     project_id = request.state.memobase_project_id
     background_tasks.add_task(
         capture_int_key, TelemetryKeyName.insert_blob_request, project_id=project_id
@@ -39,27 +39,32 @@ async def insert_blob(
     try:
         p = await controllers.blob.insert_blob(user_id, project_id, blob_data)
         if not p.ok():
-            return p.to_response(res.IdResponse)
-
+            return p.to_response(res.BaseResponse)
+        bid = p.data().id
         # TODO if single user insert too fast will cause random order insert to buffer
         # So no background task for insert buffer yet
         pb = await controllers.buffer.insert_blob_to_buffer(
-            user_id, project_id, p.data().id, blob_data.to_blob()
+            user_id, project_id, bid, blob_data.to_blob()
         )
         if not pb.ok():
-            return pb.to_response(res.IdResponse)
+            return pb.to_response(res.BaseResponse)
     except Exception as e:
         LOG.error(f"Error inserting blob: {e}, {traceback.format_exc()}")
         return Promise.reject(
             CODE.INTERNAL_SERVER_ERROR, f"Error inserting blob: {e}"
-        ).to_response(res.IdResponse)
+        ).to_response(res.BaseResponse)
 
     background_tasks.add_task(
         capture_int_key,
         TelemetryKeyName.insert_blob_success_request,
         project_id=project_id,
     )
-    return p.to_response(res.IdResponse)
+    return res.BlobInsertResponse(
+        data={
+            **p.data().model_dump(),
+            "chat_results": pb.data(),
+        }
+    )
 
 
 async def get_blob(

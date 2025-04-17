@@ -50,6 +50,19 @@ class IdsData(BaseModel):
     ids: list[UUID] = Field(..., description="List of UUID identifiers")
 
 
+class ChatModalResponse(BaseModel):
+    event_id: Optional[UUID] = Field(..., description="The event's unique identifier")
+    add_profiles: Optional[list[UUID]] = Field(
+        ..., description="List of added profiles' ids"
+    )
+    update_profiles: Optional[list[UUID]] = Field(
+        ..., description="List of updated profiles' ids"
+    )
+    delete_profiles: Optional[list[UUID]] = Field(
+        ..., description="List of deleted profiles' ids"
+    )
+
+
 class ProfileData(BaseModel):
     id: UUID = Field(..., description="The profile's unique identifier")
     content: str = Field(..., description="User profile content value")
@@ -206,4 +219,22 @@ class UserContextDataResponse(BaseResponse):
 class BillingResponse(BaseResponse):
     data: Optional[BillingData] = Field(
         None, description="Response containing token left"
+    )
+
+
+class ChatModalAPIResponse(BaseResponse):
+    data: Optional[list[ChatModalResponse]] = Field(
+        None, description="Response containing chat modal data"
+    )
+
+
+class BlobInsertData(IdData):
+    chat_results: Optional[list[ChatModalResponse]] = Field(
+        None, description="List of chat modal data"
+    )
+
+
+class BlobInsertResponse(BaseResponse):
+    data: Optional[BlobInsertData] = Field(
+        None, description="Response containing blob insert data"
     )

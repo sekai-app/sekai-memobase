@@ -52,7 +52,7 @@ async def get_user_events(
 
 async def append_user_event(
     user_id: str, project_id: str, event_data: dict
-) -> Promise[None]:
+) -> Promise[str]:
     try:
         validated_event = EventData(**event_data)
     except ValidationError as e:
@@ -68,7 +68,8 @@ async def append_user_event(
         )
         session.add(user_event)
         session.commit()
-    return Promise.resolve(None)
+        eid = user_event.id
+    return Promise.resolve(eid)
 
 
 async def delete_user_event(

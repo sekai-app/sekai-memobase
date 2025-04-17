@@ -143,7 +143,7 @@ async def update_user_profiles(
     profile_ids: list[str],
     contents: list[str],
     attributes: list[dict | None],
-):
+) -> Promise[IdsData]:
     assert len(profile_ids) == len(
         contents
     ), "Length of profile_ids, contents must be equal"
@@ -193,7 +193,7 @@ async def delete_user_profile(
 
 async def delete_user_profiles(
     user_id: str, project_id: str, profile_ids: list[str]
-) -> Promise[None]:
+) -> Promise[IdsData]:
     with Session() as session:
         session.query(UserProfile).filter(
             UserProfile.id.in_(profile_ids),
@@ -203,4 +203,4 @@ async def delete_user_profiles(
         session.commit()
     async with get_redis_client() as redis_client:
         await redis_client.delete(f"user_profiles::{project_id}::{user_id}")
-    return Promise.resolve(None)
+    return Promise.resolve(IdsData(ids=profile_ids))

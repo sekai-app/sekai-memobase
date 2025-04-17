@@ -1,5 +1,5 @@
 from sqlalchemy import func
-from datetime import datetime
+from pydantic import BaseModel
 from ..env import CONFIG, LOG
 from ..utils import (
     get_blob_token_size,
@@ -8,7 +8,7 @@ from ..utils import (
     user_id_lock,
 )
 from ..models.utils import Promise
-from ..models.response import CODE
+from ..models.response import CODE, ChatModalResponse
 from ..models.database import BufferZone, GeneralBlob
 from ..models.blob import BlobType, Blob
 from ..connectors import Session
@@ -18,11 +18,13 @@ from .modal import BLOBS_PROCESS
 @user_id_lock("insert_blob_to_buffer")
 async def insert_blob_to_buffer(
     user_id: str, project_id: str, blob_id: str, blob_data: Blob
-) -> Promise[None]:
+) -> Promise[list[ChatModalResponse]]:
+    results = []
     p = await detect_buffer_idle_or_not(user_id, project_id, blob_data.type)
     if not p.ok():
         return p
-
+    if p.data() is not None:
+        results.append(p.data())
     with Session() as session:
         buffer = BufferZone(
             user_id=user_id,
@@ -37,18 +39,20 @@ async def insert_blob_to_buffer(
     p = await detect_buffer_full_or_not(user_id, project_id, blob_data.type)
     if not p.ok():
         return p
-    return Promise.resolve(None)
+    if p.data() is not None:
+        results.append(p.data())
+    return Promise.resolve(results)
 
 
 # If there're ongoing insert, wait for them to finish then flush
 @user_id_lock("insert_blob_to_buffer")
 async def wait_insert_done_then_flush(
     user_id: str, project_id: str, blob_type: BlobType
-) -> Promise[None]:
+) -> Promise[list[ChatModalResponse]]:
     p = await flush_buffer(user_id, project_id, blob_type)
     if not p.ok():
         return p
-    return Promise.resolve(None)
+    return Promise.resolve([p.data()])
 
 
 async def get_buffer_capacity(
@@ -65,7 +69,7 @@ async def get_buffer_capacity(
 
 async def detect_buffer_full_or_not(
     user_id: str, project_id: str, blob_type: BlobType
-) -> Promise[bool]:
+) -> Promise[ChatModalResponse | None]:
     with Session() as session:
         # 1. if buffer size reach maximum, flush it
         buffer_size = (
@@ -78,15 +82,13 @@ async def detect_buffer_full_or_not(
                 f"Flush {blob_type} buffer for user {user_id} due to reach maximum token size({buffer_size} > {CONFIG.max_chat_blob_buffer_token_size})"
             )
             p = await flush_buffer(user_id, project_id, blob_type)
-            if not p.ok():
-                return p
-            return Promise.resolve(True)
-    return Promise.resolve(False)
+            return p
+    return Promise.resolve(None)
 
 
 async def detect_buffer_idle_or_not(
     user_id: str, project_id: str, blob_type: BlobType
-) -> Promise[bool]:
+) -> Promise[ChatModalResponse | None]:
     with Session() as session:
         # if buffer is idle for a long time, flush it
         last_buffer_update = (
@@ -102,15 +104,13 @@ async def detect_buffer_idle_or_not(
                 f"Flush {blob_type} buffer for user {user_id} due to idle for a long time"
             )
             p = await flush_buffer(user_id, project_id, blob_type)
-            if not p.ok():
-                return p
-            return Promise.resolve(True)
-    return Promise.resolve(False)
+            return p
+    return Promise.resolve(None)
 
 
 async def flush_buffer(
     user_id: str, project_id: str, blob_type: BlobType
-) -> Promise[None]:
+) -> Promise[ChatModalResponse]:
     # FIXME: parallel calling will cause duplicated flush
     if blob_type not in BLOBS_PROCESS:
         return Promise.reject(CODE.BAD_REQUEST, f"Blob type {blob_type} not supported")
@@ -147,7 +147,7 @@ async def flush_buffer(
         p = await BLOBS_PROCESS[blob_type](user_id, project_id, blob_ids, blobs)
         if not p.ok():
             return p
-        return Promise.resolve(None)
+        return p
 
     except Exception as e:
         LOG.error(f"Error in flush_buffer: {e}")

@@ -3,6 +3,7 @@ import asyncio
 from ....env import LOG, ProfileConfig
 from ....models.blob import Blob
 from ....models.utils import Promise
+from ....models.response import IdsData, ChatModalResponse
 from ...profile import add_user_profiles, update_user_profiles, delete_user_profiles
 from ...event import append_user_event
 from .extract import extract_topics
@@ -15,7 +16,7 @@ from .event_summary import summary_event, tag_event
 
 async def process_blobs(
     user_id: str, project_id: str, blob_ids: list[str], blobs: list[Blob]
-) -> Promise[None]:
+) -> Promise[ChatModalResponse]:
     # 1. Extract patch profiles
     p = await extract_topics(user_id, project_id, blob_ids, blobs)
     if not p.ok():
@@ -42,13 +43,16 @@ async def process_blobs(
         }
         for i in range(len(extracted_data["fact_contents"]))
     ]
-    await handle_session_event(
+    p = await handle_session_event(
         user_id,
         project_id,
         blobs,
         delta_profile_data,
         extracted_data["config"],
     )
+    if not p.ok():
+        return p
+    eid = p.data()
 
     # 3. Check if we need to organize profiles
     p = await organize_profiles(
@@ -69,14 +73,26 @@ async def process_blobs(
         LOG.error(f"Failed to re-summary profiles: {p.msg()}")
 
     # DB commit
-    ps = await asyncio.gather(
-        exe_user_profile_add(user_id, project_id, profile_options),
-        exe_user_profile_update(user_id, project_id, profile_options),
-        exe_user_profile_delete(user_id, project_id, profile_options),
+    p = await exe_user_profile_add(user_id, project_id, profile_options)
+    if not p.ok():
+        return p
+    add_profile_ids = p.data().ids
+    p = await exe_user_profile_update(user_id, project_id, profile_options)
+    if not p.ok():
+        return p
+    update_profile_ids = p.data().ids
+    p = await exe_user_profile_delete(user_id, project_id, profile_options)
+    if not p.ok():
+        return p
+    delete_profile_ids = p.data().ids
+    return Promise.resolve(
+        ChatModalResponse(
+            event_id=eid,
+            add_profiles=add_profile_ids,
+            update_profiles=update_profile_ids,
+            delete_profiles=delete_profile_ids,
+        )
     )
-    if not all([p.ok() for p in ps]):
-        return Promise.reject("Failed to add or update profiles")
-    return Promise.resolve(None)
 
 
 async def handle_session_event(
@@ -85,7 +101,7 @@ async def handle_session_event(
     blobs: list[Blob],
     delta_profile_data: list[dict],
     config: ProfileConfig,
-) -> Promise[None]:
+) -> Promise[str]:
     if not len(delta_profile_data):
         return Promise.resolve(None)
     p = await summary_event(project_id, blobs, config)
@@ -107,7 +123,7 @@ async def handle_session_event(
     else:
         event_tags = None
 
-    await append_user_event(
+    eid = await append_user_event(
         user_id,
         project_id,
         {
@@ -117,12 +133,14 @@ async def handle_session_event(
         },
     )
 
+    return eid
+
 
 async def exe_user_profile_add(
     user_id: str, project_id: str, profile_options: MergeAddResult
-) -> Promise[None]:
+) -> Promise[IdsData]:
     if not len(profile_options["add"]):
-        return Promise.resolve(None)
+        return Promise.resolve(IdsData(ids=[]))
     LOG.info(f"Adding {len(profile_options['add'])} profiles for user {user_id}")
     task_add = await add_user_profiles(
         user_id,
@@ -135,9 +153,9 @@ async def exe_user_profile_add(
 
 async def exe_user_profile_update(
     user_id: str, project_id: str, profile_options: MergeAddResult
-) -> Promise[None]:
+) -> Promise[IdsData]:
     if not len(profile_options["update"]):
-        return Promise.resolve(None)
+        return Promise.resolve(IdsData(ids=[]))
     LOG.info(f"Updating {len(profile_options['update'])} profiles for user {user_id}")
     task_update = await update_user_profiles(
         user_id,
@@ -153,7 +171,7 @@ async def exe_user_profile_delete(
     user_id: str, project_id: str, profile_options: MergeAddResult
 ) -> Promise[None]:
     if not len(profile_options["delete"]):
-        return Promise.resolve(None)
+        return Promise.resolve(IdsData(ids=[]))
     LOG.info(f"Deleting {len(profile_options['delete'])} profiles for user {user_id}")
     task_delete = await delete_user_profiles(
         user_id, project_id, profile_options["delete"]
