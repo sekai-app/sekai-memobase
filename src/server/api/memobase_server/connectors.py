@@ -14,8 +14,8 @@ REDIS_URL = os.getenv("REDIS_URL")
 PROJECT_ID = os.getenv("PROJECT_ID")
 
 if PROJECT_ID is None:
-    LOG.warning(f"PROJECT_ID is not set, use a random UUID")
-    PROJECT_ID = str(uuid4())
+    LOG.warning(f"PROJECT_ID is not set")
+    PROJECT_ID = "default"
 LOG.info(f"Project ID: {PROJECT_ID}")
 LOG.info(f"Database URL: {DATABASE_URL}")
 LOG.info(f"Redis URL: {REDIS_URL}")

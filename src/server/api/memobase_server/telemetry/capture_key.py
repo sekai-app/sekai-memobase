@@ -1,5 +1,5 @@
 from datetime import datetime
-from ..connectors import get_redis_client
+from ..connectors import get_redis_client, PROJECT_ID
 from ..models.database import DEFAULT_PROJECT_ID
 
 
@@ -12,7 +12,7 @@ def month_key():
 
 
 def head_key(project_id: str):
-    return f"memobase_telemetry::{project_id}"
+    return f"memobase_telemetry::{PROJECT_ID}::{project_id}"
 
 
 async def capture_int_key(
