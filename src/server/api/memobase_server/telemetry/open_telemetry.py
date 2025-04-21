@@ -35,6 +35,7 @@ class CounterMetricName(Enum):
     LLM_INVOCATIONS = "llm_invocations_total"
     LLM_TOKENS_INPUT = "llm_input_tokens_total"
     LLM_TOKENS_OUTPUT = "llm_output_tokens_total"
+    EMBEDDING_TOKENS = "embedding_tokens_total"
 
     def get_description(self) -> str:
         """Get the description for this metric."""
@@ -44,6 +45,7 @@ class CounterMetricName(Enum):
             CounterMetricName.LLM_INVOCATIONS: "Total number of LLM invocations",
             CounterMetricName.LLM_TOKENS_INPUT: "Total number of input tokens",
             CounterMetricName.LLM_TOKENS_OUTPUT: "Total number of output tokens",
+            CounterMetricName.EMBEDDING_TOKENS: "Total number of embedding tokens",
         }
         return descriptions[self]
 

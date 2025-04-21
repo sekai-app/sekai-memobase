@@ -4,9 +4,11 @@ import numpy as np
 from ...env import CONFIG, LOG
 from ...models.utils import Promise
 from ...models.response import CODE
+from ...models.database import DEFAULT_PROJECT_ID
 from .jina_embedding import jina_embedding
 from .openai_embedding import openai_embedding
-from ...telemetry import telemetry_manager, HistogramMetricName
+from ...telemetry import telemetry_manager, HistogramMetricName, CounterMetricName
+from ...utils import get_encoded_tokens
 
 FACTORIES = {"openai": openai_embedding, "jina": jina_embedding}
 assert (
@@ -15,7 +17,7 @@ assert (
 
 
 async def check_embedding_sanity():
-    r = await get_embedding("test", ["Hello, world!"])
+    r = await get_embedding(DEFAULT_PROJECT_ID, ["Hello, world!"])
     if not r.ok():
         raise ValueError(
             "Embedding API check failed! Make sure the embedding API key is valid."
@@ -42,6 +44,12 @@ async def get_embedding(
     except Exception as e:
         LOG.error(f"Error in get_embedding: {e}")
         return Promise.reject(CODE.SERVICE_UNAVAILABLE, f"Error in get_embedding: {e}")
+    embedding_tokens = len(get_encoded_tokens("\n".join(texts)))
+    telemetry_manager.increment_counter_metric(
+        CounterMetricName.EMBEDDING_TOKENS,
+        embedding_tokens,
+        {"project_id": project_id},
+    )
     telemetry_manager.record_histogram_metric(
         HistogramMetricName.EMBEDDING_LATENCY_MS,
         latency_ms,
