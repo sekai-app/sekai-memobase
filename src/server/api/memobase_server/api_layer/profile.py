@@ -39,7 +39,7 @@ async def get_user_profile(
     ),
     chats_str: str = Query(
         None,
-        description="List of chats to filter profiles",
+        description='List of chats in OpenAI Message format, for example: [{"role": "user", "content": "Hello"}, {"role": "assistant", "content": "Hi"}]',
     ),
 ) -> res.UserProfileResponse:
     """Get the real-time user profiles for long term memory"""

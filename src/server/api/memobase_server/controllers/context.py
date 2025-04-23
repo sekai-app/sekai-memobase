@@ -94,7 +94,6 @@ async def get_user_context(
         )
     if not p.ok():
         return p
-    print([e.similarity for e in p.data().events])
     user_events = p.data()
     event_section = "\n---\n".join([event_str_repr(ed) for ed in user_events.events])
 

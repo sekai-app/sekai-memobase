@@ -42,7 +42,7 @@ async def get_user_context(
     ),
     chats_str: str = Query(
         None,
-        description="List of chats to filter profiles",
+        description='List of chats in OpenAI Message format, for example: [{"role": "user", "content": "Hello"}, {"role": "assistant", "content": "Hi"}]',
     ),
 ) -> res.UserContextDataResponse:
     project_id = request.state.memobase_project_id
