@@ -258,6 +258,7 @@ async def test_api_user_profile(client, db_env):
     assert d["data"]["profiles"][0]["id"] == id2
 
     response = client.get(f"{PREFIX}/users/context/{u_id}?only_topics=interest")
+    print(response.json())
     d = response.json()
     assert response.status_code == 200
     assert d["errno"] == 0

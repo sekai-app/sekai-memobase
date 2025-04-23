@@ -1,11 +1,12 @@
 from ..models.utils import Promise
-from ..models.response import ContextData
+from ..models.response import ContextData, OpenAICompatibleMessage
 from ..prompts.chat_context_pack import CONTEXT_PROMPT_PACK
 from ..utils import get_encoded_tokens, event_str_repr
 from ..env import CONFIG
 from .project import get_project_profile_config
 from .profile import get_user_profiles, truncate_profiles
-from .event import get_user_events
+from .post_process.profile import filter_profiles_with_chats
+from .event import get_user_events, search_user_events
 
 
 async def get_user_context(
@@ -18,6 +19,7 @@ async def get_user_context(
     topic_limits: dict[str, int],
     profile_event_ratio: float,
     require_event_summary: bool,
+    chats: list[OpenAICompatibleMessage],
 ) -> Promise[ContextData]:
     assert 0 < profile_event_ratio <= 1, "profile_event_ratio must be between 0 and 1"
     max_profile_token_size = int(max_token_size * profile_event_ratio)
@@ -33,8 +35,19 @@ async def get_user_context(
     p = await get_user_profiles(user_id, project_id)
     if not p.ok():
         return p
+    total_profiles = p.data()
     if max_profile_token_size > 0:
-        user_profiles = p.data()
+        if chats:
+            p = await filter_profiles_with_chats(
+                project_id,
+                total_profiles,
+                chats,
+                only_topics=only_topics,
+                # max_filter_num=topk,
+            )
+            if p.ok():
+                total_profiles.profiles = p.data()
+        user_profiles = total_profiles
         use_profiles = await truncate_profiles(
             user_profiles,
             prefer_topics=prefer_topics,
@@ -66,15 +79,22 @@ async def get_user_context(
         )
 
     # max 40 events, then truncate to max_event_token_size
-    p = await get_user_events(
-        user_id,
-        project_id,
-        topk=40,
-        max_token_size=max_event_token_size,
-        need_summary=require_event_summary,
-    )
+    if chats:
+        search_query = chats[-1].content
+        p = await search_user_events(
+            user_id, project_id, query=search_query, topk=20, similarity_threshold=0.3
+        )
+    else:
+        p = await get_user_events(
+            user_id,
+            project_id,
+            topk=20,
+            max_token_size=max_event_token_size,
+            need_summary=require_event_summary,
+        )
     if not p.ok():
         return p
+    print([e.similarity for e in p.data().events])
     user_events = p.data()
     event_section = "\n---\n".join([event_str_repr(ed) for ed in user_events.events])
 

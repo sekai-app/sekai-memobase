@@ -1,4 +1,6 @@
+import re
 import yaml
+import json
 from typing import cast
 from datetime import timezone, datetime
 from functools import wraps
@@ -9,6 +11,8 @@ from .models.database import GeneralBlob
 from .models.response import UserEventData, EventData
 from .models.utils import Promise, CODE
 from .connectors import get_redis_client, PROJECT_ID
+
+LIST_INT_REGEX = re.compile(r"\[\s*(?:\d+(?:\s*,\s*\d+)*\s*)?\]")
 
 
 def event_str_repr(event: UserEventData) -> str:
@@ -29,6 +33,7 @@ def event_str_repr(event: UserEventData) -> str:
         else:
             event_tags = ""
         return f"{happened_at}:\n{event_data.event_tip}\n{event_tags}"
+
 
 def event_embedding_str(event_data: EventData) -> str:
     if event_data.profile_delta is None:
@@ -52,6 +57,26 @@ def event_embedding_str(event_data: EventData) -> str:
     else:
         return f"{event_data.event_tip}\n{profile_delta_str}\n{event_tags}"
 
+
+def load_json_or_none(content: str) -> dict | None:
+    try:
+        return json.loads(content)
+    except Exception:
+        LOG.error(f"Invalid json: {content}")
+        return None
+
+
+def find_list_int_or_none(content: str) -> list[int] | None:
+    result = LIST_INT_REGEX.findall(content)
+    if not result:
+        return None
+    result = result[0]
+    ids = result.strip("[]").strip()
+    if not ids:
+        return []
+    return [int(i.strip()) for i in ids.split(",")]
+
+
 def get_encoded_tokens(content: str) -> list[int]:
     return ENCODER.encode(content)
 
@@ -60,8 +85,10 @@ def get_decoded_tokens(tokens: list[int]) -> str:
     return ENCODER.decode(tokens)
 
 
-def truncate_string(content: str, max_tokens: int):
-    return get_decoded_tokens(get_encoded_tokens(content)[:max_tokens])
+def truncate_string(content: str, max_tokens: int) -> str:
+    tokens = get_encoded_tokens(content)
+    tailing = "" if len(tokens) <= max_tokens else "..."
+    return get_decoded_tokens(tokens[:max_tokens]) + tailing
 
 
 def pack_blob_from_db(blob: GeneralBlob, blob_type: BlobType) -> Blob:

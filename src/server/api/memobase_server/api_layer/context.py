@@ -40,15 +40,21 @@ async def get_user_context(
         False,
         description="Whether to require event summary in returned Context",
     ),
+    chats_str: str = Query(
+        None,
+        description="List of chats to filter profiles",
+    ),
 ) -> res.UserContextDataResponse:
     project_id = request.state.memobase_project_id
     topic_limits_json = topic_limits_json or "{}"
+    chats_str = chats_str or "[]"
     try:
         topic_limits = res.StrIntData(data=json.loads(topic_limits_json)).data
+        chats = res.MessageData(data=json.loads(chats_str)).data
     except Exception as e:
-        return Promise.reject(
-            CODE.BAD_REQUEST, f"Invalid topic_limits JSON: {e}"
-        ).to_response(res.UserContextDataResponse)
+        return Promise.reject(CODE.BAD_REQUEST, f"Invalid JSON: {e}").to_response(
+            res.UserContextDataResponse
+        )
     p = await controllers.context.get_user_context(
         user_id,
         project_id,
@@ -59,5 +65,6 @@ async def get_user_context(
         topic_limits,
         profile_event_ratio,
         require_event_summary,
+        chats,
     )
     return p.to_response(res.UserContextDataResponse)

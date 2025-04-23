@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import IntEnum
 from typing import Optional
 from pydantic import BaseModel, UUID4, UUID5, Field
-from .blob import BlobData
+from .blob import BlobData, OpenAICompatibleMessage
 from .claim import ClaimData
 from .action import ActionData
 
@@ -108,9 +108,7 @@ class UserEventData(BaseModel):
     updated_at: datetime = Field(
         None, description="Timestamp when the event was last updated"
     )
-    similarity: Optional[float] = Field(
-        None, description="Similarity score"
-    )
+    similarity: Optional[float] = Field(None, description="Similarity score")
 
 
 class ContextData(BaseModel):
@@ -138,6 +136,10 @@ class UserEventsData(BaseModel):
 
 class StrIntData(BaseModel):
     data: dict[str, int] = Field(..., description="String to int mapping")
+
+
+class MessageData(BaseModel):
+    data: list[OpenAICompatibleMessage] = Field(..., description="List of messages")
 
 
 class QueryData(BaseModel):

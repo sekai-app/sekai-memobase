@@ -3,6 +3,7 @@ from fastapi import Request
 from fastapi import Path, Query, Body
 from datetime import datetime
 from ..controllers import full as controllers
+from ..controllers.post_process.profile import filter_profiles_with_chats
 
 from ..models.response import CODE
 from ..models.utils import Promise
@@ -36,19 +37,38 @@ async def get_user_profile(
         None,
         description='Set specific subtopic limits for topics in JSON, for example {"topic1": 3, "topic2": 5}. The limits in this param will override `max_subtopic_size`.',
     ),
+    chats_str: str = Query(
+        None,
+        description="List of chats to filter profiles",
+    ),
 ) -> res.UserProfileResponse:
     """Get the real-time user profiles for long term memory"""
     project_id = request.state.memobase_project_id
     topic_limits_json = topic_limits_json or "{}"
+    chats_str = chats_str or "[]"
     try:
         topic_limits = res.StrIntData(data=json.loads(topic_limits_json)).data
+        chats = res.MessageData(data=json.loads(chats_str)).data
     except Exception as e:
         return Promise.reject(
-            CODE.BAD_REQUEST, f"Invalid topic_limits JSON: {e}"
+            CODE.BAD_REQUEST, f"Invalid JSON requests: {e}"
         ).to_response(res.UserProfileResponse)
     p = await controllers.profile.get_user_profiles(user_id, project_id)
+    if not p.ok():
+        return p.to_response(res.UserProfileResponse)
+    total_profiles = p.data()
+    if chats:
+        p = await filter_profiles_with_chats(
+            project_id,
+            total_profiles,
+            chats,
+            only_topics=only_topics,
+            # max_filter_num=topk,
+        )
+        if p.ok():
+            total_profiles.profiles = p.data()
     p = await controllers.profile.truncate_profiles(
-        p.data(),
+        total_profiles,
         prefer_topics=prefer_topics,
         topk=topk,
         max_token_size=max_token_size,
