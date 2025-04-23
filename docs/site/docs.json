@@ -30,14 +30,16 @@
                 "pages": [
                   "features/profile/profile",
                   "features/profile/profile_desc",
-                  "features/profile/profile_config"
+                  "features/profile/profile_config",
+                  "features/profile/profile_filter"
                 ]
               },
               {
                 "group": "User Event",
                 "pages": [
                   "features/event/event",
-                  "features/event/event_tag"
+                  "features/event/event_tag",
+                  "features/event/event_search"
                 ]
               },
               "features/context"
@@ -113,6 +115,7 @@
                 "group": "User Events",
                 "pages": [
                   "api-reference/events/get_events",
+                  "api-reference/events/search_events",
                   "api-reference/events/update_event",
                   "api-reference/events/delete_event"
                 ]

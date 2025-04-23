@@ -1,0 +1,23 @@
+---
+title: Search Events
+---
+
+Memobase Event is a sequence of experiences and [tags](/features/event/event_tag) of user.
+By default, their're ranked by time. But Memobase offers a way to search events by query.
+
+## Sementic Search
+```python
+# To use the Python SDK, install the package:
+# pip install memobase
+
+from memobase import Memobase
+
+client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+uid = client.add_user()
+u = client.get_user(uid)
+
+events = u.search_event("Anything about my emotion")
+print(events)
+```
+Memobase will search events that the user talked about emotion, [tagged](/features/event/event_tag) with `emotion` or those which updated profiles with `emotion` slots. 
+Detailed params are [here](/api-reference/events/search_events)

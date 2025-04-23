@@ -1,0 +1,55 @@
+---
+title: Filter Profile
+---
+For each user, Memobase will track and model the profile.
+You can use them in your [AI prompt](/features/context) to offer a global understanding of the user.
+
+In practice, the user profile won't be too large, 
+but it's better for you to be able to control the final size of you prompt.
+
+Memobase offers some params to help you filter the profiles
+
+## Filter by Rules
+You can pass some rules to Memobase API to filter some profiles:
+- `max_token_size`: The maximum token size of the profile.
+- `prefer_topics`: those topics will be ranked higher, so they are more likely to be included in the final profile.
+- `only_topics`: only include these topics, other topics will be filtered.
+Detailed params can be found in [API docs](/api-reference/profiles/profile).
+
+## Filter by Context
+Memobase also offers a semantic filter to filter the profiles.
+You can pass the latest chat messages to Memobase, and get the "contextual" profiles.
+"Contextual" here is much more better than a embedding-based search:
+Memobase uses LLM to reason and judge which profile may help the future chatting.
+
+So if user just say ""Find some restaurants for me", 
+Memobase will filter `contact_info::city`, `interest::foods`, `health::allergies` and so on.
+Those profiles will be randed higher in the results.
+
+<CodeGroup>
+```python Python
+from memobase import Memobase
+
+client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+uid = client.add_user()
+u = client.get_user(uid)
+
+p = u.profile(chats = [
+  {"role": "user", "content": "Find some restaurants for me"},
+  need_json=True
+])
+
+print(p)
+```
+```markdown Output
+## Return Profiles
+- contact_info::city:: Shanghai
+- interest::foods:: Chinese
+- health::allergies:: peanuts
+
+## Chat
+*User*: Find some restaurants for me
+*Assistant*: Great! I found some restaurants in Shanghai... 
+I noticed you are allergic to peanuts, be careful on those restaurants:...
+```
+</CodeGroup>

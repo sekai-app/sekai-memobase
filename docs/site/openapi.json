@@ -311,6 +311,7 @@
 						"application/json": {
 							"schema": {
 								"type": "object",
+								"additionalProperties": true,
 								"description": "Updated user data",
 								"title": "User Data"
 							}
@@ -817,6 +818,17 @@
 							"title": "Topic Limits Json"
 						},
 						"description": "Set specific subtopic limits for topics in JSON, for example {\"topic1\": 3, \"topic2\": 5}. The limits in this param will override `max_subtopic_size`."
+					},
+					{
+						"name": "chats_str",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"description": "List of chats in OpenAI Message format, for example: [{\"role\": \"user\", \"content\": \"Hello\"}, {\"role\": \"assistant\", \"content\": \"Hi\"}]",
+							"title": "Chats Str"
+						},
+						"description": "List of chats in OpenAI Message format, for example: [{\"role\": \"user\", \"content\": \"Hello\"}, {\"role\": \"assistant\", \"content\": \"Hi\"}]"
 					}
 				],
 				"responses": {
@@ -1405,6 +1417,104 @@
 				]
 			}
 		},
+		"/api/v1/users/event/search/{user_id}": {
+			"get": {
+				"tags": [
+					"event"
+				],
+				"summary": "Search User Events",
+				"operationId": "search_user_events_api_v1_users_event_search__user_id__get",
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user",
+							"title": "User Id"
+						},
+						"description": "The ID of the user"
+					},
+					{
+						"name": "query",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The query to search for",
+							"title": "Query"
+						},
+						"description": "The query to search for"
+					},
+					{
+						"name": "topk",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Number of events to retrieve, default is 10",
+							"default": 10,
+							"title": "Topk"
+						},
+						"description": "Number of events to retrieve, default is 10"
+					},
+					{
+						"name": "similarity_threshold",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "number",
+							"description": "Similarity threshold, default is 0.5",
+							"default": 0.5,
+							"title": "Similarity Threshold"
+						},
+						"description": "Similarity threshold, default is 0.5"
+					},
+					{
+						"name": "time_range_in_days",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Time range in days, default is 7",
+							"default": 7,
+							"title": "Time Range In Days"
+						},
+						"description": "Time range in days, default is 7"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserEventsDataResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPValidationError"
+								}
+							}
+						}
+					}
+				},
+				"x-code-samples": [
+					{
+						"lang": "Python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\nuid = client.add_user()\nu = client.get_user(uid)\n\nb = ChatBlob(messages=[\n    {\n        \"role\": \"user\",\n        \"content\": \"Hi, I'm here again\"\n    },\n    {\n        \"role\": \"assistant\",\n        \"content\": \"Hi, Gus! How can I help you?\"\n    }\n])\nu.insert(b)\nu.flush()\n\nevents = u.search_event('query')\nprint(events)\n",
+						"label": "Python"
+					}
+				]
+			}
+		},
 		"/api/v1/users/context/{user_id}": {
 			"get": {
 				"tags": [
@@ -1509,6 +1619,17 @@
 							"title": "Require Event Summary"
 						},
 						"description": "Whether to require event summary in returned Context"
+					},
+					{
+						"name": "chats_str",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"description": "List of chats in OpenAI Message format, for example: [{\"role\": \"user\", \"content\": \"Hello\"}, {\"role\": \"assistant\", \"content\": \"Hi\"}]",
+							"title": "Chats Str"
+						},
+						"description": "List of chats in OpenAI Message format, for example: [{\"role\": \"user\", \"content\": \"Hello\"}, {\"role\": \"assistant\", \"content\": \"Hi\"}]"
 					}
 				],
 				"responses": {
@@ -1555,6 +1676,7 @@
 					"data": {
 						"anyOf": [
 							{
+								"additionalProperties": true,
 								"type": "object"
 							},
 							{
@@ -1652,12 +1774,14 @@
 						"$ref": "#/components/schemas/BlobType"
 					},
 					"blob_data": {
+						"additionalProperties": true,
 						"type": "object",
 						"title": "Blob Data"
 					},
 					"fields": {
 						"anyOf": [
 							{
+								"additionalProperties": true,
 								"type": "object"
 							},
 							{
@@ -2241,6 +2365,7 @@
 					"attributes": {
 						"anyOf": [
 							{
+								"additionalProperties": true,
 								"type": "object"
 							},
 							{
@@ -2268,6 +2393,7 @@
 					"attributes": {
 						"anyOf": [
 							{
+								"additionalProperties": true,
 								"type": "object"
 							},
 							{
@@ -2332,6 +2458,7 @@
 					"data": {
 						"anyOf": [
 							{
+								"additionalProperties": true,
 								"type": "object"
 							},
 							{
@@ -2447,6 +2574,18 @@
 						"format": "date-time",
 						"title": "Updated At",
 						"description": "Timestamp when the event was last updated"
+					},
+					"similarity": {
+						"anyOf": [
+							{
+								"type": "number"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Similarity",
+						"description": "Similarity score"
 					}
 				},
 				"type": "object",
