@@ -27,6 +27,7 @@ MergeAddResult = TypedDict(
         "update": list[UpdateProfile],
         "delete": list[str],
         "before_profiles": list[ProfileData],
+        "update_delta": list[AddProfile],
     },
 )
 

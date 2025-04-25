@@ -37,11 +37,7 @@ async def process_blobs(
 
     profile_options = p.data()
     delta_profile_data = [
-        {
-            "content": extracted_data["fact_contents"][i],
-            "attributes": extracted_data["fact_attributes"][i],
-        }
-        for i in range(len(extracted_data["fact_contents"]))
+        p for p in (profile_options["add"] + profile_options["update_delta"])
     ]
     p = await handle_session_event(
         user_id,

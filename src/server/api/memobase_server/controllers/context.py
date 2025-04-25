@@ -20,6 +20,7 @@ async def get_user_context(
     profile_event_ratio: float,
     require_event_summary: bool,
     chats: list[OpenAICompatibleMessage],
+    event_similarity_threshold: float,
 ) -> Promise[ContextData]:
     assert 0 < profile_event_ratio <= 1, "profile_event_ratio must be between 0 and 1"
     max_profile_token_size = int(max_token_size * profile_event_ratio)
@@ -82,7 +83,11 @@ async def get_user_context(
     if chats:
         search_query = chats[-1].content
         p = await search_user_events(
-            user_id, project_id, query=search_query, topk=20, similarity_threshold=0.3
+            user_id,
+            project_id,
+            query=search_query,
+            topk=20,
+            similarity_threshold=event_similarity_threshold,
         )
     else:
         p = await get_user_events(

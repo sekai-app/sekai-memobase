@@ -53,9 +53,11 @@ def event_embedding_str(event_data: EventData) -> str:
         )
 
     if event_data.event_tip is None:
-        return f"{profile_delta_str}\n{event_tags}"
+        r = f"{profile_delta_str}\n{event_tags}"
     else:
-        return f"{event_data.event_tip}\n{profile_delta_str}\n{event_tags}"
+        r = f"{event_data.event_tip}\n{profile_delta_str}\n{event_tags}"
+    print(r)
+    return r
 
 
 def load_json_or_none(content: str) -> dict | None:

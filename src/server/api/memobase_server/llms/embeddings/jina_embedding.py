@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Literal
 from ...errors import ExternalAPIError
-from ...env import CONFIG
+from ...env import CONFIG, LOG
 from .utils import get_jina_async_client_instance
 
 JINA_TASK = {
@@ -27,4 +27,7 @@ async def jina_embedding(
     if response.status_code != 200:
         raise ExternalAPIError(f"Failed to embed texts: {response.text}")
     data = response.json()
+    LOG.info(
+        f"Jina embedding, {model}, {phase}, {data['usage']['prompt_tokens']}/{data['usage']['total_tokens']}"
+    )
     return np.array([dp["embedding"] for dp in data["data"]])

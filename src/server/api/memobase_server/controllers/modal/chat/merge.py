@@ -35,6 +35,7 @@ async def merge_or_valid_new_memos(
         "add": [],
         "update": [],
         "delete": [],
+        "update_delta": [],
         "before_profiles": profiles,
     }
     tasks = []
@@ -130,6 +131,12 @@ async def handle_profile_merge_or_valid(
                     "profile_id": runtime_profile.id,
                     "content": update_response["memo"],
                     "attributes": runtime_profile.attributes,
+                }
+            )
+            session_merge_validate_results["update_delta"].append(
+                {
+                    "content": profile_content,
+                    "attributes": profile_attributes,
                 }
             )
     elif update_response["action"] == "ABORT":

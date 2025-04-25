@@ -44,6 +44,10 @@ async def get_user_context(
         None,
         description='List of chats in OpenAI Message format, for example: [{"role": "user", "content": "Hello"}, {"role": "assistant", "content": "Hi"}]',
     ),
+    event_similarity_threshold: float = Query(
+        0.3,
+        description="Event similarity threshold of returned Context",
+    ),
 ) -> res.UserContextDataResponse:
     project_id = request.state.memobase_project_id
     topic_limits_json = topic_limits_json or "{}"
@@ -66,5 +70,6 @@ async def get_user_context(
         profile_event_ratio,
         require_event_summary,
         chats,
+        event_similarity_threshold,
     )
     return p.to_response(res.UserContextDataResponse)

@@ -28,6 +28,7 @@ async def check_embedding_sanity():
         raise ValueError(
             f"Embedding dimension mismatch! Expected {CONFIG.embedding_dim}, got {embedding_dim}."
         )
+    LOG.info(f"Embedding dimension matched: {embedding_dim}")
 
 
 async def get_embedding(
