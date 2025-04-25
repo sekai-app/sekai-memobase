@@ -287,6 +287,7 @@ class AsyncUser:
         profile_event_ratio: float = None,
         require_event_summary: bool = None,
         chats: list[OpenAICompatibleMessage] = None,
+        event_similarity_threshold: float = None,
     ) -> str:
         params = f"?max_token_size={max_token_size}"
         if prefer_topics:
@@ -313,6 +314,8 @@ class AsyncUser:
                     raise ValueError(f"Invalid chat message: {e}")
             chats_query = f"&chats_str={json.dumps(chats)}"
             params += chats_query
+        if event_similarity_threshold:
+            params += f"&event_similarity_threshold={event_similarity_threshold}"
         r = unpack_response(
             await self.project_client.client.get(
                 f"/users/context/{self.user_id}{params}"

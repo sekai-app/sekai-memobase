@@ -64,3 +64,4 @@ class UserEventData(BaseModel):
     updated_at: datetime = Field(
         None, description="Timestamp when the event was last updated"
     )
+    similarity: Optional[float] = Field(None, description="Similarity score")

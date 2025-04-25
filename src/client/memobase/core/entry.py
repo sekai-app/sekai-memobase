@@ -249,7 +249,7 @@ class User:
         params = f"?query={query}&topk={topk}&similarity_threshold={similarity_threshold}&time_range_in_days={time_range_in_days}"
         r = unpack_response(
             self.project_client.client.get(
-                f"/users/event/{self.user_id}/search{params}"
+                f"/users/event/search/{self.user_id}{params}"
             )
         )
         return [UserEventData.model_validate(e) for e in r.data["events"]]
@@ -264,6 +264,7 @@ class User:
         profile_event_ratio: float = None,
         require_event_summary: bool = None,
         chats: list[OpenAICompatibleMessage] = None,
+        event_similarity_threshold: float = None,
     ) -> str:
         params = f"?max_token_size={max_token_size}"
         if prefer_topics:
@@ -290,6 +291,8 @@ class User:
                     raise ValueError(f"Invalid chat message: {e}")
             chats_query = f"&chats_str={json.dumps(chats)}"
             params += chats_query
+        if event_similarity_threshold:
+            params += f"&event_similarity_threshold={event_similarity_threshold}"
         r = unpack_response(
             self.project_client.client.get(f"/users/context/{self.user_id}{params}")
         )
