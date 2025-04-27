@@ -180,8 +180,9 @@ those elements should be separated by `{tab}` and each line should be separated 
 ## Examples
 Here are some few shot examples:
 {examples}
-
 Return the facts and preferences in a markdown list format as shown above.
+If the user mentions time-sensitive information, try to infer the specific date instead of relative dates:
+- When use mentioned `Today`, try to infer the current date(YYYY/MM/DD) instead of using `Today`. Same for `Yesterday`, `Tomorrow`, `Last week`, `Next week`, `Next month`, `Next year` etc.
 
 Remember the following:
 - If the user mentions time-sensitive information, try to infer the specific date from the data.
