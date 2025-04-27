@@ -1,0 +1,189 @@
+---
+title: Livekit
+---
+> [Full Code](https://github.com/memodb-io/memobase/tree/dev/assets/tutorials/livekit%2Bmemobase)
+
+Memobase can be used to Voice Agent for many use cases, *e.g.* AI Companion, customer support, etc.
+This document gives a code breakdown of how to build a Voice Agent using Memobase and Livekit.
+
+## Setup
+
+1. Go to [Memobase](https://www.memobase.io/en) for your Memobase API Key or launch [a local server](../../../src/server/readme.md)
+2. Make sure to have a Livekit and Deepgram account. You can find these variables `LIVEKIT_URL` , `LIVEKIT_API_KEY` and `LIVEKIT_API_SECRET` from [LiveKit Cloud Console](https://cloud.livekit.io/) and for more information you can refer this website [LiveKit Documentation](https://docs.livekit.io/home/cloud/keys-and-tokens/). For `DEEPGRAM_API_KEY` you can get from [Deepgram Console](https://console.deepgram.com/) refer this website [Deepgram Documentation](https://developers.deepgram.com/docs/create-additional-api-keys) for more details.
+3. Set up the environment variables:
+
+```bash
+OPENAI_API_KEY=your_openai_api_key
+DEEPGRAM_API_KEY=your_deepgram_api_key
+LIVEKIT_URL=your_livekit_url
+LIVEKIT_API_KEY=your_livekit_api_key
+LIVEKIT_API_SECRET=your_livekit_api_secret
+MEMOBASE_URL=https://api.memobase.io
+MEMOBASE_API_KEY=your_memobase_api_key
+```
+4. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+
+## Code Breakdown
+Full code is available [here](https://github.com/memodb-io/memobase/tree/dev/assets/tutorials/livekit%2Bmemobase/livekit_example.py). We're using [livekit 1.0 SDK](https://docs.livekit.io/agents/build/).
+
+The main code is pretty simple, livekit offers a `Agent` class to contorl the behavior of Voice Agent.
+Memobase needs toreceive the current chat history and modify the system prompt to inject the user information.
+
+First we need to do some setup work:
+```python
+import os
+import logging
+import pickle
+from pathlib import Path
+from typing import AsyncIterable
+from collections.abc import Iterable
+from dataclasses import dataclass
+from dotenv import load_dotenv
+
+from livekit.agents import (
+    JobContext,
+    WorkerOptions,
+    cli,
+    RunContext,
+    function_tool,
+    RoomInputOptions,
+    Agent,
+    AgentSession,
+    llm,
+    ModelSettings,
+)
+from livekit.plugins import openai, silero, deepgram, noise_cancellation
+from livekit.plugins.turn_detector.multilingual import MultilingualModel
+from memobase import AsyncMemoBaseClient, MemoBaseClient, User, ChatBlob
+from memobase.utils import string_to_uuid
+
+load_dotenv()
+mb_client = AsyncMemoBaseClient(
+    api_key=os.getenv("MEMOBASE_API_KEY"), project_url=os.getenv("MEMOBASE_URL")
+)
+```
+We initialized the Memobase client from env. 
+
+Then we inherit the livekit `Agent` class:
+```python   
+class RAGEnrichedAgent(Agent):
+    """
+    An agent that can answer questions using RAG (Retrieval Augmented Generation).
+    """
+    def __init__(self) -> None:
+        """Initialize the RAG-enabled agent."""
+        super().__init__(
+            instructions="You are a warm-hearted partner.You can remember past interactions and use them to inform your answers.",
+        )
+        self.user_name = os.getenv("MEMOBASE_USER_NAME", "test user")
+        self.chat_log_index = 1
+```
+In init method, we obtain the possible user name first, the user name will be used in Memobase to identify the user.
+
+Then, we override the `llm_node` method(which will be called before the messages are sent to the LLM):
+```python
+async def llm_node(
+        self,
+        chat_ctx: llm.ChatContext,
+        tools: list[llm.FunctionTool],
+        model_settings: ModelSettings,
+    ) -> AsyncIterable[llm.ChatChunk]:
+        assert await mb_client.ping(), "Memobase is not reachable"
+        user = await mb_client.get_or_create_user(string_to_uuid(self.user_name))
+
+        # If we need to insert new messages.
+        if len(chat_ctx.items) > self.chat_log_index:
+            need_to_update = chat_ctx.items[
+                self.chat_log_index : len(chat_ctx.items) - 1
+            ]
+            if len(need_to_update):
+                b = ChatBlob(
+                    messages=[
+                        {
+                            "role": m.role,
+                            "content": m.content[0],
+                        }
+                        for m in need_to_update
+                        if m.role in ["user", "assistant"]
+                    ]
+                )
+                await user.insert(b)
+                await user.flush()
+                self.chat_log_index = len(chat_ctx.items) - 1
+        rag_context: str = await user.context(max_token_size=500)
+        chat_ctx.add_message(content=rag_context, role="system")
+        logger.info(f"Memobase context: {rag_context}")
+        return Agent.default.llm_node(self, chat_ctx, tools, model_settings)
+```
+In this method, we first get the user from Memobase for inserting messages and getting memories.
+We first check if there're new messages from the last time we inserted messages.
+If there are, we insert them into Memobase.
+
+Then we get the context from Memobase and add it to the system prompt.
+Finally, we call the default `llm_node` method to get the response from the LLM.
+
+The context will look like this:
+```
+<memory>
+# Below is the user profile:
+- basic_info::name: Gus
+- interest::sports: User likes to go hiking
+
+# Below is the latest events of the user:
+...
+</memory>
+Please provide your answer using the information within the <memory> tag at the appropriate time.
+```
+Memobase has some types of memories, *e.g.* [User Profile](/features/profile), [User Event](/features/event), etc.
+In here, we called the [Context API](/features/context) in Memobase to pack all types of memories in a prompt.
+
+At last, we need to build the entrypoint for livekit:
+```python
+async def entrypoint(ctx: JobContext):
+    """Main entrypoint for the agent."""
+    await ctx.connect()
+
+    session = AgentSession(
+        stt=deepgram.STT(),
+        llm=openai.LLM(model="gpt-4o"),
+        tts=openai.TTS(
+            instructions="You are a helpful assistant with a pleasant voice.",
+            voice="ash",
+        ),
+        turn_detection=MultilingualModel(),
+        vad=silero.VAD.load(),
+    )
+
+    await session.start(
+        agent=RAGEnrichedAgent(),
+        room=ctx.room,
+        room_input_options=RoomInputOptions(
+            noise_cancellation=noise_cancellation.BVC(),
+        ),
+    )
+
+
+if __name__ == "__main__":
+    cli.run_app(WorkerOptions(entrypoint_fnc=entrypoint))
+```
+
+
+## Run the code
+First you need to download the necessary files to run livekit in your local machine:
+```bash
+python livekit_example.py download-files
+```
+Then you can start to chat with the agent:
+```bash
+python livekit_example.py console
+```
+You can talk about yourself, like your name, your favorite sports, etc.
+The agent will remember these information.
+
+You can then start a new chat console to see if the agent can remember you.
+
+

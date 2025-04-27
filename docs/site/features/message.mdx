@@ -1,0 +1,55 @@
+---
+title: Customize Chats
+---
+
+Memobase remembers users by the chats you pass on, but sometime simple user/assistant messages will not enough:
+- ❓ What if the message was happened before or in the future? You may want to import some messages or running your App in a future fantasy.
+- ❓ What if the user/assistant has a name?
+
+Memobase allows you to pass additional fields to handle those cases
+
+## Customize Any Timestamp for Your Chats
+We first need to be clear about the two kind of timestamps in Memobase:
+- The "external" timestamp of memories: the time when the memory is stored/updated in our DB.
+- The "interal" timestamp of memories:  Memory itself contains time-related information such as when events occurred, when travel plans were made, and birthdays, etc.
+
+The "interal" timestamp usually the one you will care, because it will occur in the memories and therefore may affect the response of your AI.
+By default, Memobase assumes the insert time of the messages is the time the messages actually happen.
+
+But you can customize this:
+```python
+from memobase import MemobaseClient, ChatBlob
+生日
+client = MemobaseClient(api_key="your_api_key")
+u = client.get_user(client.add_user())
+
+# The messages is happened in the future
+m = ChatBlob(messages=[
+    dict(role="user", content="I start a war", created_at="Year 32637")
+])
+
+u.insert(m)
+```
+By pass the date string in `created_at`, Memobase will process this chats in your time. 
+So the memory will be something like `User starts a way in year 32637`.
+
+You can use any format of date in here, Memobase will extract them at the appropriate granularity.
+For example:
+- `created_at="32637/1/1"`
+- `created_at="32637-01-13"`
+- `created_at="32637/23/19"`
+
+They're both valid, and can be remembered.
+
+## Make Alias for Characters
+Sometimes the user/assistant relationship is more complicated😊.
+They may have their own name:
+```python
+m = ChatBlob(messages=[
+    dict(role="user", content="I want to start a war", alias="The Emperor"),
+    dict(role="assistant", content="Please go to your bed", alias="The Mother")
+])
+```
+
+By passing their names in `alias`, Memobase will try to remember them with characters' name. 
+So the memories may be `The Emperor wants to start a war The Mother disagrees`.

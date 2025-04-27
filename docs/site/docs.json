@@ -42,6 +42,7 @@
                   "features/event/event_search"
                 ]
               },
+              "features/message",
               "features/context"
             ]
           },
@@ -62,10 +63,25 @@
         ]
       },
       {
+        "tab": "Examples",
+        "groups": [
+          {
+            "group": "Templates",
+            "icon": "lightbulb",
+            "pages": [
+              "templates/livekit",
+              "templates/ollama",
+              "templates/openai"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "API Reference",
         "groups": [
           {
             "group": "API Reference",
+            "icon": "plug",
             "pages": [
               "api-reference/overview",
               {
