@@ -16,15 +16,28 @@
 
 ## Get started
 
-> [!NOTE]
->
-> You must fill the OpenAI API Key in `llm_api_key` of `config.yaml`
->
-> Or you can change `llm_base_url` to any OpenAI-SDK-Compatible service(via [vllm](https://github.com/vllm-project/vllm), [Ollama](../../assets/tutorials/ollama+memobase/readme.md),...)
->
-> Alternatively, you can set `llm_api_key` and `llm_base_url` using environment variables `MEMOBASE_LLM_API_KEY` and `MEMOBASE_LLM_BASE_URL`
+### Setup
+
+[**config.yaml**](https://docs.memobase.io/references/full)
+
+Memobase uses a single  `config.yaml` to initialize the server. It contains the configs of:
+
+- LLM: `llm_base_url`, `llm_api_key`, `best_llm_model`,...
+- Embedding: `enable_event_embedding`, `embedding_api_key`...
+- Memory: `max_pre_profile_token_size`, `max_profile_subtopics`, `additional_user_profiles`...
+
+By default, Memobase enables user profile and event memory with filter ability. That means running a Memobase server requires you to have below things:
+
+- **LLM API**: You must fill the OpenAI API Key in `llm_api_key` of `config.yaml`.Or you can change `llm_base_url` to any OpenAI-SDK-Compatible service(via [vllm](https://github.com/vllm-project/vllm), [Ollama](../../assets/tutorials/ollama+memobase/readme.md),...). Alternatively, you can set `llm_api_key` and `llm_base_url` using environment variables `MEMOBASE_LLM_API_KEY` and `MEMOBASE_LLM_BASE_URL`
+- **Embedding API**: Memobase supports OpenAI-Compatible SDK and [Jina Embedding](https://jina.ai/models/jina-embeddings-v3/). Memobase uses embedding API to retrieve related user events. If you don't have a embedding API, you can set `enable_event_embedding: false` in `config.yaml`
 
 
+
+**environment variables**
+
+Check `./.env.example` for necessary vars. You can configure the running port and access token in here.  Also, anything in `config.yaml` can be override in env([doc](https://docs.memobase.io/references/full#environment-variable-overrides)), just starts with `MEMOBASE_`
+
+### Launch
 
 1. Make sure you have [docker-compose](https://docs.docker.com/compose/install/) installed.
 
@@ -37,7 +50,7 @@
    ```
 
    1. `.env` contains the service configs, like running port, secret token...
-   2. `config.yaml` contains the Memobase configs, like LLM model, profile slots. [docs](https://docs.memobase.io/features/customization/full)
+   2. `config.yaml` contains the Memobase configs, like LLM model, profile slots. [docs](https://docs.memobase.io/references/full)
 
 3. Run `docker-compose build && docker-compose up` to start the services.
 
