@@ -24,6 +24,9 @@
     </a>
   </p>
   <p>
+    <a href="https://app.memobase.io/playground">
+       <img src="https://img.shields.io/badge/Memobase-Playground-blue">
+    </a>
     <a href="https://discord.gg/YdgwU4d9NB">
       <img src="https://dcbadge.limes.pink/api/server/YdgwU4d9NB?style=flat">
     </a>
@@ -32,6 +35,7 @@
     </a>
   </p>
 </div>
+
 
 
 
@@ -103,6 +107,8 @@ Memobase can provide you structured profiles of users, check out the [result](./
 
 
 ## Get Started
+
+> Try our [playground](https://app.memobase.io/playground) to see the memories in action
 
 1. [Start your Memobase server locally](./src/server/readme.md). If you don't want to be bothered, Memobase Cloud provides [a free tier](https://www.memobase.io/en/login) enough for your testing
 2. You should have the below two things to continue:
