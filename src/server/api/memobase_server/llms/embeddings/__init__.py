@@ -17,6 +17,9 @@ assert (
 
 
 async def check_embedding_sanity():
+    if not CONFIG.enable_event_embedding:
+        LOG.info("Event embedding is disabled, skipping sanity check.")
+        return
     r = await get_embedding(DEFAULT_PROJECT_ID, ["Hello, world!"])
     if not r.ok():
         raise ValueError(
