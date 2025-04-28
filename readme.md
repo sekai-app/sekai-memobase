@@ -232,6 +232,7 @@ Checkout the detail params [here](https://docs.memobase.io/api-reference/prompt/
 - Checkout the [quickstart script](./assets/quickstart.py) for more details
 - You may want to explore the [customization](https://docs.memobase.io/features/profile/profile) of Memobase to make sure the system works as your expectation.
 - If you want to test Memobase on your own data, we offer a [script](./docs/experiments/chat_sessions) that allows you to set multiple chat sessions and see how the memory grows.
+- See our [example documents](https://docs.memobase.io/templates/livekit) to find anything may help you.
 
 
 
