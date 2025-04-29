@@ -56,7 +56,6 @@ def event_embedding_str(event_data: EventData) -> str:
         r = f"{profile_delta_str}\n{event_tags}"
     else:
         r = f"{event_data.event_tip}\n{profile_delta_str}\n{event_tags}"
-    print(r)
     return r
 
 
