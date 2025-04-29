@@ -497,7 +497,7 @@
 				"x-code-samples": [
 					{
 						"lang": "Python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\nfrom memobase.core.types import BlobType\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nuser = memobase.get_user('user_id')\nblobs = user.get_all(BlobType.CHAT)\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\nfrom memobase.core.blob import BlobType\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nuser = memobase.get_user('user_id')\nblobs = user.get_all(BlobType.CHAT)\n",
 						"label": "Python"
 					},
 					{

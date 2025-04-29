@@ -369,7 +369,7 @@ API_X_CODE_DOCS["GET /users/blobs/{user_id}/{blob_type}"] = {
 # pip install memobase
 
 from memobase import Memobase
-from memobase.core.types import BlobType
+from memobase.core.blob import BlobType
 
 memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
@@ -1034,7 +1034,6 @@ events = u.search_event('query')
 print(events)
 """,
             "label": "Python",
-        },  
+        },
     ]
 }
-
