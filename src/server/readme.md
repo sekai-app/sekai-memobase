@@ -33,10 +33,10 @@ By default, Memobase enables user profile and event memory with filter ability. 
 
 We have some example `config.yaml` in `examplel_config`:
 
-- [`profile_for_assistant`](./example_config/profile_for_education),  [`profile_for_education`](./example_config/profile_for_education),  [`profile_for_companion`](profile_for_companion)  are three similar configs in term of structure, but for different user cases.
-- [`event_tag`](./example_config/event_tag) is a feature to tracking temporal attributes of users. [doc](https://docs.memobase.io/features/event/event_tag)
-- [`only_strict_profile`](./example_config/only_strict_profile): disable all other features, only collect the profiles you design.
-- [`jina_embedding`](./example_config/jina_embedding) uses Jina exmbedding for event search.
+- [`profile_for_assistant`](./api/example_config/profile_for_education),  [`profile_for_education`](./api/example_config/profile_for_education),  [`profile_for_companion`](./api/example_config/profile_for_companion)  are three similar configs in term of structure, but for different user cases.
+- [`event_tag`](./api/example_config/event_tag) is a feature to tracking temporal attributes of users. [doc](https://docs.memobase.io/features/event/event_tag)
+- [`only_strict_profile`](./api/example_config/only_strict_profile): disable all other features, only collect the profiles you design.
+- [`jina_embedding`](./api/example_config/jina_embedding) uses Jina exmbedding for event search.
 
 
 
