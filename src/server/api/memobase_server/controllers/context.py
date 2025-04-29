@@ -80,7 +80,7 @@ async def get_user_context(
         )
 
     # max 40 events, then truncate to max_event_token_size
-    if chats:
+    if chats and CONFIG.enable_event_embedding:
         search_query = chats[-1].content
         p = await search_user_events(
             user_id,
