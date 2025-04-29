@@ -272,7 +272,7 @@ class AsyncUser:
         params = f"?query={query}&topk={topk}&similarity_threshold={similarity_threshold}&time_range_in_days={time_range_in_days}"
         r = unpack_response(
             await self.project_client.client.get(
-                f"/users/event/{self.user_id}/search{params}"
+                f"/users/event/search/{self.user_id}{params}"
             )
         )
         return [UserEventData.model_validate(e) for e in r.data["events"]]
