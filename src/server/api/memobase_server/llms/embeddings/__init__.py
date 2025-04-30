@@ -1,6 +1,7 @@
 import time
 from typing import Literal
 import numpy as np
+from traceback import format_exc
 from ...env import CONFIG, LOG
 from ...models.utils import Promise
 from ...models.response import CODE
@@ -46,7 +47,7 @@ async def get_embedding(
         results = await FACTORIES[CONFIG.embedding_provider](model, texts, phase)
         latency_ms = (time.time() - start_time) * 1000
     except Exception as e:
-        LOG.error(f"Error in get_embedding: {e}")
+        LOG.error(f"Error in get_embedding: {e} {format_exc()}")
         return Promise.reject(CODE.SERVICE_UNAVAILABLE, f"Error in get_embedding: {e}")
     embedding_tokens = len(get_encoded_tokens("\n".join(texts)))
     telemetry_manager.increment_counter_metric(

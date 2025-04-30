@@ -210,5 +210,6 @@ async def search_user_events(
 
         # Create UserEventsData with the events
         user_events_data = UserEventsData(events=user_events)
+        LOG.info(f"Event Query: {query}")
 
     return Promise.resolve(user_events_data)

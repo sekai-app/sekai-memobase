@@ -23,6 +23,7 @@ async def jina_embedding(
             "truncate": True,
             "dimensions": CONFIG.embedding_dim,
         },
+        timeout=20,
     )
     if response.status_code != 200:
         raise ExternalAPIError(f"Failed to embed texts: {response.text}")
