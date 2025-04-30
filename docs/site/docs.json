@@ -150,6 +150,11 @@
     "global": {
       "anchors": [
         {
+          "anchor": "Playground",
+          "href": "https://app.memobase.io/playground",
+          "icon": "play"
+        },
+        {
           "anchor": "Open Source",
           "href": "https://github.com/memodb-io/memobase",
           "icon": "github"
@@ -158,6 +163,11 @@
           "anchor": "Community",
           "href": "https://discord.gg/YdgwU4d9NB",
           "icon": "discord"
+        },
+        {
+          "anchor": "Support",
+          "href": "mailto:contact@memobase.io",
+          "icon": "envelope"
         }
       ]
     }

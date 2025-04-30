@@ -42,15 +42,17 @@ p = u.profile(chats = [
 
 print(p)
 ```
-```markdown Output
-## Return Profiles
-- contact_info::city:: Shanghai
-- interest::foods:: Chinese
-- health::allergies:: peanuts
-
-## Chat
-*User*: Find some restaurants for me
-*Assistant*: Great! I found some restaurants in Shanghai... 
-I noticed you are allergic to peanuts, be careful on those restaurants:...
+```json Output
+{
+  "contact_info": {
+    "city": "Shanghai",
+  },
+  "interest": {
+    "foods": "Chinese",
+  },
+  "health": {
+    "allergies": "peanuts",
+  }
+}
 ```
 </CodeGroup>
