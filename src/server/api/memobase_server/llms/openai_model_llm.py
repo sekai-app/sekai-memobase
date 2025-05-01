@@ -18,7 +18,8 @@ async def openai_complete(
     response = await openai_async_client.chat.completions.create(
         model=model, messages=messages, timeout=120, **kwargs
     )
+    cached_tokens = getattr(response.usage.prompt_tokens_details, "cached_tokens", None)
     LOG.info(
-        f"Cached {prompt_id} {model} {response.usage.prompt_tokens_details.cached_tokens}/{response.usage.prompt_tokens}"
+        f"Cached {prompt_id} {model} {cached_tokens}/{response.usage.prompt_tokens}"
     )
     return response.choices[0].message.content
