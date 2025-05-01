@@ -1,6 +1,7 @@
 name: test&build
 
 on:
+  merge_group:
   workflow_dispatch:
   push:
     branches:
