@@ -11,7 +11,8 @@ async def openai_embedding(
     response = await openai_async_client.embeddings.create(
         model=model, input=texts, encoding_format="float"
     )
-    LOG.info(
-        f"OpenAI embedding, {model}, {phase}, {response.usage.prompt_tokens}/{response.usage.total_tokens}"
-    )
+
+    prompt_tokens = getattr(response.usage, "prompt_tokens", None)
+    total_tokens = getattr(response.usage, "total_tokens", None)
+    LOG.info(f"OpenAI embedding, {model}, {phase}, {prompt_tokens}/{total_tokens}")
     return np.array([dp.embedding for dp in response.data])
