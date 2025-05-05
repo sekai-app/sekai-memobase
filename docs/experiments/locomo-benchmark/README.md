@@ -9,7 +9,7 @@ This project contains the code of running benchmark results on [Locomo dataset](
 - zep
 - basic rag
 - naive LLM
-- Memobase
+- Memobase (version [0.0.32-beta1](https://github.com/orgs/memodb-io/packages/container/memobase/408325731?tag=0.0.32-beta1) or later)
 
 ## Result
 
