@@ -47,6 +47,8 @@ if USE_CORS:
         allow_headers=["*"],
     )
 
+NO_AUTH = {"/api/v1/healthcheck"}
+
 
 def custom_openapi():
     if app.openapi_schema:
@@ -70,6 +72,10 @@ def custom_openapi():
         }
     }
     openapi_schema["security"] = [{"BearerAuth": []}]
+    for path in openapi_schema["paths"]:
+        if path in NO_AUTH:
+            for method in openapi_schema["paths"][path]:
+                openapi_schema["paths"][path][method]["security"] = []
 
     app.openapi_schema = openapi_schema  # type: ignore
     return app.openapi_schema
