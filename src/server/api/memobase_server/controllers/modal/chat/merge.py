@@ -144,9 +144,9 @@ async def handle_profile_merge_or_valid(
             LOG.info(f"Invalide profile: {KEY}::{profile_content}, abort it")
         else:
             LOG.info(
-                f"Invalide profile: {runtime_profile.attributes}, delete {runtime_profile.id}"
+                f"Invalide merge: {runtime_profile.attributes}, {profile_content}, abort it"
             )
-            session_merge_validate_results["delete"].append(runtime_profile.id)
+            # session_merge_validate_results["delete"].append(runtime_profile.id)
         return Promise.resolve(None)
     else:
         LOG.warning(f"Invalid action: {update_response['action']}")
