@@ -24,6 +24,7 @@ async def get_user_context(
 ) -> Promise[ContextData]:
     assert 0 < profile_event_ratio <= 1, "profile_event_ratio must be between 0 and 1"
     max_profile_token_size = int(max_token_size * profile_event_ratio)
+    add_query_context = None
     # max_event_token_size = max_token_size - max_profile_token_size
 
     p = await get_project_profile_config(project_id)
@@ -47,7 +48,8 @@ async def get_user_context(
                 # max_filter_num=topk,
             )
             if p.ok():
-                total_profiles.profiles = p.data()
+                total_profiles.profiles = p.data()["profiles"]
+                add_query_context = p.data()["reason"]
         user_profiles = total_profiles
         use_profiles = await truncate_profiles(
             user_profiles,
@@ -80,6 +82,8 @@ async def get_user_context(
     # max 40 events, then truncate to max_event_token_size
     if chats and CONFIG.enable_event_embedding:
         search_query = chats[-1].content
+        # if add_query_context:
+        #     search_query = f"{add_query_context}; {search_query}"
         p = await search_user_events(
             user_id,
             project_id,

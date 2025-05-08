@@ -1,4 +1,7 @@
+import json
+import re
 from pydantic import ValidationError
+from typing import TypedDict
 from ...models.utils import Promise
 from ...models.database import GeneralBlob, UserProfile
 from ...models.blob import OpenAICompatibleMessage
@@ -9,6 +12,21 @@ from ...prompts import pick_related_profiles as pick_prompt
 from ...llms import llm_complete
 
 
+class FilterProfilesResult(TypedDict):
+    reason: str | None
+    profiles: list[UserProfile]
+
+
+JSON_BODY_REGEX = re.compile(r"({[\s\S]*})")
+
+
+def try_json_reason(content: str) -> str | None:
+    try:
+        return json.loads(JSON_BODY_REGEX.search(content).group(1))["reason"]
+    except Exception:
+        return None
+
+
 async def filter_profiles_with_chats(
     project_id: str,
     profiles: UserProfilesData,
@@ -17,7 +35,7 @@ async def filter_profiles_with_chats(
     max_value_token_size: int = 10,
     max_previous_chats: int = 4,
     max_filter_num: int = 10,
-) -> Promise[list[UserProfile]]:
+) -> Promise[FilterProfilesResult]:
     """Filter profiles with chats"""
     if not len(chats) or not len(profiles.profiles):
         return Promise.reject(CODE.BAD_REQUEST, "No chats or profiles to filter")
@@ -51,8 +69,8 @@ async def filter_profiles_with_chats(
     if not r.ok():
         LOG.error(f"Failed to pick related profiles: {r.msg()}")
         return r
-    print(chats, r.data())
     found_ids = find_list_int_or_none(r.data())
+    reason = try_json_reason(r.data())
     if found_ids is None:
         LOG.error(f"Failed to pick related profiles: {r.data()}")
         return Promise.reject(
@@ -60,4 +78,6 @@ async def filter_profiles_with_chats(
         )
     ids = [i for i in found_ids if i < len(topics_index)]
     profiles = [profiles.profiles[topics_index[i]["index"]] for i in ids]
-    return Promise.resolve(profiles)
+    print(r.data())
+    LOG.info(f"Filter profiles with chats: {reason}, {found_ids}")
+    return Promise.resolve({"reason": reason, "profiles": profiles})

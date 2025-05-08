@@ -66,7 +66,7 @@ async def get_user_profile(
             # max_filter_num=topk,
         )
         if p.ok():
-            total_profiles.profiles = p.data()
+            total_profiles.profiles = p.data()["profiles"]
     p = await controllers.profile.truncate_profiles(
         total_profiles,
         prefer_topics=prefer_topics,

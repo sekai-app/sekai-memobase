@@ -51,7 +51,7 @@ Q: What's the weather forecast for tomorrow?
 ]
 
 
-PROMPT = """You are a professional journalist, and your task is to select user's memos that are needed by the last user query.
+PROMPT = """You are a professional journalist, and your task is to select user's memos to enrich the conversation.
 
 ## Input Template
 Below is the input template:
@@ -71,8 +71,8 @@ Q: ... # last query
 ```
 <memos> contains all the user's memos in markdown orderlist, the number bullet is the memo ID.
 For each memo, it starts with a topic and subtopic indicating the category of the memo, then a truncated content of memo.
-Jude the memo by mainly by its topic/subtopic, and use the truncated content as a reference.
-Find the user'smemos that are needed by the last user query in <context>.
+Find the user's memos that are helpful to the last user query in <context>.
+The precision is not the first priority, but the memos should be helpful to the conversation.
 
 ## Output
 You need to think the helpful memos first, then output the memo ids in a plain JSON object.
@@ -83,12 +83,6 @@ You need to think the helpful memos first, then output the memo ids in a plain J
 where NEED_ID_I is the i-th needed memo id.
 You should first think what kind of memos will help the future conversation, and then select the related memos if any.
 You may select up to {max_num} memos, if no memo is needed, just return an empty list(i.e. `{{"reason": "...", "ids": []}}`).
-
-
-## Examples
-{examples}
-Above are mock examples, understand the logic and format of examples.
-Then ignore their ids and focus on later <memos> and <context> that user gives to you in the input.
 
 ## Requirements
 - Maximum number of memos to select is {max_num}, never exceed it.

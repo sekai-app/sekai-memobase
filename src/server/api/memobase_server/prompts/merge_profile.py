@@ -153,6 +153,7 @@ The topic description may contain some requirements for the memo:
 - The value should only record certain information, for example, the user's name, email, long-term goal of study, etc.
 You need to judge whether the topic's value matches the description.
 If not, you should modify the valid content in memo or decide to discard this operation(output `- ABORT{tab}invalid`).
+!! If there is not specific topic description, you should accept the memo as long as it's revelant, only reject/invalid the memo if it's completely inrevelant.
 <example>
 {example_validate}
 </example>
@@ -174,18 +175,23 @@ Today is [today]
 </template>
 - [update_instruction], [topic_description], [old_memo] may be empty. When empty, a `NONE` will be placed.
 - [today] is the current date in format YYYY-MM-DD.
-- Pay attention to and keep the time annotation in the new and old memos (e.g., XXX[mentioned on 2025/05/05]).
+- Pay attention to and keep the time annotation in the new and old memos (e.g., XXX[mentioned on 2025, happend at 2023]).
 
 ## Output requirements
 Think step by step before memo update.
 Based on the above instructions, you need to think step by step and output your final result in the following format:
-Output format:
-### Output Format
-<template>
-THOUGHT
+```
+YOUR THOUGHT
 ---
 - UPDATE{tab}MEMO
-</template>
+```
+Or
+```
+YOUR THOUGHT
+---
+- ABORT{tab}invalid
+```
+
 You first need to think about the requirements and if the topic's value is suitable for this topic step by step.
 Then output your result on topic's value after `---` .
 ### RESULT
@@ -193,6 +199,7 @@ If the topic can be revised to match the description's requirements, output:
 - UPDATE{tab}MEMO
 the new line must start with `- UPDATE{tab}`, then output the revised value of the topic
 If the memo is totally invalid, just output `- ABORT{tab}invalid` after `---`
+If there is not specific topic description, you should accept the memo as long as it's revelant, only reject/invalid the memo if it's completely inrevelant.
 
 Make sure you understand the topic description(In `### Topic Description` section) if it exists and update the final memo accordingly.
 Understand the memos wisely, you are allowed to infer the information from the new memo and old memo to decide the final memo.
