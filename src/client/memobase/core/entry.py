@@ -219,11 +219,13 @@ class User:
         )
         return True
 
-    def event(self, topk=10, max_token_size=None, need_summary=False) -> list[UserEventData]:
-        params = f"?topk={topk}"  
-        if max_token_size is not None:  
-            params += f"&max_token_size={max_token_size}"  
-        if need_summary:  
+    def event(
+        self, topk=10, max_token_size=None, need_summary=False
+    ) -> list[UserEventData]:
+        params = f"?topk={topk}"
+        if max_token_size is not None:
+            params += f"&max_token_size={max_token_size}"
+        if need_summary:
             params += f"&need_summary=true"
         r = unpack_response(
             self.project_client.client.get(f"/users/event/{self.user_id}{params}")
@@ -294,7 +296,7 @@ class User:
                     OpenAICompatibleMessage(**c)
                 except ValidationError as e:
                     raise ValueError(f"Invalid chat message: {e}")
-            chats_query = f"&chats_str={json.dumps(chats)}"
+            chats_query = f"&chats_str={json.dumps(chats, ensure_ascii=False)}"
             params += chats_query
         if event_similarity_threshold:
             params += f"&event_similarity_threshold={event_similarity_threshold}"
