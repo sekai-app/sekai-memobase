@@ -5,53 +5,53 @@ ADD_KWARGS = {
     "prompt_id": "pick_related_profiles",
 }
 
-EXAMPLES = [
-    {
-        "memos": """<memos>
-0. basic_info, age, 25
-1. basic_info, name, Lisa
-2. health, allergies, peanuts and shellfish
-3. dietary, restrictions, vegetarian
-4. health, medication, antihistamines
-5. dietary, preferences, spicy food
-6. work, position, Graphic Designer
-7. technology, devices, MacBook Pro and iPhone
-8. work, company, Memobase
-9. technology, software, Photoshop and Illustrator
-10. education, university, Stanford
-11. education, degree, Physics
-</memos>""",
-        "examples": [
-            {
-                "context": """<context>
-Q: Hello!
-</context>""",
-                "output": '{"reason": "user is starting a new conversation, having some backgrounds is helpful for later", "ids": [0,1]}',
-            },
-            {
-                "context": """<context>
-Q: What's your opinion on the latest AI tools?
-</context>""",
-                "output": '{"reason": "user work and education background is helpful when choosing AI tools", "ids": [9,6,7,11]}',
-            },
-            {
-                "context": """<context>
-Q: How do I reset my password?
-</context>""",
-                "output": '{"reason": "user devices and platforms are helpful when resetting password", "ids": [7]}',
-            },
-            {
-                "context": """<context>
-Q: What's the weather forecast for tomorrow?
-</context>""",
-                "output": '{"reason": "Location is needed for weather, working company and college can be used to guess the location", "ids": [9,10]}',
-            },
-        ],
-    },
-]
+# EXAMPLES = [
+#     {
+#         "memos": """<memos>
+# 0. basic_info, age, 25
+# 1. basic_info, name, Lisa
+# 2. health, allergies, peanuts and shellfish
+# 3. dietary, restrictions, vegetarian
+# 4. health, medication, antihistamines
+# 5. dietary, preferences, spicy food
+# 6. work, position, Graphic Designer
+# 7. technology, devices, MacBook Pro and iPhone
+# 8. work, company, Memobase
+# 9. technology, software, Photoshop and Illustrator
+# 10. education, university, Stanford
+# 11. education, degree, Physics
+# </memos>""",
+#         "examples": [
+#             {
+#                 "context": """<context>
+# Q: Hello!
+# </context>""",
+#                 "output": '{"reason": "user is starting a new conversation, having some backgrounds is helpful for later", "ids": [0,1]}',
+#             },
+#             {
+#                 "context": """<context>
+# Q: What's your opinion on the latest AI tools?
+# </context>""",
+#                 "output": '{"reason": "user work and education background is helpful when choosing AI tools", "ids": [9,6,7,11]}',
+#             },
+#             {
+#                 "context": """<context>
+# Q: How do I reset my password?
+# </context>""",
+#                 "output": '{"reason": "user devices and platforms are helpful when resetting password", "ids": [7]}',
+#             },
+#             {
+#                 "context": """<context>
+# Q: What's the weather forecast for tomorrow?
+# </context>""",
+#                 "output": '{"reason": "Location is needed for weather, working company and college can be used to guess the location", "ids": [9,10]}',
+#             },
+#         ],
+#     },
+# ]
 
 
-PROMPT = """You are a professional journalist, and your task is to select user's memos to enrich the conversation.
+PROMPT = """You are a professional journalist, and your task is to select all possible user's memos to enrich the conversation.
 
 ## Input Template
 Below is the input template:
@@ -70,25 +70,21 @@ Q: ... # last query
 </context>
 ```
 <memos> contains all the user's memos in markdown orderlist, the number bullet is the memo ID.
-For each memo, it starts with a topic and subtopic indicating the category of the memo, then a truncated content of memo.
-Find the user's memos that are helpful to the last user query in <context>.
-The precision is not the first priority, but the memos should be helpful to the conversation.
+Find the memos that will enrich the conversation directly/indirectly.
 
 ## Output
-You need to think the helpful memos first, then output the memo ids in a plain JSON object.
+You need to think how to enrich the conversation, then output the memo IDs in a plain JSON object.
 ### Format
 ```output
 {{"reason": "YOUR THINKING","ids": [NEED_ID_0,NEED_ID_1,...]}}
 ```
+First infer from the context what kind of topics will help the conversation in "reason", then select the all possible memos IDS in "ids"
 where NEED_ID_I is the i-th needed memo id.
-You should first think what kind of memos will help the future conversation, and then select the related memos if any.
-You may select up to {max_num} memos, if no memo is needed, just return an empty list(i.e. `{{"reason": "...", "ids": []}}`).
+You may select up to {max_num} memos.
 
 ## Requirements
-- Maximum number of memos to select is {max_num}, never exceed it.
-- Deeply understand the current context, and try to select memos that will help to answer the user query in anyway.
-- Just return an empty list when current context is a plain instruction or requirment without any personal info needed. 
-- No explanation or any other words, just return a plain JSON object with the format above ({{"reason": str,"ids": list[int]}})
+- Deeply understand the current context, and try to select possible memos that will enrich the conversation.
+- Return a plain JSON object with the format above ({{"reason": str,"ids": list[int]}})
 - Don't select semantically duplicated memos, i.e. if a memo is already included in another memo, don't select it.
 """
 
@@ -96,7 +92,7 @@ You may select up to {max_num} memos, if no memo is needed, just return an empty
 def get_prompt(max_num: int) -> str:
     return PROMPT.format(
         max_num=max_num,
-        examples=pack_examples(),
+        # examples=pack_examples(),
     )
 
 
