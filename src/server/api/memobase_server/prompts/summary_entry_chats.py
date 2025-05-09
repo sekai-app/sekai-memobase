@@ -18,6 +18,9 @@ You will be given a chats between a user and an assistant.
     Input: `[2024/04/30] user: I bought a new car last week!`
     Output: `user bought a new car. [mention 2024/04/30, happen at a week before 2024/04/30]`
     Explain: because you don't know the exact date.
+    Input: `[...] user: I bought a new car last week!`
+    Output: `user bought a new car.`
+    Explain: because you don't know the exact date, so don't attach any date.
 
 ### Important Info
 Below is the topics/subtopics you should log from the chats.

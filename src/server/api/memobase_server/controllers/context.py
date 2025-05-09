@@ -49,7 +49,7 @@ async def get_user_context(
             )
             if p.ok():
                 total_profiles.profiles = p.data()["profiles"]
-                add_query_context = p.data()["reason"]
+                add_query_context = p.data()
         user_profiles = total_profiles
         use_profiles = await truncate_profiles(
             user_profiles,
@@ -82,8 +82,15 @@ async def get_user_context(
     # max 40 events, then truncate to max_event_token_size
     if chats and CONFIG.enable_event_embedding:
         search_query = chats[-1].content
-        # if add_query_context:
-        #     search_query = f"{add_query_context}; {search_query}"
+        if add_query_context:
+            filter_profiles = add_query_context["profiles"]
+            profoile_q = "\n".join(
+                [
+                    f"- {fp.attributes['topic']}::{fp.attributes['sub_topic']}"
+                    for fp in filter_profiles
+                ]
+            )
+            search_query = f"{profoile_q}\n---\n{search_query}"
         p = await search_user_events(
             user_id,
             project_id,
