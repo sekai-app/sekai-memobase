@@ -210,5 +210,8 @@
     "gtm": {
       "tagId": "GTM-PDC577XR"
     }
+  },
+  "seo": {
+    "indexing": "all"
   }
 }
