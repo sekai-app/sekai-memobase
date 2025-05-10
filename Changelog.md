@@ -4,14 +4,17 @@
 
 - `docs`: Locomo benchmark of Memobase,mem0, zep, langmem
 - `feat`: Update algorithms for temporal memory
+- `feat`: Search context event with profiles
+- `impr`: Update entry summary/merge/pick up prompt, reducing tokens.
 
 **Changed**
 
-- 
+- `docs/API`: fix some wrong params
 
 **Fixed**
 
 - OpenAI LLM and Embedding usage logging bugs
+- 
 
 ### [0.0.31] - 2025/4/28
 
