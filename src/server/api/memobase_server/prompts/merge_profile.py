@@ -50,7 +50,7 @@ User didn't provide any birthday
             "response": """
 birthday is a unique value and the new memo doesn't provide any valuable info, so keep the old one.
 ---
-- UPDATE{tab}1999/04/30
+- ABORT{tab}invalid
 """,
         },
     ],
@@ -131,7 +131,7 @@ The old and new memo tell different parts of the same story and should be merged
 </example>
 
 ### keep the old one
-If the new memo has no information added or containing nothing useful, you should keep the old memo.
+If the new memo has no information added,  containing nothing useful or is invalid, you should keep the old memo by aborting this update(output `- ABORT{tab}invalid`)
 <example>
 {example_keep}
 </example>
@@ -161,7 +161,7 @@ If not, you should modify the valid content in memo or decide to discard this op
 ## Input formate
 Below is the input format:
 <template>
-Today is [today]
+Today is [YYYY-MM-DD]
 ## Update Instruction
 [update_instruction]
 ### Topic Description
@@ -174,7 +174,6 @@ Today is [today]
 [new_memo]
 </template>
 - [update_instruction], [topic_description], [old_memo] may be empty. When empty, a `NONE` will be placed.
-- [today] is the current date in format YYYY-MM-DD.
 - Pay attention to and keep the time annotation in the new and old memos (e.g., XXX[mentioned on 2025, happend at 2023]).
 
 ## Output requirements
@@ -200,6 +199,7 @@ If the topic can be revised to match the description's requirements, output:
 the new line must start with `- UPDATE{tab}`, then output the revised value of the topic
 If the memo is totally invalid, just output `- ABORT{tab}invalid` after `---`
 If there is not specific topic description, you should accept the memo as long as it's revelant, only reject/invalid the memo if it's completely inrevelant.
+If the memo is not formatted correctly, you should decide whether it can be fixed by revising the memo, if yes, update it, if not, abort the update.
 
 Make sure you understand the topic description(In `### Topic Description` section) if it exists and update the final memo accordingly.
 Understand the memos wisely, you are allowed to infer the information from the new memo and old memo to decide the final memo.
