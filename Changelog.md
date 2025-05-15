@@ -1,4 +1,4 @@
-### [0.0.32] - unreleased
+### [0.0.32] -2025/5/14
 
 **Added**
 
@@ -14,7 +14,8 @@
 **Fixed**
 
 - OpenAI LLM and Embedding usage logging bugs
-- 
+
+  
 
 ### [0.0.31] - 2025/4/28
 
