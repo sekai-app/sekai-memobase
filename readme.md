@@ -18,11 +18,16 @@
     <a href="https://pkg.go.dev/github.com/memodb-io/memobase/src/client/memobase-go">
       <img src="https://img.shields.io/badge/go-reference-blue?logo=go&logoColor=fff&style=flat&labelColor=2C2C2C&color=28CF8D" />
     </a>
-    <a href="https://github.com/orgs/memodb-io/packages?repo_name=memobase">
-    <img src="https://img.shields.io/github/v/tag/memodb-io/memobase">
+    <a href="./src/mcp">
+       <img src="https://img.shields.io/badge/MCP-Memobase-green">
     </a>
-  <a href="https://github.com/memodb-io/memobase/actions/workflows/publish.yaml">
+  </p>
+  <p>
+    <a href="https://github.com/memodb-io/memobase/actions/workflows/publish.yaml">
       <img src="https://github.com/memodb-io/memobase/actions/workflows/publish.yaml/badge.svg">
+    </a>
+        <a href="https://github.com/orgs/memodb-io/packages?repo_name=memobase">
+    <img src="https://img.shields.io/github/v/tag/memodb-io/memobase">
     </a>
   </p>
   <p>
@@ -37,7 +42,6 @@
     </a>
   </p>
 </div>
-
 
 
 
@@ -131,7 +135,18 @@ Memobase is building with FastAPI, Postgres and Redis, supporting request cachin
 
 ## Get Started
 
-> Try our [playground](https://app.memobase.io/playground) to see the memories in action
+> [!NOTE]
+>
+> Try [Memobase-Playground](https://github.com/memodb-io/memobase-playground), an open-source, full-stack AI Chatbot with long-term memory. [live-demo](https://app.memobase.io/playground)
+
+<div align="center">
+  <a href="https://app.memobase.io/playground">
+  <img style="border-radius: 12px; width: 512px;" src="https://github.com/user-attachments/assets/f9431519-4693-43df-aaaa-560d8f531de7">
+  </a>
+<p>Memobase Playground</p>
+</div>
+
+
 
 1. [Start your Memobase server locally](./src/server/readme.md). If you don't want to be bothered, Memobase Cloud provides [a free tier](https://www.memobase.io/en/login) enough for your testing
 2. You should have the below two things to continue:
@@ -146,9 +161,11 @@ Memobase is building with FastAPI, Postgres and Redis, supporting request cachin
 
 > [!TIP]
 >
-> You can just run this equivalent [quickstart script](./assets/quickstart.py)
+> - You can just run this equivalent [quickstart script](./assets/quickstart.py)
 >
-> Or you can keep things super easy by using [OpenAI SDK with Memobase.](https://docs.memobase.io/practices/openai), [Ollama with Memobase](./assets/tutorials/ollama+memobase)
+> - Or you can keep things super easy by using [OpenAI SDK with Memobase.](https://docs.memobase.io/practices/openai), [Ollama with Memobase](./assets/tutorials/ollama+memobase).
+>
+> - Looking for [MCP](https://github.com/modelcontextprotocol)? Memobase-MCP is also [available](./src/mcp)
 
 ### 1. Make sure you're connected
 
@@ -262,6 +279,7 @@ Checkout the detail params [here](https://docs.memobase.io/api-reference/prompt/
 - You may want to explore the [customization](https://docs.memobase.io/features/profile/profile) of Memobase to make sure the system works as your expectation.
 - If you want to test Memobase on your own data, we offer a [script](./docs/experiments/chat_sessions) that allows you to set multiple chat sessions and see how the memory grows.
 - See our [integrations](https://docs.memobase.io/templates/livekit) to find anything may help you.
+- Check [Memobase-Playground](https://github.com/memodb-io/memobase-playground), an open-source, full-stack template AI Chatbot with long-term memory. [live-demo](https://app.memobase.io/playground)
 
 
 
