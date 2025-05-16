@@ -98,10 +98,6 @@ uv run src/main.py
 
 The MCP server will essentially be run as an API endpoint that you can then connect to with config shown below.
 
-#### Stdio Transport
-
-With stdio, the MCP client iself can spin up the MCP server, so nothing to run at this point.
-
 ### Using Docker
 
 #### SSE Transport
@@ -112,15 +108,11 @@ docker run --env-file .env -p:8050:8050 memobase-mcp
 
 The MCP server will essentially be run as an API endpoint within the container that you can then connect to with config shown below.
 
-#### Stdio Transport
-
-With stdio, the MCP client iself can spin up the MCP server container, so nothing to run at this point.
-
 ## Integration with MCP Clients
 
-### SSE Configuration
+### Cursor
 
-Once you have the server running with SSE transport, you can connect to it using this configuration:
+Once you have the server running with SSE transport, you can connect to it using this configuration (edit this in `.cursor/mcp.json`):
 
 ```json
 {
