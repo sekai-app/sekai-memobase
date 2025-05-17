@@ -11,7 +11,7 @@ def en_context_prompt(profile_section: str, event_section: str) -> str:
 # Below is the latest events of the user:
 {event_section}
 </memory>
-Please provide your answer using the information within the <memory> tag at the appropriate time.
+Unless the user has relevant queries, do not actively mention those memories in the conversation.
 """
 
 
@@ -23,7 +23,7 @@ def zh_context_prompt(profile_section: str, event_section: str) -> str:
 # 以下是用户的最近事件：
 {event_section}
 </memory>
-请在适当的时候使用<memory>标签中的信息。
+除非用户有相关的需求，否则不要主动在对话中提到这些memory.
 """
 
 
