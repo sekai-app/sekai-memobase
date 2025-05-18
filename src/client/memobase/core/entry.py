@@ -250,7 +250,7 @@ class User:
         self,
         query: str,
         topk: int = 10,
-        similarity_threshold: float = 0.5,
+        similarity_threshold: float = 0.2,
         time_range_in_days: int = 7,
     ) -> list[UserEventData]:
         params = f"?query={query}&topk={topk}&similarity_threshold={similarity_threshold}&time_range_in_days={time_range_in_days}"

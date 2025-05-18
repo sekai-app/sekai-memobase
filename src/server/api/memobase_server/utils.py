@@ -182,7 +182,7 @@ def is_valid_profile_config(profile_config: str | None) -> Promise[None]:
     # check if the profile config is valid yaml
     try:
         if len(profile_config) > 65535:
-            return False
+            return Promise.reject(CODE.BAD_REQUEST, "Profile config is too long")
         ProfileConfig.load_config_string(profile_config)
         return Promise.resolve(None)
     except yaml.YAMLError as e:

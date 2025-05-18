@@ -13,12 +13,12 @@ basic_info, Age
 ## Old Memo
 User is 39 years old
 ## New Memo
-User is 40 years old
+User is 40 years old[mentioned on 2025-05-17]
 """,
             "response": """
 Age has one true value only, the old one is outdated, so replace it with the new one.
 ---
-- UPDATE{tab}User is 40 years old
+- UPDATE{tab}User is 40 years old[mentioned on 2025-05-17]
 """,
         },
     ],
@@ -27,14 +27,14 @@ Age has one true value only, the old one is outdated, so replace it with the new
             "input": """## User Topic
 interest, Food
 ## Old Memo
-Love cheese pizza
+User loves cheese pizza[mentioned on 2025-03]
 ## New Memo
-Love chicken pizza
+User loves chicken pizza[mentioned on 2025-05]; User ate chicken pizza[mentioned on 2025-05]
 """,
             "response": """
-interest of food is not exclusive, so merge the two memos.
+interest of food is not exclusive, so merge the two memos. Also, I need to keep the final memo concise.
 ---
-- UPDATE{tab}Love cheese and chicken pizza
+- UPDATE{tab}Love cheese pizza[mentioned on 2025-03] and chicken pizza[mentioned on 2025-05]
 """,
         },
     ],
@@ -98,14 +98,14 @@ Record the user's current working plans, forgive the outdated plans
 ## User Topic
 work, curent_plans
 ## Old Memo
-User need to prepare for the interview in 2025-03-21
+User need to prepare for the interview in 2025-03-21[mentioned on 2025-03-11]
 ## New Memo
-User need to develop a Memobase Playgeound App before 2025-05-01
+User need to develop a Memobase Playgeound App before 2025-05-01[mentioned on 2025-04-05]
 """,
             "response": """User can have multiple current working plans, I can merge the two plans.
 But based on the requirements, the old memo is outdated(today is 04-05, but the interview is in 03-21), so I need to discard the old memo.
 ---
-- UPDATE{tab}User need to develop a Memobase Playgeound App before 2025-05-01
+- UPDATE{tab}User need to develop a Memobase Playgeound App before 2025-05-01[mentioned on 2025-04-05]
 """,
         },
     ],
@@ -210,6 +210,8 @@ Follow the instruction mentioned below:
 - Do not make any explanations in MEMO, only output the final value related to the topic.
 - Never make up things that are not mentioned in the input.
 - If the input memos are not matching the topic description, you should output `- ABORT{tab}invalid` after `---`
+- Keep the time annotation in the new and old memos (e.g., XXX[mentioned on 2025, happend at 2023]).
+- If you decide to update, make sure the final memo is concise and no redundant information. (e.g. "User is sad; User's mood is sad" -> "User is sad")
 
 That's all, now perform your job.
 """

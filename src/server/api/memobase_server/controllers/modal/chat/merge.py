@@ -89,7 +89,6 @@ async def handle_profile_merge_or_valid(
             }
         )
         return Promise.resolve(None)
-
     r = await llm_complete(
         project_id,
         PROMPTS[USE_LANGUAGE]["merge"].get_input(
@@ -104,6 +103,8 @@ async def handle_profile_merge_or_valid(
         temperature=0.2,  # precise
         **PROMPTS[USE_LANGUAGE]["merge"].get_kwargs(),
     )
+    print(KEY, profile_content)
+    print(r.data())
     if not r.ok():
         LOG.warning(f"Failed to merge profiles: {r.msg()}")
         return r
