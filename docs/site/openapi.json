@@ -3,7 +3,7 @@
 	"info": {
 		"title": "Memobase API",
 		"summary": "APIs for Memobase, a user memory system for LLM Apps",
-		"version": "0.0.32"
+		"version": "0.0.33"
 	},
 	"servers": [
 		{
@@ -1478,11 +1478,11 @@
 						"required": false,
 						"schema": {
 							"type": "number",
-							"description": "Similarity threshold, default is 0.5",
-							"default": 0.5,
+							"description": "Similarity threshold, default is 0.2",
+							"default": 0.2,
 							"title": "Similarity Threshold"
 						},
-						"description": "Similarity threshold, default is 0.5"
+						"description": "Similarity threshold, default is 0.2"
 					},
 					{
 						"name": "time_range_in_days",
@@ -1651,7 +1651,7 @@
 						"schema": {
 							"type": "number",
 							"description": "Event similarity threshold of returned Context",
-							"default": 0.3,
+							"default": 0.2,
 							"title": "Event Similarity Threshold"
 						},
 						"description": "Event similarity threshold of returned Context"
