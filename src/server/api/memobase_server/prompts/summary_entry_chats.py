@@ -43,13 +43,10 @@ TIME is the time of this message happened, so you need to convert the date info 
 Output your logging result in Markdown unorder list format.
 For example:
 ```
-## Events
-- Jack paint a picture about his kids today.[mention 2023/1/23]
-## User Info
-- User's alias is Jack, assistant is Melinda.
-- Jack mentioned his work is software engineer in Memobase. [mention 2023/1/23]
-## Schedules
-- Jack plans to go the gym tomorrow. [mention 2023/1/23, happen at 2023/1/24]
+- Jack paint a picture about his kids today.[mention 2023/1/23] // event
+- User's alias is Jack, assistant is Melinda. // info
+- Jack mentioned his work is software engineer in Memobase. [mention 2023/1/23] // info
+- Jack plans to go the gym tomorrow. [mention 2023/1/23, happen at 2023/1/24] // schedule
 ...
 ```
 Always add specific mention time of your log, and the event happen time if possible.

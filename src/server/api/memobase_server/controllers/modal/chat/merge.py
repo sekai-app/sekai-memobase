@@ -103,8 +103,8 @@ async def handle_profile_merge_or_valid(
         temperature=0.2,  # precise
         **PROMPTS[USE_LANGUAGE]["merge"].get_kwargs(),
     )
-    print(KEY, profile_content)
-    print(r.data())
+    # print(KEY, profile_content)
+    # print(r.data())
     if not r.ok():
         LOG.warning(f"Failed to merge profiles: {r.msg()}")
         return r
@@ -143,11 +143,11 @@ async def handle_profile_merge_or_valid(
     elif update_response["action"] == "ABORT":
         if runtime_profile is None:
             LOG.info(
-                f"Invalide profile: {KEY}::{profile_content}, abort it\n<raw_response>\n{r.data()}\n</raw_response>"
+                f"Invalid profile: {KEY}::{profile_content}, abort it\n<raw_response>\n{r.data()}\n</raw_response>"
             )
         else:
             LOG.info(
-                f"Invalide merge: {runtime_profile.attributes}, {profile_content}, abort it\n<raw_response>\n{r.data()}\n</raw_response>"
+                f"Invalid merge: {runtime_profile.attributes}, {profile_content}, abort it\n<raw_response>\n{r.data()}\n</raw_response>"
             )
             # session_merge_validate_results["delete"].append(runtime_profile.id)
         return Promise.resolve(None)

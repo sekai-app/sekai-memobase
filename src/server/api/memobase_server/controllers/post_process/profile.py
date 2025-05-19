@@ -78,6 +78,5 @@ async def filter_profiles_with_chats(
         )
     ids = [i for i in found_ids if i < len(topics_index)]
     profiles = [profiles.profiles[topics_index[i]["index"]] for i in ids]
-    print(r.data())
     LOG.info(f"Filter profiles with chats: {reason}, {found_ids}")
     return Promise.resolve({"reason": reason, "profiles": profiles})
