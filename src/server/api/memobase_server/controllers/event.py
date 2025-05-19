@@ -163,7 +163,7 @@ async def search_user_events(
     project_id: str,
     query: str,
     topk: int = 10,
-    similarity_threshold: float = 0.6,
+    similarity_threshold: float = 0.2,
     time_range_in_days: int = 21,
 ) -> Promise[UserEventsData]:
     if not CONFIG.enable_event_embedding:

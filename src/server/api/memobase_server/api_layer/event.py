@@ -56,7 +56,7 @@ async def search_user_events(
     query: str = Query(..., description="The query to search for"),
     topk: int = Query(10, description="Number of events to retrieve, default is 10"),
     similarity_threshold: float = Query(
-        0.5, description="Similarity threshold, default is 0.5"
+        0.2, description="Similarity threshold, default is 0.2"
     ),
     time_range_in_days: int = Query(7, description="Time range in days, default is 7"),
 ) -> res.UserEventsDataResponse:

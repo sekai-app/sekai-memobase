@@ -45,7 +45,7 @@ async def get_user_context(
         description='List of chats in OpenAI Message format, for example: [{"role": "user", "content": "Hello"}, {"role": "assistant", "content": "Hi"}]',
     ),
     event_similarity_threshold: float = Query(
-        0.3,
+        0.2,
         description="Event similarity threshold of returned Context",
     ),
 ) -> res.UserContextDataResponse:
