@@ -151,7 +151,9 @@ FACT_RETRIEVAL_PROMPT = """{system_prompt}
 ## Formatting
 ### Input
 #### Topics Guidelines
-You'll be given some topics and subtopics that you should focus on collecting and extracting.
+You'll be given some user-relatedtopics and subtopics that you should focus on collecting and extracting.
+Don't collect topics that are not related to the user, it will cause confusion.
+For example, if the memo mentions the position of another person, don't generate a "work{tab}position" topic, it will cause confusion. Only generate a topic if the user mentions their own work.
 You can create your own topics/sub_topics if you find it necessary, unless the user requests to not to create new topics/sub_topics.
 #### User Before Topics
 You will be given the topics and subtopics that the user has already shared with the assistant.
