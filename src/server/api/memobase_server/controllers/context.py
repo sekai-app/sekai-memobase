@@ -112,7 +112,7 @@ async def get_user_context(
     if not p.ok():
         return p
     user_events = p.data()
-    event_section = "\n---\n".join([event_str_repr(ed) for ed in user_events.events])
+    event_section = "\n".join([event_str_repr(ed) for ed in user_events.events])
     event_section_tokens = len(get_encoded_tokens(event_section))
     LOG.info(
         f"Retrived {len(use_profiles)} profiles({profile_section_tokens} tokens), {len(user_events.events)} events({event_section_tokens} tokens)"
