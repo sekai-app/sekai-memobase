@@ -1,8 +1,8 @@
-import asyncio
-
-from ....env import LOG, ProfileConfig
+from ....connectors import Session
+from ....env import LOG, ProfileConfig, CONFIG
+from ....utils import get_blob_str, get_encoded_tokens
 from ....models.blob import Blob
-from ....models.utils import Promise
+from ....models.utils import Promise, CODE
 from ....models.response import IdsData, ChatModalResponse
 from ...profile import add_user_profiles, update_user_profiles, delete_user_profiles
 from ...event import append_user_event
@@ -15,10 +15,34 @@ from .event_summary import tag_event
 from .entry_summary import entry_summary
 
 
+def truncate_chat_blobs(
+    blob_ids: list[str], blobs: list[Blob], max_token_size: int
+) -> tuple[list[str], list[Blob]]:
+    results_ids = []
+    results = []
+    total_token_size = 0
+    for b, bid in zip(blobs[::-1], blob_ids[::-1]):
+        ts = len(get_encoded_tokens(get_blob_str(b)))
+        total_token_size += ts
+        if total_token_size <= max_token_size:
+            results.append(b)
+            results_ids.append(bid)
+        else:
+            break
+    return results_ids[::-1], results[::-1]
+
+
 async def process_blobs(
     user_id: str, project_id: str, blob_ids: list[str], blobs: list[Blob]
 ) -> Promise[ChatModalResponse]:
     # 1. Extract patch profiles
+    blob_ids, blobs = truncate_chat_blobs(
+        blob_ids, blobs, CONFIG.max_chat_blob_buffer_process_token_size
+    )
+    if len(blobs) == 0:
+        return Promise.reject(
+            CODE.SERVER_PARSE_ERROR, "No blobs to process after truncating"
+        )
     p = await entry_summary(user_id, project_id, blobs)
     if not p.ok():
         return p
@@ -45,16 +69,6 @@ async def process_blobs(
     delta_profile_data = [
         p for p in (profile_options["add"] + profile_options["update_delta"])
     ]
-    p = await handle_session_event(
-        user_id,
-        project_id,
-        user_memo_str,
-        delta_profile_data,
-        extracted_data["config"],
-    )
-    if not p.ok():
-        return p
-    eid = p.data()
 
     # 3. Check if we need to organize profiles
     p = await organize_profiles(
@@ -74,7 +88,17 @@ async def process_blobs(
     if not p.ok():
         LOG.error(f"Failed to re-summary profiles: {p.msg()}")
 
-    # DB commit
+    # FIXME using one session for all operations
+    p = await handle_session_event(
+        user_id,
+        project_id,
+        user_memo_str,
+        delta_profile_data,
+        extracted_data["config"],
+    )
+    if not p.ok():
+        return p
+    eid = p.data()
     p = await exe_user_profile_add(user_id, project_id, profile_options)
     if not p.ok():
         return p
@@ -158,7 +182,7 @@ async def exe_user_profile_update(
 
 async def exe_user_profile_delete(
     user_id: str, project_id: str, profile_options: MergeAddResult
-) -> Promise[None]:
+) -> Promise[IdsData]:
     if not len(profile_options["delete"]):
         return Promise.resolve(IdsData(ids=[]))
     LOG.info(f"Deleting {len(profile_options['delete'])} profiles for user {user_id}")

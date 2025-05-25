@@ -149,16 +149,9 @@ async def flush_buffer(
         p = await BLOBS_PROCESS[blob_type](user_id, project_id, blob_ids, blobs)
         if not p.ok():
             return p
-        return p
-
-    except Exception as e:
-        LOG.error(f"Error in flush_buffer: {e}")
-        raise e
-
-    finally:
         with Session() as session:
             try:
-                # Delete buffers and blobs regardless of processing outcome
+                # Delete buffers and blobs when processing is done
 
                 session.query(BufferZone).filter_by(
                     user_id=user_id, blob_type=str(blob_type), project_id=project_id
@@ -176,3 +169,9 @@ async def flush_buffer(
                 session.rollback()
                 LOG.error(f"Error while deleting buffers/blobs: {e}")
                 raise e
+
+        return p
+
+    except Exception as e:
+        LOG.error(f"Error in flush_buffer: {e}")
+        raise e
