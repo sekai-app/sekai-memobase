@@ -72,7 +72,8 @@
               "templates/livekit",
               "templates/ollama",
               "templates/openai",
-              "templates/dify"
+              "templates/dify",
+              "templates/mcp"
             ]
           }
         ]
