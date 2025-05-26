@@ -1,3 +1,20 @@
+### [0.0.33] -2025/5/26
+
+**Added**
+
+- `feat`: Basic MCP(sse) for Cursor
+
+**Changed**
+
+- Update default embedding threshold
+- Fine-tune the prompts (merge, entry summary, )
+
+**Fixed**
+
+- Redis health check error
+
+  
+
 ### [0.0.32] -2025/5/14
 
 **Added**
