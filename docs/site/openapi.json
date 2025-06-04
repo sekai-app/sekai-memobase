@@ -3,7 +3,7 @@
 	"info": {
 		"title": "Memobase API",
 		"summary": "APIs for Memobase, a user memory system for LLM Apps",
-		"version": "0.0.33"
+		"version": "0.0.34"
 	},
 	"servers": [
 		{
@@ -1067,7 +1067,7 @@
 					"profile"
 				],
 				"summary": "Delete User Profile",
-				"description": "Get the real-time user profiles for long term memory",
+				"description": "Delete a profile",
 				"operationId": "delete_user_profile_api_v1_users_profile__user_id___profile_id__delete",
 				"parameters": [
 					{
@@ -1140,7 +1140,7 @@
 					"buffer"
 				],
 				"summary": "Flush Buffer",
-				"description": "Get the real-time user profiles for long term memory",
+				"description": "Flush unprocessed blobs into Memory",
 				"operationId": "flush_buffer_api_v1_users_buffer__user_id___buffer_type__post",
 				"parameters": [
 					{
@@ -1691,6 +1691,134 @@
 						"label": "JavaScript"
 					}
 				]
+			}
+		},
+		"/api/v1/users/roleplay/proactive/{user_id}": {
+			"post": {
+				"tags": [
+					"roleplay"
+				],
+				"summary": "Infer Proactive Topics",
+				"description": "Provide interest detection and personalized topics",
+				"operationId": "infer_proactive_topics_api_v1_users_roleplay_proactive__user_id__post",
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the user",
+							"title": "User Id"
+						},
+						"description": "The ID of the user"
+					},
+					{
+						"name": "topk",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Number of profiles to retrieve, default is all",
+							"title": "Topk"
+						},
+						"description": "Number of profiles to retrieve, default is all"
+					},
+					{
+						"name": "max_token_size",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Max token size of returned profile content, default is all",
+							"title": "Max Token Size"
+						},
+						"description": "Max token size of returned profile content, default is all"
+					},
+					{
+						"name": "prefer_topics",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"description": "Rank prefer topics at first to try to keep them in filtering, default order is by updated time",
+							"title": "Prefer Topics"
+						},
+						"description": "Rank prefer topics at first to try to keep them in filtering, default order is by updated time"
+					},
+					{
+						"name": "only_topics",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"description": "Only return profiles with these topics, default is all",
+							"title": "Only Topics"
+						},
+						"description": "Only return profiles with these topics, default is all"
+					},
+					{
+						"name": "max_subtopic_size",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Max subtopic size of the same topic in returned profile, default is all",
+							"title": "Max Subtopic Size"
+						},
+						"description": "Max subtopic size of the same topic in returned profile, default is all"
+					},
+					{
+						"name": "topic_limits_json",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"description": "Set specific subtopic limits for topics in JSON, for example {\"topic1\": 3, \"topic2\": 5}. The limits in this param will override `max_subtopic_size`.",
+							"title": "Topic Limits Json"
+						},
+						"description": "Set specific subtopic limits for topics in JSON, for example {\"topic1\": 3, \"topic2\": 5}. The limits in this param will override `max_subtopic_size`."
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ProactiveTopicRequest",
+								"description": "The body of the request"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProactiveTopicResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPValidationError"
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	},
@@ -2304,6 +2432,137 @@
 				},
 				"type": "object",
 				"title": "IdsResponse"
+			},
+			"OpenAICompatibleMessage": {
+				"properties": {
+					"role": {
+						"type": "string",
+						"enum": [
+							"user",
+							"assistant"
+						],
+						"title": "Role"
+					},
+					"content": {
+						"type": "string",
+						"title": "Content"
+					},
+					"alias": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Alias"
+					},
+					"created_at": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Created At"
+					}
+				},
+				"type": "object",
+				"required": [
+					"role",
+					"content"
+				],
+				"title": "OpenAICompatibleMessage"
+			},
+			"ProactiveTopicData": {
+				"properties": {
+					"action": {
+						"type": "string",
+						"enum": [
+							"new_topic",
+							"continue"
+						],
+						"title": "Action",
+						"description": "The action to take"
+					},
+					"topic_prompt": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Topic Prompt",
+						"description": "The topic prompt, insert it to your latest user message or system prompt"
+					}
+				},
+				"type": "object",
+				"required": [
+					"action"
+				],
+				"title": "ProactiveTopicData"
+			},
+			"ProactiveTopicRequest": {
+				"properties": {
+					"messages": {
+						"items": {
+							"$ref": "#/components/schemas/OpenAICompatibleMessage"
+						},
+						"type": "array",
+						"title": "Messages",
+						"description": "The latest messages between user/assistant"
+					},
+					"agent_context": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Agent Context",
+						"description": "The agent's roleplay prompt"
+					}
+				},
+				"type": "object",
+				"required": [
+					"messages"
+				],
+				"title": "ProactiveTopicRequest"
+			},
+			"ProactiveTopicResponse": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/ProactiveTopicData"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"description": "Response containing proactive topic data"
+					},
+					"errno": {
+						"$ref": "#/components/schemas/CODE",
+						"description": "Error code, 0 means success",
+						"default": 0
+					},
+					"errmsg": {
+						"type": "string",
+						"title": "Errmsg",
+						"description": "Error message, empty when success",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"title": "ProactiveTopicResponse"
 			},
 			"ProfileConfigData": {
 				"properties": {
