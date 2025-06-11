@@ -11,7 +11,6 @@ In simple terms, Memobase can provide user profile memory for your users. You ca
   description: "Track the gaming preferences/achievements of the user."
   sub_topics:
       - name: "FPS"
-        description: "Games like CSGO, Valorant, etc."
       - name: "LOL"
         ...
 - topic: "Whatever"
@@ -19,7 +18,7 @@ In simple terms, Memobase can provide user profile memory for your users. You ca
     ...
 ```
 Memobase will generate user profile preferences based on your configuration.
-Refer to [Customization](/features/customization/profile) for more details.
+Refer to [Customization](/features/profile) for more details.
 
 ## How to Integrate Memory?
 
@@ -40,7 +39,8 @@ Normally, you should call `flush` API right after a chat session is closed.
 
 ## User System Management
 
-Users in Memobase do not need to correspond one-to-one with your actual users. One of your actual users can correspond to multiple Memobase users if a user in your application has multiple segmented memories:
+Users in Memobase do not need to correspond one-to-one with your actual users. 
+One of your actual users can correspond to multiple Memobase users if a user in your application has multiple segmented memories:
 
 - AI Role-Playing: Each agent should have independent memory for the user, so one user might have dozens of corresponding Memobase users for the various role agents they have interacted with.
 - AI Companionship + AI Education: You might provide a unified agent for the user, in which case your user can correspond one-to-one with Memobase.

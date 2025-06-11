@@ -49,6 +49,7 @@
           {
             "group": "Practices",
             "pages": [
+              "practices/bad",
               "practices/tips",
               "practices/openai"
             ]

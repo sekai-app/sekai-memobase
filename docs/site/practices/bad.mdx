@@ -1,0 +1,18 @@
+---
+title: How to Fix Bad Cases
+---
+
+## Too many useless profile memories
+1. Make sure you have the idea of what a profile should have.
+2. [Configure](/features/profile/profile_desc) your `config.yaml` properly with profile slots' description.
+3. If you still have too many useless profile memories, you can enable [strict mode](/features/profile/profile_config#strict-mode) 
+to only collect the profiles you want.
+
+## Some profiles should be extracted, but it's not.
+1. Maybe your profile description is too hard for LLM to understand/infer, try to lower your requirements.
+2. If you still have this issue, you can disable the [profile validation](/features/profile/profile_config#profile-validate-mode) 
+
+## My profile is inaccurate/wrong.
+1. Add more details to your [profile description](/features/profile/profile_desc), making sure the profile description is clear and easy to understand.
+2. Add [update descrption](/features/profile/profile_desc#instruct-memobase-to-update-a-profile-slot) for that profile also, it will help Memobase to merge the profile wisely.
+
