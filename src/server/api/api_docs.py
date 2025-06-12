@@ -739,6 +739,7 @@ client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 u = client.get_user(uid)
 u.flush()
+u.flush(sync=True) # wait for the buffer to be processed
 """,
             "label": "Python",
         },
@@ -1049,7 +1050,7 @@ b = ChatBlob(messages=[
     }
 ])
 u.insert(b)
-u.flush()
+u.flush(sync=True)
 
 events = u.search_event('query')
 print(events)

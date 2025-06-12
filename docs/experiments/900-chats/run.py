@@ -48,9 +48,17 @@ u = client.get_user(uid)
 
 start = time()
 for blob in track(blobs):
-    u.insert(blob)
-u.flush()
+    u.insert(blob, sync=True)
+u.flush(sync=True)
 print("Cost time(s)", time() - start)
+
+while True:
+    left = len(u.buffer("chat", "processing"))
+    if len(left):
+        print(f"Left {len(left)} chats")
+        sleep(1)
+    else:
+        break
 
 pprint(u.profile()[:10])
 prompts = [m.describe for m in u.profile()]

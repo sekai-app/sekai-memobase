@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import httpx
 from collections import defaultdict
 from typing import Optional, Literal
@@ -112,10 +113,10 @@ class User:
     project_client: MemoBaseClient
     fields: Optional[dict] = None
 
-    def insert(self, blob_data: Blob) -> str:
+    def insert(self, blob_data: Blob, sync=False) -> str:
         r = unpack_response(
             self.project_client.client.post(
-                f"/blobs/insert/{self.user_id}",
+                f"/blobs/insert/{self.user_id}?wait_process={sync}",
                 json=blob_data.to_request(),
             )
         )
@@ -142,9 +143,11 @@ class User:
         )
         return True
 
-    def flush(self, blob_type: BlobType = BlobType.chat) -> bool:
+    def flush(self, blob_type: BlobType = BlobType.chat, sync=False) -> bool:
         r = unpack_response(
-            self.project_client.client.post(f"/users/buffer/{self.user_id}/{blob_type}")
+            self.project_client.client.post(
+                f"/users/buffer/{self.user_id}/{blob_type}?wait_process={sync}"
+            )
         )
         return True
 

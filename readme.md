@@ -216,8 +216,9 @@ print(u.get(bid)) # not found once you flush the memory.
 ### 4. Get your Memory
 
 ```python
-u.flush()
+u.flush(sync=True)
 ```
+> By default, Memobase will flush the buffer asynchronously. You can set `sync=True` to wait for the buffer to be processed.
 
 And what will you get?
 

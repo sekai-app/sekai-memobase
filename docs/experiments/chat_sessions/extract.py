@@ -51,8 +51,8 @@ for session in sessions:
 
     start = time()
     for index, blob in track(enumerate(blobs), total=len(blobs)):
-        u.insert(blob)
-    u.flush()
+        u.insert(blob, sync=True)
+    u.flush(sync=True)
     print("Cost time(s)", time() - start)
 
     prompts = [m.describe for m in u.profile()]

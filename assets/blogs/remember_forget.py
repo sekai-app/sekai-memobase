@@ -34,7 +34,7 @@ def pack_blob(message):
 u.insert(pack_blob("I love traveling to China"))
 
 u.insert(pack_blob("I'm feeling really stressed today"))
-u.flush()
+u.flush(sync=True)
 print(
     "MEMORY：\n",
     "\n".join([f"- {p.describe}" for p in u.profile()]),
@@ -42,7 +42,7 @@ print(
 )
 
 u.insert(pack_blob("I'm happy today!"))
-u.flush()
+u.flush(sync=True)
 print(
     "MEMORY：\n",
     "\n".join([f"- {p.describe}" for p in u.profile()]),

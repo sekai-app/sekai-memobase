@@ -125,10 +125,10 @@ class AsyncUser:
     project_client: AsyncMemoBaseClient
     fields: Optional[dict] = None
 
-    async def insert(self, blob_data: Blob) -> str:
+    async def insert(self, blob_data: Blob, sync=False) -> str:
         r = unpack_response(
             await self.project_client.client.post(
-                f"/blobs/insert/{self.user_id}",
+                f"/blobs/insert/{self.user_id}?wait_process={sync}",
                 json=blob_data.to_request(),
             )
         )
@@ -156,10 +156,10 @@ class AsyncUser:
         )
         return True
 
-    async def flush(self, blob_type: BlobType = BlobType.chat) -> bool:
+    async def flush(self, blob_type: BlobType = BlobType.chat, sync=False) -> bool:
         r = unpack_response(
             await self.project_client.client.post(
-                f"/users/buffer/{self.user_id}/{blob_type}"
+                f"/users/buffer/{self.user_id}/{blob_type}?wait_process={sync}"
             )
         )
         return True

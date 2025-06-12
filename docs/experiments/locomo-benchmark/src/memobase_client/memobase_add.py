@@ -45,7 +45,7 @@ class MemobaseADD:
     def add_memory(self, user, message, retries=3):
         for attempt in range(retries):
             try:
-                _ = user.insert(ChatBlob(messages=message))
+                _ = user.insert(ChatBlob(messages=message), sync=True)
                 return
             except Exception as e:
                 if attempt < retries - 1:
@@ -60,7 +60,7 @@ class MemobaseADD:
         for i in tqdm(range(0, len(messages), self.batch_size), desc=desc):
             batch_messages = messages[i : i + self.batch_size]
             self.add_memory(u, batch_messages)
-        u.flush()
+        u.flush(sync=True)
 
     def process_conversation(self, item, idx):
         conversation = item["conversation"]

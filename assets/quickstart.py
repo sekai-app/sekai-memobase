@@ -35,7 +35,7 @@ print("User ID is", uid)
 print("Blob ID is", bid)
 
 print("Start processing...")
-u.flush()
+u.flush(sync=True)
 
 
 print("\n--------------\nBelow is your profile:")

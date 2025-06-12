@@ -29,7 +29,7 @@ messages1 = [
 
 blob = ChatBlob(messages=messages1)
 bid = u.insert(blob)
-u.flush()
+u.flush(sync=True)
 
 messages2 = [
     {
@@ -40,7 +40,7 @@ messages2 = [
 
 blob = ChatBlob(messages=messages2)
 bid = u.insert(blob)
-u.flush()
+u.flush(sync=True)
 
 
 events = u.event()
