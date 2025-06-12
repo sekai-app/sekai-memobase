@@ -147,9 +147,9 @@ async def handle_session_event(
 async def handle_user_profile_db(
     user_id: str, project_id: str, profile_options: MergeAddResult
 ) -> Promise[IdsData]:
-    LOG.info(f"Adding {len(profile_options['add'])} profiles for user {user_id}")
-    LOG.info(f"Updating {len(profile_options['update'])} profiles for user {user_id}")
-    LOG.info(f"Deleting {len(profile_options['delete'])} profiles for user {user_id}")
+    LOG.info(
+        f"Adding {len(profile_options['add'])}, updating {len(profile_options['update'])}, deleting {len(profile_options['delete'])} profiles for user {user_id}"
+    )
 
     p = await add_update_delete_user_profiles(
         user_id,
