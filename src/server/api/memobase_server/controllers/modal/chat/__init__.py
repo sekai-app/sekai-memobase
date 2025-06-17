@@ -1,3 +1,4 @@
+import asyncio
 from ...project import get_project_profile_config
 from ....connectors import Session
 from ....env import LOG, ProfileConfig, CONFIG
@@ -51,6 +52,55 @@ async def process_blobs(
         return p
     user_memo_str = p.data()
 
+    processing_results = await asyncio.gather(
+        process_profile_res(user_id, project_id, user_memo_str, project_profiles),
+        process_event_res(user_id, project_id, user_memo_str, project_profiles),
+    )
+
+    profile_results: Promise = processing_results[0]
+    event_results: Promise = processing_results[1]
+
+    if not profile_results.ok() or not event_results.ok():
+        return Promise.reject(
+            CODE.SERVER_PARSE_ERROR,
+            f"Failed to process profile or event: {profile_results.msg()}, {event_results.msg()}",
+        )
+
+    intermediate_profile, delta_profile_data = profile_results.data()
+    event_tags = event_results.data()
+
+    p = await handle_session_event(
+        user_id,
+        project_id,
+        user_memo_str,
+        delta_profile_data,
+        event_tags,
+        project_profiles,
+    )
+    if not p.ok():
+        return p
+    eid = p.data()
+
+    p = await handle_user_profile_db(user_id, project_id, intermediate_profile)
+    if not p.ok():
+        return p
+    return Promise.resolve(
+        ChatModalResponse(
+            event_id=eid,
+            add_profiles=p.data().ids,
+            update_profiles=[up["profile_id"] for up in intermediate_profile["update"]],
+            delete_profiles=intermediate_profile["delete"],
+        )
+    )
+
+
+async def process_profile_res(
+    user_id: str,
+    project_id: str,
+    user_memo_str: str,
+    project_profiles: ProfileConfig,
+) -> Promise[tuple[MergeAddResult, list[dict]]]:
+
     p = await extract_topics(user_id, project_id, user_memo_str, project_profiles)
     if not p.ok():
         return p
@@ -68,15 +118,15 @@ async def process_blobs(
     if not p.ok():
         return p
 
-    profile_options = p.data()
+    intermediate_profile = p.data()
     delta_profile_data = [
-        p for p in (profile_options["add"] + profile_options["update_delta"])
+        p for p in (intermediate_profile["add"] + intermediate_profile["update_delta"])
     ]
 
     # 3. Check if we need to organize profiles
     p = await organize_profiles(
         project_id,
-        profile_options,
+        intermediate_profile,
         config=project_profiles,
     )
     if not p.ok():
@@ -85,35 +135,27 @@ async def process_blobs(
     # 4. Re-summary profiles if any slot is too big
     p = await re_summary(
         project_id,
-        add_profile=profile_options["add"],
-        update_profile=profile_options["update"],
+        add_profile=intermediate_profile["add"],
+        update_profile=intermediate_profile["update"],
     )
     if not p.ok():
         LOG.error(f"Failed to re-summary profiles: {p.msg()}")
 
-    # FIXME using one session for all operations
-    p = await handle_session_event(
-        user_id,
-        project_id,
-        user_memo_str,
-        delta_profile_data,
-        project_profiles,
-    )
-    if not p.ok():
-        return p
-    eid = p.data()
+    return Promise.resolve((intermediate_profile, delta_profile_data))
 
-    p = await handle_user_profile_db(user_id, project_id, profile_options)
+
+async def process_event_res(
+    user_id: str,
+    project_id: str,
+    memo_str: str,
+    config: ProfileConfig,
+) -> Promise[list | None]:
+    p = await tag_event(project_id, config, memo_str)
     if not p.ok():
+        LOG.error(f"Failed to tag event: {p.msg()}")
         return p
-    return Promise.resolve(
-        ChatModalResponse(
-            event_id=eid,
-            add_profiles=p.data().ids,
-            update_profiles=[up["profile_id"] for up in profile_options["update"]],
-            delete_profiles=profile_options["delete"],
-        )
-    )
+    event_tags = p.data()
+    return Promise.resolve(event_tags)
 
 
 async def handle_session_event(
@@ -121,21 +163,15 @@ async def handle_session_event(
     project_id: str,
     memo_str: str,
     delta_profile_data: list[dict],
+    event_tags: list | None,
     config: ProfileConfig,
 ) -> Promise[str]:
-    if not len(delta_profile_data):
-        return Promise.resolve(None)
-    event_tip = memo_str
-    p = await tag_event(project_id, config, event_tip)
-    if not p.ok():
-        LOG.error(f"Failed to tag event: {p.msg()}")
-    event_tags = p.data() if p.ok() else None
 
     eid = await append_user_event(
         user_id,
         project_id,
         {
-            "event_tip": event_tip,
+            "event_tip": memo_str,
             "event_tags": event_tags,
             "profile_delta": delta_profile_data,
         },
@@ -145,20 +181,20 @@ async def handle_session_event(
 
 
 async def handle_user_profile_db(
-    user_id: str, project_id: str, profile_options: MergeAddResult
+    user_id: str, project_id: str, intermediate_profile: MergeAddResult
 ) -> Promise[IdsData]:
     LOG.info(
-        f"Adding {len(profile_options['add'])}, updating {len(profile_options['update'])}, deleting {len(profile_options['delete'])} profiles for user {user_id}"
+        f"Adding {len(intermediate_profile['add'])}, updating {len(intermediate_profile['update'])}, deleting {len(intermediate_profile['delete'])} profiles for user {user_id}"
     )
 
     p = await add_update_delete_user_profiles(
         user_id,
         project_id,
-        [ap["content"] for ap in profile_options["add"]],
-        [ap["attributes"] for ap in profile_options["add"]],
-        [up["profile_id"] for up in profile_options["update"]],
-        [up["content"] for up in profile_options["update"]],
-        [up["attributes"] for up in profile_options["update"]],
-        profile_options["delete"],
+        [ap["content"] for ap in intermediate_profile["add"]],
+        [ap["attributes"] for ap in intermediate_profile["add"]],
+        [up["profile_id"] for up in intermediate_profile["update"]],
+        [up["content"] for up in intermediate_profile["update"]],
+        [up["attributes"] for up in intermediate_profile["update"]],
+        intermediate_profile["delete"],
     )
     return p
