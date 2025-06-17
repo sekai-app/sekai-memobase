@@ -1,4 +1,10 @@
-### [0.0.34] - unrealeased
+### [0.0.34] - 2025/6/17
+
+**Added**
+
+- `feat` Add background task for insert/flush
+- Update chat blob processing
+- Add experimental features for roleplay
 
 **Fixed**
 
