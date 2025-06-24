@@ -1,3 +1,13 @@
+[0.0.345] - unreleased
+
+**Changed**
+
+- Remove rich log to simple logging
+
+- Update api doc structure
+
+
+
 ### [0.0.34] - 2025/6/17
 
 **Added**
