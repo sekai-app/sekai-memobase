@@ -193,9 +193,14 @@
 						"in": "query",
 						"required": false,
 						"schema": {
+							"enum": [
+								"updated_at",
+								"profile_count",
+								"event_count"
+							],
 							"type": "string",
 							"description": "Order by field",
-							"default": "",
+							"default": "updated_at",
 							"title": "Order By"
 						},
 						"description": "Order by field"
@@ -258,7 +263,14 @@
 							}
 						}
 					}
-				}
+				},
+				"x-code-samples": [
+					{
+						"lang": "python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nusers = memobase.get_all_users(search=\"\", order_by=\"updated_at\", order_desc=True, limit=10, offset=0)\n\n",
+						"label": "Python"
+					}
+				]
 			}
 		},
 		"/api/v1/project/usage": {
@@ -304,7 +316,14 @@
 							}
 						}
 					}
-				}
+				},
+				"x-code-samples": [
+					{
+						"lang": "python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nusage = memobase.get_daily_usage(days=7)\n\n",
+						"label": "Python"
+					}
+				]
 			}
 		},
 		"/api/v1/users": {
