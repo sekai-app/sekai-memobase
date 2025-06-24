@@ -15,7 +15,7 @@ from memobase_server import api_layer
 from memobase_server.env import LOG
 from memobase_server.llms.embeddings import check_embedding_sanity
 from uvicorn.config import LOGGING_CONFIG
-from api_docs import API_X_CODE_DOCS
+from memobase_server.api_layer.docs import API_X_CODE_DOCS
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
 
