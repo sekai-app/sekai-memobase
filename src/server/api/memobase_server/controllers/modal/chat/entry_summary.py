@@ -19,6 +19,10 @@ async def entry_chat_summary(
         project_profiles, PROMPTS[USE_LANGUAGE]["profile"].CANDIDATE_PROFILE_TOPICS
     )
     prompt = PROMPTS[USE_LANGUAGE]["entry_summary"]
+    event_summary_theme = (
+        project_profiles.event_theme_requirement or CONFIG.event_theme_requirement
+    )
+
     event_tags = read_out_event_tags(project_profiles)
     event_attriubtes_str = "\n".join(
         [f"- {et.name}({et.description})" for et in event_tags]
@@ -33,7 +37,7 @@ async def entry_chat_summary(
         system_prompt=prompt.get_prompt(
             profile_topics_str,
             event_attriubtes_str,
-            additional_requirements=project_profiles.event_theme_requirement,
+            additional_requirements=event_summary_theme,
         ),
         temperature=0.2,  # precise
         model=CONFIG.summary_llm_model,

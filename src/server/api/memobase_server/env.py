@@ -5,7 +5,6 @@ Initialize logger, encoder, and config.
 import os
 import datetime
 import json
-from rich.logging import RichHandler
 import yaml
 import logging
 import tiktoken
@@ -258,8 +257,12 @@ class ProfileConfig:
 # 1. Add logger
 LOG = logging.getLogger("memobase_server")
 LOG.setLevel(logging.INFO)
-console_handler = RichHandler()
-LOG.addHandler(console_handler)
+
+# Add standard formatter and handler
+formatter = logging.Formatter("%(name)s - %(levelname)s - %(asctime)s -  %(message)s")
+handler = logging.StreamHandler()
+handler.setFormatter(formatter)
+LOG.addHandler(handler)
 
 # 2. Add encoder for tokenize strings
 ENCODER = tiktoken.encoding_for_model("gpt-4o")

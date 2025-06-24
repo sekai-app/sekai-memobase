@@ -177,6 +177,15 @@ async def flush_buffer_by_ids(
         # Process blobs first (moved outside the session)
         p = await BLOBS_PROCESS[blob_type](user_id, project_id, blobs)
         if not p.ok():
+            # Rollback buffer status to failed if the process failed
+            with Session() as session:
+                session.query(BufferZone).filter(
+                    BufferZone.id.in_(process_buffer_ids),
+                ).update(
+                    {BufferZone.status: BufferStatus.failed},
+                    synchronize_session=False,
+                )
+                session.commit()
             return p
         with Session() as session:
             try:
@@ -206,7 +215,7 @@ async def flush_buffer_by_ids(
     except Exception as e:
         with Session() as session:
             session.query(BufferZone).filter(
-                BufferZone.id.in_([row.buffer_id for row in buffer_blob_data]),
+                BufferZone.id.in_(process_buffer_ids),
             ).update(
                 {BufferZone.status: BufferStatus.failed},
                 synchronize_session=False,

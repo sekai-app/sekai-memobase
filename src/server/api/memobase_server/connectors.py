@@ -12,6 +12,7 @@ from .models.database import REG, Project, UserEvent
 DATABASE_URL = os.getenv("DATABASE_URL")
 REDIS_URL = os.getenv("REDIS_URL")
 PROJECT_ID = os.getenv("PROJECT_ID")
+ADMIN_URL = os.getenv("ADMIN_URL")
 
 if PROJECT_ID is None:
     LOG.warning(f"PROJECT_ID is not set")
@@ -46,7 +47,7 @@ def create_pgvector_extension():
 
 def create_tables():
     create_pgvector_extension()
-    
+
     REG.metadata.create_all(DB_ENGINE)
     with Session() as session:
         Project.initialize_root_project(session)

@@ -6,7 +6,7 @@ from ..models.database import (
     next_month_first_day,
 )
 from ..models.response import CODE, IdData, IdsData, UserProfilesData, BillingData
-from ..connectors import Session
+from ..connectors import Session, ADMIN_URL
 from ..telemetry.capture_key import get_int_key, capture_int_key
 from ..env import (
     LOG,
@@ -17,9 +17,13 @@ from ..env import (
     BillingStatus,
 )
 from datetime import datetime, date
+from ..auth import admin_api
 
 
 async def get_project_billing(project_id: str) -> Promise[BillingData]:
+    if ADMIN_URL is not None:
+        return await admin_api.get_project_usage(project_id)
+
     with Session() as session:
         billing = (
             session.query(ProjectBilling)
@@ -112,6 +116,10 @@ async def project_cost_token_billing(
     await capture_int_key(
         TelemetryKeyName.llm_output_tokens, output_tokens, project_id=project_id
     )
+    if ADMIN_URL is not None:
+        return await admin_api.cost_project_usage(
+            project_id, input_tokens, output_tokens
+        )
     with Session() as session:
         _billing = (
             session.query(ProjectBilling)
