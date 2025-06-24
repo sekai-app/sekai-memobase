@@ -19,7 +19,6 @@ from api_docs import API_X_CODE_DOCS
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_redis_pool()
@@ -124,6 +123,20 @@ router.get(
     tags=["project"],
     openapi_extra=API_X_CODE_DOCS["GET /project/billing"],
 )(api_layer.project.get_project_billing)
+
+
+router.get(
+    "/project/users",
+    tags=["project"],
+    # openapi_extra=API_X_CODE_DOCS["GET /project/users/{project_id}"],
+)(api_layer.project.get_project_users)
+
+
+router.get(
+    "/project/usage",
+    tags=["project"],
+    # openapi_extra=API_X_CODE_DOCS["GET /project/usage/{project_id}"],
+)(api_layer.project.get_project_usage)
 
 
 router.post(

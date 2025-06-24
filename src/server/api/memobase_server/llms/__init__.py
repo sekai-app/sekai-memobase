@@ -25,9 +25,6 @@ async def llm_complete(
     max_tokens=1024,
     **kwargs,
 ) -> Promise[str | dict]:
-    return Promise.reject(
-        CODE.SERVICE_UNAVAILABLE, "LLM not available because I say so!"
-    )
     use_model = model or CONFIG.best_llm_model
     if json_mode:
         kwargs["response_format"] = {"type": "json_object"}

@@ -258,8 +258,17 @@ class ProfileConfig:
 LOG = logging.getLogger("memobase_server")
 LOG.setLevel(logging.INFO)
 
+
 # Add standard formatter and handler
-formatter = logging.Formatter("%(name)s - %(levelname)s - %(asctime)s -  %(message)s")
+class Colors:
+    BLUE = "\033[94m"
+    BOLD = "\033[1m"
+    END = "\033[0m"
+
+
+formatter = logging.Formatter(
+    f"{Colors.BOLD}{Colors.BLUE}%(name)s |{Colors.END}  %(levelname)s - %(asctime)s  -  %(message)s"
+)
 handler = logging.StreamHandler()
 handler.setFormatter(formatter)
 LOG.addHandler(handler)

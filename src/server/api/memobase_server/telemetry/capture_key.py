@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from ..connectors import get_redis_client, PROJECT_ID
 from ..models.database import DEFAULT_PROJECT_ID
 
@@ -9,6 +9,10 @@ def date_key():
 
 def month_key():
     return datetime.now().strftime("%Y-%m")
+
+
+def date_past_key(delay_days: int) -> str:
+    return (datetime.now() - timedelta(days=delay_days)).strftime("%Y-%m-%d")
 
 
 def head_key(project_id: str):
@@ -31,12 +35,16 @@ async def capture_int_key(
 
 
 async def get_int_key(
-    name: str, project_id: str = DEFAULT_PROJECT_ID, in_month: bool = False
+    name: str,
+    project_id: str = DEFAULT_PROJECT_ID,
+    in_month: bool = False,
+    use_date: str = None,
 ) -> int:
     if in_month:
         key = f"{head_key(project_id)}::{name}::{month_key()}"
     else:
-        key = f"{head_key(project_id)}::{name}::{date_key()}"
+        using_date = use_date or date_key()
+        key = f"{head_key(project_id)}::{name}::{using_date}"
     async with get_redis_client() as r_c:
         return int((await r_c.get(key)) or 0)
 

@@ -208,6 +208,19 @@ class UserContextImport(BaseModel):
     )
 
 
+class ProjectUsersData(BaseModel):
+    users: list = Field(..., description="The user list")
+    count: int = Field(0, description="The user count")
+
+
+class DailyUsage(BaseModel):
+    date: str = Field(..., description="The date")
+    total_insert: int = Field(0, description="The total insert")
+    total_success_insert: int = Field(0, description="The total update")
+    total_input_token: int = Field(0, description="The total input token")
+    total_output_token: int = Field(0, description="The total output token")
+
+
 # API response format
 class BaseResponse(BaseModel):
     data: Optional[dict] = Field(None, description="Response data payload")
@@ -290,4 +303,16 @@ class BlobInsertResponse(BaseResponse):
 class ProactiveTopicResponse(BaseResponse):
     data: Optional[ProactiveTopicData] = Field(
         None, description="Response containing proactive topic data"
+    )
+
+
+class ProjectUsersDataResponse(BaseResponse):
+    data: Optional[ProjectUsersData] = Field(
+        None, description="Response containing the users"
+    )
+
+
+class UsageResponse(BaseResponse):
+    data: Optional[list[DailyUsage]] = Field(
+        None, description="Response containing the daily usage"
     )
