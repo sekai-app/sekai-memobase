@@ -30,7 +30,11 @@ async def entry_chat_summary(
     r = await llm_complete(
         project_id,
         prompt.pack_input(blob_strs),
-        system_prompt=prompt.get_prompt(profile_topics_str, event_attriubtes_str),
+        system_prompt=prompt.get_prompt(
+            profile_topics_str,
+            event_attriubtes_str,
+            additional_requirements=project_profiles.event_theme_requirement,
+        ),
         temperature=0.2,  # precise
         model=CONFIG.summary_llm_model,
         **prompt.get_kwargs(),

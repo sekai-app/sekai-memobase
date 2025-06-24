@@ -7,6 +7,7 @@ SUMMARY_PROMPT = """你是一位从聊天记录中记录个人信息、日程安
 你将获得用户和助手之间的对话内容。
 
 ## 要求
+{additional_requirements}
 - 你需要列出所有可能的用户信息
 - 你需要列出所有可能的日程安排
 - 你需要列出用户事件及其详细时间。根据消息后的[TIME]转换消息中的事件日期信息。例如：
@@ -63,8 +64,14 @@ def pack_input(chat_strs):
 """
 
 
-def get_prompt(topic_examples: str, attribute_examples: str) -> str:
-    return SUMMARY_PROMPT.format(topics=topic_examples, attributes=attribute_examples)
+def get_prompt(
+    topic_examples: str, attribute_examples: str, additional_requirements: str = ""
+) -> str:
+    return SUMMARY_PROMPT.format(
+        topics=topic_examples,
+        attributes=attribute_examples,
+        additional_requirements=additional_requirements,
+    )
 
 
 def get_kwargs() -> dict:

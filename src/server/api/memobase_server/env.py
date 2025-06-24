@@ -109,6 +109,7 @@ class Config:
 
     additional_user_profiles: list[dict] = field(default_factory=list)
     overwrite_user_profiles: Optional[list[dict]] = None
+    event_theme_requirement: Optional[str] = None
     profile_strict_mode: bool = False
     profile_validate_mode: bool = True
 
@@ -228,6 +229,7 @@ class ProfileConfig:
     profile_validate_mode: bool | None = None
     additional_user_profiles: list[dict] = field(default_factory=list)
     overwrite_user_profiles: Optional[list[dict]] = None
+    event_theme_requirement: Optional[str] = None
 
     enable_event_summary: bool = None
     event_tags: list[dict] = None

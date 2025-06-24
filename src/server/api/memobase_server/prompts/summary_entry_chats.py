@@ -7,6 +7,7 @@ SUMMARY_PROMPT = """You are a expert of logging personal info, schedule, events 
 You will be given a chats between a user and an assistant.
 
 ## Requirement
+{additional_requirements}
 - You need to list all possible user info
 - You need to list all possible schedule
 - You need to list the user events with detailed datetime. Convert the event date info in the message based on [TIME] after your log. for example
@@ -62,8 +63,14 @@ def pack_input(chat_strs):
 """
 
 
-def get_prompt(topic_examples: str, attribute_examples: str) -> str:
-    return SUMMARY_PROMPT.format(topics=topic_examples, attributes=attribute_examples)
+def get_prompt(
+    topic_examples: str, attribute_examples: str, additional_requirements: str = ""
+) -> str:
+    return SUMMARY_PROMPT.format(
+        topics=topic_examples,
+        attributes=attribute_examples,
+        additional_requirements=additional_requirements,
+    )
 
 
 def get_kwargs() -> dict:
