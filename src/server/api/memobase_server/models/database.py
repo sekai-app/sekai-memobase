@@ -74,6 +74,9 @@ class Base:
     )
 
 
+SHORT_ENUM_SIZE = 16
+
+
 @REG.mapped_as_dataclass
 class Billing(Base):
     __tablename__ = "billings"
@@ -141,7 +144,7 @@ class Project(Base):
     project_secret: Mapped[str] = mapped_column(VARCHAR(255), nullable=False)
     profile_config: Mapped[str | None] = mapped_column(TEXT, nullable=True)
     status: Mapped[str] = mapped_column(
-        VARCHAR(16), nullable=False, default=ProjectStatus.active
+        VARCHAR(SHORT_ENUM_SIZE), nullable=False, default=ProjectStatus.active
     )
 
     related_users: Mapped[list["User"]] = relationship(
@@ -241,7 +244,7 @@ class GeneralBlob(Base):
     )
 
     # Specific columns
-    blob_type: Mapped[str] = mapped_column(VARCHAR(255), nullable=False)
+    blob_type: Mapped[str] = mapped_column(VARCHAR(SHORT_ENUM_SIZE), nullable=False)
     blob_data: Mapped[dict] = mapped_column(JSONB, nullable=False)
 
     related_buffers: Mapped[list["BufferZone"]] = relationship(
@@ -295,7 +298,7 @@ class BufferZone(Base):
     __tablename__ = "buffer_zones"
 
     # Specific columns
-    blob_type: Mapped[str] = mapped_column(VARCHAR(255), nullable=False)
+    blob_type: Mapped[str] = mapped_column(VARCHAR(SHORT_ENUM_SIZE), nullable=False)
     token_size: Mapped[int] = mapped_column(Integer, nullable=False)
 
     # Relationships
@@ -310,7 +313,7 @@ class BufferZone(Base):
     )
 
     status: Mapped[str] = mapped_column(
-        VARCHAR(255), nullable=False, default=BufferStatus.idle
+        VARCHAR(SHORT_ENUM_SIZE), nullable=False, default=BufferStatus.idle
     )
 
     project_id: Mapped[str] = mapped_column(
@@ -497,7 +500,7 @@ class UserStatus(Base):
     __tablename__ = "user_statuses"
 
     # Specific columns
-    type: Mapped[str] = mapped_column(VARCHAR(255), nullable=False)
+    type: Mapped[str] = mapped_column(VARCHAR(SHORT_ENUM_SIZE), nullable=False)
     attributes: Mapped[dict] = mapped_column(JSONB, nullable=False)
 
     # Relationships
