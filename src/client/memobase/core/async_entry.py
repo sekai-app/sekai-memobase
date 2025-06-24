@@ -109,6 +109,25 @@ class AsyncMemoBaseClient:
         r = unpack_response(await self._client.delete(f"/users/{user_id}"))
         return True
 
+    async def get_all_users(
+        self,
+        search: str = "",
+        order_by: str = "updated_at",
+        order_desc: bool = True,
+        limit: int = 10,
+        offset: int = 0,
+    ) -> list[dict]:
+        r = unpack_response(
+            await self._client.get(
+                f"/project/users?search={search}&order_by={order_by}&order_desc={order_desc}&limit={limit}&offset={offset}"
+            )
+        )
+        return r.data["users"]
+
+    async def get_daily_usage(self, days: int = 7) -> dict:
+        r = unpack_response(await self._client.get(f"/project/usage?last_days={days}"))
+        return r.data
+
     async def close(self):
         await self._client.aclose()
 
