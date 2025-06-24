@@ -5,6 +5,7 @@ from ..models.response import BaseResponse, CODE
 from ..models.utils import Promise
 from ..models import response as res
 from fastapi import Request
+from typing import Literal
 from fastapi import Body, Path, Query
 
 
@@ -41,7 +42,9 @@ async def get_project_billing(request: Request) -> res.BillingResponse:
 async def get_project_users(
     request: Request,
     search: str = Query("", description="Search string in username field"),
-    order_by: str = Query("", description="Order by field"),
+    order_by: Literal["updated_at", "profile_count", "event_count"] = Query(
+        "updated_at", description="Order by field"
+    ),
     order_desc: bool = Query(True, description="Order descending or ascending"),
     limit: int = Query(10, description="Limit the number of results returned"),
     offset: int = Query(0, description="Offset the starting point for pagination"),

@@ -106,7 +106,32 @@ const config = await client.getConfig();
     ),
 )
 
+# Project users endpoint
+add_api_code_docs(
+    "GET",
+    "/project/users",
+    py_code(
+        """
+from memobase import Memobase
 
-# add_api_code_docs(
-#     "GET"
-# )
+memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+
+users = memobase.get_all_users(search="", order_by="updated_at", order_desc=True, limit=10, offset=0)
+"""
+    ),
+)
+
+# Project usage endpoint
+add_api_code_docs(
+    "GET",
+    "/project/usage",
+    py_code(
+        """
+from memobase import Memobase
+
+memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+
+usage = memobase.get_daily_usage(days=7)
+"""
+    ),
+)

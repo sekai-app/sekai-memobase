@@ -128,14 +128,14 @@ router.get(
 router.get(
     "/project/users",
     tags=["project"],
-    # openapi_extra=API_X_CODE_DOCS["GET /project/users/{project_id}"],
+    openapi_extra=API_X_CODE_DOCS["GET /project/users"],
 )(api_layer.project.get_project_users)
 
 
 router.get(
     "/project/usage",
     tags=["project"],
-    # openapi_extra=API_X_CODE_DOCS["GET /project/usage/{project_id}"],
+    openapi_extra=API_X_CODE_DOCS["GET /project/usage"],
 )(api_layer.project.get_project_usage)
 
 
