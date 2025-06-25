@@ -98,9 +98,11 @@ async def flush_buffer_background_running(
     user_id: str,
     project_id: str,
     blob_type: BlobType,
-    asleep_waiting_s: float = 0.001,
-    max_iterations: int = 1000,
-    process_interval_s: float = 60 * 10,
+    asleep_waiting_s: float = 0.1,  # Increased from 0.001 to reduce CPU usage
+    max_iterations: int = 100,  # Reduced from 1000 to prevent extremely long-running processes
+    process_interval_s: float = 60 * 5,  # Reduced from 10 minutes to 5 minutes
+    max_processing_time_s: float = 60 * 15,  # Maximum 15 minutes total processing time
+    max_consecutive_errors=5,  # Stop after 5 consecutive errors
 ):
     user_key = get_user_lock_key(
         user_id, project_id, f"flush_buffer_background_{blob_type}"
@@ -110,38 +112,59 @@ async def flush_buffer_background_running(
     )
 
     __lock_value = str(uuid.uuid4())
+    start_time = asyncio.get_event_loop().time()
 
     # Shorter lock timeout with renewal
     async with get_redis_client() as redis_client:
         acquired = await redis_client.set(
             user_key, __lock_value, nx=True, ex=process_interval_s
-        )  # 5 minutes
+        )
         if not acquired:
+            LOG.debug(f"[background] Lock already acquired for user {user_id}")
             return
 
     try:
         iteration_count = 0
+        consecutive_errors = 0
+
         while iteration_count < max_iterations:
+            current_time = asyncio.get_event_loop().time()
+
+            # Check if we've exceeded maximum processing time
+            if current_time - start_time > max_processing_time_s:
+                LOG.warning(
+                    f"[background] Maximum processing time ({max_processing_time_s}s) exceeded for user {user_id}"
+                )
+                break
+
+            # Check lock and get next batch
             async with get_redis_client() as redis_client:
                 lock_value = await redis_client.get(user_key)
                 if lock_value is None or lock_value != __lock_value:  # Lock is expired
+                    LOG.debug(f"[background] Lock expired for user {user_id}")
                     break
 
                 buffer_ids_str = await redis_client.lpop(buffer_queue_key)
                 if buffer_ids_str is None:  # Queue is empty
+                    LOG.debug(f"[background] Queue empty for user {user_id}")
                     break
 
                 # Renew lock timeout if needed
                 await redis_client.expire(user_key, process_interval_s)
                 current_queue_size = await redis_client.llen(buffer_queue_key)
+
             LOG.info(
                 f"[background]({iteration_count}/{max_iterations}) Processing buffer for user {user_id} (left queue size: {current_queue_size})"
             )
+
             buffer_ids = unpack_ids_from_str(buffer_ids_str or "")
             if not buffer_ids:
                 continue
 
             try:
+                # Process the buffer with timeout protection
+                processing_start = asyncio.get_event_loop().time()
+
                 p = await flush_buffer_by_ids(
                     user_id,
                     project_id,
@@ -149,23 +172,60 @@ async def flush_buffer_background_running(
                     buffer_ids,
                     select_status=BufferStatus.processing,
                 )
+
+                processing_time = asyncio.get_event_loop().time() - processing_start
+
                 if not p.ok():
+                    consecutive_errors += 1
                     LOG.error(f"[background] Error flushing buffer by ids: {p.msg()}")
-                    # TODO: Add to dead letter queue or retry mechanism
+
+                    # Stop if too many consecutive errors
+                    if consecutive_errors >= max_consecutive_errors:
+                        LOG.error(
+                            f"[background] Too many consecutive errors ({consecutive_errors}) for user {user_id}, stopping"
+                        )
+                        break
+                else:
+                    consecutive_errors = 0  # Reset error counter on success
+                    LOG.debug(f"[background] Processed batch in {processing_time:.2f}s")
+
             except Exception as e:
+                consecutive_errors += 1
                 LOG.error(
                     f"[background] Unknown Error flushing buffer by ids: {e}\n{traceback.format_exc()}"
                 )
-                # TODO: Add to dead letter queue
 
+                # Stop if too many consecutive errors
+                if consecutive_errors >= max_consecutive_errors:
+                    LOG.error(
+                        f"[background] Too many consecutive errors ({consecutive_errors}) for user {user_id}, stopping"
+                    )
+                    break
+
+            # Sleep between iterations to prevent overwhelming the system
             await asyncio.sleep(asleep_waiting_s)
             iteration_count += 1
+
+        total_processing_time = asyncio.get_event_loop().time() - start_time
+        LOG.info(
+            f"[background] Completed processing for user {user_id}. "
+            f"Iterations: {iteration_count}, Time: {total_processing_time:.2f}s, "
+            f"Final consecutive errors: {consecutive_errors}"
+        )
 
     finally:
         try:
             async with get_redis_client() as redis_client:
-                await redis_client.eval(
-                    REDIS_LUA_CHECK_AND_DELETE_LOCK, 1, user_key, lock_value
+                result = await redis_client.eval(
+                    REDIS_LUA_CHECK_AND_DELETE_LOCK, 1, user_key, __lock_value
                 )
+                if result == 1:
+                    LOG.debug(
+                        f"[background] Successfully released lock for user {user_id}"
+                    )
+                else:
+                    LOG.warning(
+                        f"[background] Lock was already expired/released for user {user_id}"
+                    )
         except Exception as e:
             LOG.error(f"[background] Failed to release lock for user {user_id}: {e}")

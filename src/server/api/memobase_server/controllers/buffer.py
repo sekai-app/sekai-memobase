@@ -9,7 +9,7 @@ from ..models.utils import Promise
 from ..models.response import CODE, ChatModalResponse, IdsData
 from ..models.database import BufferZone, GeneralBlob
 from ..models.blob import BlobType, Blob
-from ..connectors import Session
+from ..connectors import Session, log_pool_status
 from .modal import BLOBS_PROCESS
 
 
@@ -124,6 +124,10 @@ async def flush_buffer_by_ids(
         return Promise.reject(CODE.BAD_REQUEST, f"Blob type {blob_type} not supported")
     if not len(buffer_ids):
         return Promise.resolve(None)
+
+    # Log initial pool status
+    log_pool_status(f"flush_buffer_by_ids_start_{blob_type}")
+
     with Session() as session:
         # Join BufferZone with GeneralBlob to get all data in one query
         buffer_blob_data = (
@@ -208,6 +212,7 @@ async def flush_buffer_by_ids(
             except Exception as e:
                 session.rollback()
                 LOG.error(f"DB Error while deleting buffers/blobs: {e}")
+                log_pool_status(f"flush_buffer_by_ids_db_error_{blob_type}")
                 raise e
 
         return p
@@ -222,6 +227,7 @@ async def flush_buffer_by_ids(
             )
             session.commit()
         LOG.error(f"Error in flush_buffer: {e}. Buffer status updated to failed.")
+        log_pool_status(f"flush_buffer_by_ids_exception_{blob_type}")
         raise e
 
 

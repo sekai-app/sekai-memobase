@@ -24,11 +24,13 @@ LOG.info(f"Redis URL: {REDIS_URL}")
 # Create an engine
 DB_ENGINE = create_engine(
     DATABASE_URL,
-    pool_size=50,  # Reasonable default, adjust based on your needs
-    max_overflow=30,  # Allow 10 connections beyond pool_size
-    pool_recycle=600,  # Recycle connections after 10 minutes
+    pool_size=75,  # Increased from 50 to handle more concurrent operations
+    max_overflow=50,  # Increased from 30 to provide more buffer
+    pool_recycle=300,  # Reduced from 600 to recycle connections more frequently
     pool_pre_ping=True,  # Verify connections before using
-    pool_timeout=30,  # Wait up to 30 seconds for available connection
+    pool_timeout=45,  # Increased from 30 seconds for better handling under load
+    pool_reset_on_return="commit",  # Ensure clean state when connections are returned
+    echo_pool=False,  # Set to True for debugging pool issues
 )
 REDIS_POOL = None
 
@@ -97,6 +99,36 @@ def get_redis_client() -> redis.Redis:
         return redis.Redis(connection_pool=REDIS_POOL, decode_responses=True)
     else:
         return redis.Redis.from_url(REDIS_URL, decode_responses=True)
+
+
+def get_pool_status() -> dict:
+    """Get current connection pool status for monitoring."""
+    pool = DB_ENGINE.pool
+    return {
+        "size": pool.size(),
+        "checked_in": pool.checkedin(),
+        "checked_out": pool.checkedout(),
+        "overflow": pool.overflow(),
+        "total_capacity": pool.size() + pool.overflow(),
+        "utilization_percent": (
+            round((pool.checkedout() / (pool.size() + pool.overflow())) * 100, 2)
+            if (pool.size() + pool.overflow()) > 0
+            else 0
+        ),
+    }
+
+
+def log_pool_status(operation: str = "unknown"):
+    """Log current pool status for debugging."""
+    status = get_pool_status()
+    if status["utilization_percent"] > 80:  # Log warning if utilization is high
+        LOG.warning(
+            f"High DB pool utilization after {operation}: "
+            f"{status['checked_out']}/{status['total_capacity']} "
+            f"({status['utilization_percent']}%) - "
+            f"Available: {status['checked_in']}, Overflow: {status['overflow']}"
+        )
+    LOG.info(f"[DB pool status] {operation}: {status}")
 
 
 if __name__ == "__main__":
