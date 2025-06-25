@@ -6,9 +6,9 @@ add_api_code_docs(
     "/healthcheck",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+memobase = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 assert memobase.ping()
 """
@@ -59,9 +59,9 @@ add_api_code_docs(
     "/project/billing",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+memobase = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 print(memobase.get_usage())
 """
@@ -104,9 +104,9 @@ add_api_code_docs(
     "/project/profile_config",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+memobase = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 memobase.update_config('your_profile_config')
 """
@@ -158,9 +158,9 @@ add_api_code_docs(
     "/project/profile_config",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+memobase = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 config = memobase.get_config()
 """
@@ -212,9 +212,9 @@ add_api_code_docs(
     "/project/users",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+memobase = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 users = memobase.get_all_users(search="", order_by="updated_at", order_desc=True, limit=10, offset=0)
 """
@@ -257,9 +257,9 @@ add_api_code_docs(
     "/project/usage",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+memobase = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 usage = memobase.get_daily_usage(days=7)
 """

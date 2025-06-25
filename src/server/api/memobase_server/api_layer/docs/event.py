@@ -6,9 +6,9 @@ add_api_code_docs(
     "/users/event/{user_id}",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 u = client.get_user(uid)
 
 events = u.event(topk=10, max_token_size=1000, need_summary=True)
@@ -70,9 +70,9 @@ add_api_code_docs(
     "/users/event/{user_id}/{event_id}",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 uid = client.add_user()
 u = client.get_user(uid)
 # ... insert messages to user
@@ -131,9 +131,9 @@ add_api_code_docs(
     "/users/event/{user_id}/{event_id}",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 uid = client.add_user()
 u = client.get_user(uid)
 # ... insert messages to user
@@ -193,9 +193,10 @@ add_api_code_docs(
     "/users/event/search/{user_id}",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
+from memobase.core.blob import ChatBlob
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 uid = client.add_user()
 u = client.get_user(uid)
 

@@ -6,13 +6,13 @@ add_api_code_docs(
     "/users/blobs/{user_id}/{blob_type}",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 from memobase.core.blob import BlobType
 
-memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
-user = memobase.get_user('user_id')
-blobs = user.get_all(BlobType.CHAT)
+user = client.get_user('user_id')
+blobs = user.get_all(BlobType.chat)
 """
     ),
     js_code(
@@ -72,10 +72,10 @@ add_api_code_docs(
     "/blobs/insert/{user_id}",
     py_code(
         """
-from memobase import Memobase
-from memobase import ChatBlob
+from memobase import MemoBaseClient
+from memobase.core.blob import ChatBlob
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 b = ChatBlob(messages=[
     {
@@ -176,9 +176,9 @@ add_api_code_docs(
     "/blobs/{user_id}/{blob_id}",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 u = client.get_user(uid)
 b = u.get(bid)
@@ -245,9 +245,9 @@ add_api_code_docs(
     "/blobs/{user_id}/{blob_id}",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 u = client.get_user(uid)
 u.delete(bid)
@@ -309,9 +309,9 @@ add_api_code_docs(
     "/users/buffer/{user_id}/{buffer_type}",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 u = client.get_user(uid)
 u.flush()
@@ -372,6 +372,17 @@ func main() {
 add_api_code_docs(
     "GET",
     "/users/buffer/capacity/{user_id}/{buffer_type}",
+    py_code(
+        """
+from memobase import MemoBaseClient
+from memobase.core.blob import BlobType
+
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+
+user = client.get_user('user_id')
+blobs = user.buffer(BlobType.chat)
+"""
+    ),
     go_code(
         """
 import (

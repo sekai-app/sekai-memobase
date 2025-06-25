@@ -187,7 +187,7 @@ mb.update_user(uid, {"any_key": "any_value2"})
 u = mb.get_user(uid)
 print(u)
 
-# mb.delete(uid)
+# mb.delete_user(uid)
 ```
 
 ### 3. Insert Data

@@ -6,9 +6,9 @@ add_api_code_docs(
     "/users/profile/{user_id}",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 u = client.get_user(uid)
 p = u.profile()
@@ -77,6 +77,16 @@ func main() {
 add_api_code_docs(
     "POST",
     "/users/profile/{user_id}",
+    py_code(
+        """
+from memobase import MemoBaseClient
+
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+
+user = client.get_user('user_id')
+user.add_profile(content="I am a software engineer", topic="career", sub_topic="job")
+"""
+    ),
     go_code(
         """
 import (
@@ -120,6 +130,16 @@ func main() {
 add_api_code_docs(
     "PUT",
     "/users/profile/{user_id}/{profile_id}",
+    py_code(
+        """
+from memobase import MemoBaseClient
+
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+
+user = client.get_user('user_id')
+user.update_profile(profile_id="profile_id", content="I am a software engineer", topic="career", sub_topic="job")
+"""
+    ),
     go_code(
         """
 import (
@@ -166,11 +186,12 @@ add_api_code_docs(
     "/users/profile/{user_id}/{profile_id}",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-memobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
-memobase.delete_profile('user_id', 'profile_id')
+user = client.get_user('user_id')
+user.delete_profile('profile_id')
 """
     ),
     js_code(

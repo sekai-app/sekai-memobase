@@ -6,9 +6,9 @@ add_api_code_docs(
     "/users",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 uid = client.add_user({"ANY": "DATA"})
 """
@@ -63,9 +63,9 @@ add_api_code_docs(
     "/users/{user_id}",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 u = client.get_user(uid)
 """
@@ -119,9 +119,9 @@ add_api_code_docs(
     "/users/{user_id}",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 client.update_user(uid, {"ANY": "NEW_DATA"})
 """
@@ -175,9 +175,9 @@ add_api_code_docs(
     "/users/{user_id}",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 client.delete_user(uid)
 """
@@ -230,9 +230,9 @@ add_api_code_docs(
     "/users/context/{user_id}",
     py_code(
         """
-from memobase import Memobase
+from memobase import MemoBaseClient
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+client = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
 
 context = u.context()
 """

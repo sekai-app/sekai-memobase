@@ -37,7 +37,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nassert memobase.ping()\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nmemobase = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nassert memobase.ping()\n\n",
 						"label": "Python"
 					},
 					{
@@ -76,7 +76,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nconfig = memobase.get_config()\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nmemobase = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nconfig = memobase.get_config()\n\n",
 						"label": "Python"
 					},
 					{
@@ -133,7 +133,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nmemobase.update_config('your_profile_config')\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nmemobase = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nmemobase.update_config('your_profile_config')\n\n",
 						"label": "Python"
 					},
 					{
@@ -171,7 +171,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nprint(memobase.get_usage())\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nmemobase = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nprint(memobase.get_usage())\n\n",
 						"label": "Python"
 					},
 					{
@@ -282,7 +282,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nusers = memobase.get_all_users(search=\"\", order_by=\"updated_at\", order_desc=True, limit=10, offset=0)\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nmemobase = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nusers = memobase.get_all_users(search=\"\", order_by=\"updated_at\", order_desc=True, limit=10, offset=0)\n\n",
 						"label": "Python"
 					},
 					{
@@ -340,7 +340,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nusage = memobase.get_daily_usage(days=7)\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nmemobase = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nusage = memobase.get_daily_usage(days=7)\n\n",
 						"label": "Python"
 					},
 					{
@@ -395,7 +395,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nuid = client.add_user({\"ANY\": \"DATA\"})\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nuid = client.add_user({\"ANY\": \"DATA\"})\n\n",
 						"label": "Python"
 					},
 					{
@@ -456,7 +456,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\n\n",
 						"label": "Python"
 					},
 					{
@@ -528,7 +528,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nclient.update_user(uid, {\"ANY\": \"NEW_DATA\"})\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nclient.update_user(uid, {\"ANY\": \"NEW_DATA\"})\n\n",
 						"label": "Python"
 					},
 					{
@@ -587,7 +587,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nclient.delete_user(uid)\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nclient.delete_user(uid)\n\n",
 						"label": "Python"
 					},
 					{
@@ -682,7 +682,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\nfrom memobase.core.blob import BlobType\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nuser = memobase.get_user('user_id')\nblobs = user.get_all(BlobType.CHAT)\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\nfrom memobase.core.blob import BlobType\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nuser = client.get_user('user_id')\nblobs = user.get_all(BlobType.chat)\n\n",
 						"label": "Python"
 					},
 					{
@@ -766,7 +766,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\nfrom memobase import ChatBlob\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nb = ChatBlob(messages=[\n    {\n        \"role\": \"user\",\n        \"content\": \"Hi, I'm here again\"\n    },\n    {\n        \"role\": \"assistant\",\n        \"content\": \"Hi, Gus! How can I help you?\"\n    }\n])\nu = client.get_user(uid)\nbid = u.insert(b)\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\nfrom memobase.core.blob import ChatBlob\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nb = ChatBlob(messages=[\n    {\n        \"role\": \"user\",\n        \"content\": \"Hi, I'm here again\"\n    },\n    {\n        \"role\": \"assistant\",\n        \"content\": \"Hi, Gus! How can I help you?\"\n    }\n])\nu = client.get_user(uid)\nbid = u.insert(b)\n\n",
 						"label": "Python"
 					},
 					{
@@ -838,7 +838,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\nb = u.get(bid)\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\nb = u.get(bid)\n\n",
 						"label": "Python"
 					},
 					{
@@ -908,7 +908,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\nu.delete(bid)\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\nu.delete(bid)\n\n",
 						"label": "Python"
 					},
 					{
@@ -1053,7 +1053,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\np = u.profile()\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\np = u.profile()\n\n",
 						"label": "Python"
 					},
 					{
@@ -1122,6 +1122,11 @@
 					}
 				},
 				"x-code-samples": [
+					{
+						"lang": "python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nuser = client.get_user('user_id')\nuser.add_profile(content=\"I am a software engineer\", topic=\"career\", sub_topic=\"job\")\n\n",
+						"label": "Python"
+					},
 					{
 						"lang": "go",
 						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Add a profile\n    profileID, err := user.AddProfile(\"value\", \"topic\", \"sub_topic\")\n    if err != nil {\n        log.Fatalf(\"Failed to add profile: %v\", err)\n    }\n    fmt.Printf(\"Successfully added profile with ID: %s\n\", profileID)\n}\n\n",
@@ -1252,6 +1257,11 @@
 				},
 				"x-code-samples": [
 					{
+						"lang": "python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nuser = client.get_user('user_id')\nuser.update_profile(profile_id=\"profile_id\", content=\"I am a software engineer\", topic=\"career\", sub_topic=\"job\")\n\n",
+						"label": "Python"
+					},
+					{
 						"lang": "go",
 						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Update a profile\n    profileID := \"EXISTING_PROFILE_ID\" // Replace with an actual profile ID\n    err = user.UpdateProfile(profileID, \"value2\", \"topic2\", \"sub_topic2\")\n    if err != nil {\n        log.Fatalf(\"Failed to update profile: %v\", err)\n    }\n    fmt.Printf(\"Successfully updated profile with ID: %s\n\", profileID)\n}\n\n",
 						"label": "Go"
@@ -1314,7 +1324,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nmemobase.delete_profile('user_id', 'profile_id')\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nuser = client.get_user('user_id')\nuser.delete_profile('profile_id')\n\n",
 						"label": "Python"
 					},
 					{
@@ -1398,7 +1408,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\nu.flush()\nu.flush(sync=True) # wait for the buffer to be processed\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nu = client.get_user(uid)\nu.flush()\nu.flush(sync=True) # wait for the buffer to be processed\n\n",
 						"label": "Python"
 					},
 					{
@@ -1487,6 +1497,11 @@
 				},
 				"x-code-samples": [
 					{
+						"lang": "python",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\nfrom memobase.core.blob import BlobType\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nuser = client.get_user('user_id')\nblobs = user.buffer(BlobType.chat)\n\n",
+						"label": "Python"
+					},
+					{
 						"lang": "go",
 						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Get buffer capacity\n    blobIDs, err := user.Buffer(blob.ChatType, \"processing\")\n    if err != nil {\n        log.Fatalf(\"Failed to get buffer capacity: %v\", err)\n    }\n    fmt.Printf(\"Found %d blobs in buffer\n\", len(blobIDs))\n}\n\n",
 						"label": "Go"
@@ -1574,7 +1589,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\nu = client.get_user(uid)\n\nevents = u.event(topk=10, max_token_size=1000, need_summary=True)\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\nu = client.get_user(uid)\n\nevents = u.event(topk=10, max_token_size=1000, need_summary=True)\n\n",
 						"label": "Python"
 					},
 					{
@@ -1657,7 +1672,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\nuid = client.add_user()\nu = client.get_user(uid)\n# ... insert messages to user\n\nevents = u.event(topk=5)\neid = events[0].id\n\nu.update_event(eid, {\"event_tip\": \"The event is about...\"})\nprint(u.event(topk=1))\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\nuid = client.add_user()\nu = client.get_user(uid)\n# ... insert messages to user\n\nevents = u.event(topk=5)\neid = events[0].id\n\nu.update_event(eid, {\"event_tip\": \"The event is about...\"})\nprint(u.event(topk=1))\n\n",
 						"label": "Python"
 					},
 					{
@@ -1722,7 +1737,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\nuid = client.add_user()\nu = client.get_user(uid)\n# ... insert messages to user\n\nevents = u.event(topk=1)\nprint(events)\n\neid = events[0].id\nu.delete_event(eid)\n\nprint(u.event(topk=1))\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\nuid = client.add_user()\nu = client.get_user(uid)\n# ... insert messages to user\n\nevents = u.event(topk=1)\nprint(events)\n\neid = events[0].id\nu.delete_event(eid)\n\nprint(u.event(topk=1))\n\n",
 						"label": "Python"
 					},
 					{
@@ -1825,7 +1840,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\nuid = client.add_user()\nu = client.get_user(uid)\n\nb = ChatBlob(messages=[\n    {\n        \"role\": \"user\",\n        \"content\": \"Hi, I'm here again\"\n    },\n    {\n        \"role\": \"assistant\",\n        \"content\": \"Hi, Gus! How can I help you?\"\n    }\n])\nu.insert(b)\nu.flush(sync=True)\n\nevents = u.search_event('query')\nprint(events)\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\nfrom memobase.core.blob import ChatBlob\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\nuid = client.add_user()\nu = client.get_user(uid)\n\nb = ChatBlob(messages=[\n    {\n        \"role\": \"user\",\n        \"content\": \"Hi, I'm here again\"\n    },\n    {\n        \"role\": \"assistant\",\n        \"content\": \"Hi, Gus! How can I help you?\"\n    }\n])\nu.insert(b)\nu.flush(sync=True)\n\nevents = u.search_event('query')\nprint(events)\n\n",
 						"label": "Python"
 					},
 					{
@@ -1990,7 +2005,7 @@
 				"x-code-samples": [
 					{
 						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\ncontext = u.context()\n\n",
+						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import MemoBaseClient\n\nclient = MemoBaseClient(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\ncontext = u.context()\n\n",
 						"label": "Python"
 					},
 					{
