@@ -2,7 +2,7 @@
 
 **Changed**
 
-- Remove rich log to simple logging
+- Remove rich log to simple logging, add project id and user id
 
 - Update api doc structure
 
