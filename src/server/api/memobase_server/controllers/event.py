@@ -9,7 +9,7 @@ from ..llms.embeddings import get_embedding
 from datetime import timedelta
 from sqlalchemy import desc, select
 from sqlalchemy.sql import func
-from ..env import LOG, CONFIG
+from ..env import TRACE_LOG, CONFIG
 
 
 async def get_user_events(
@@ -65,7 +65,11 @@ async def append_user_event(
     try:
         validated_event = EventData(**event_data)
     except ValidationError as e:
-        LOG.error(f"Invalid event data: {str(e)}")
+        TRACE_LOG.error(
+            project_id,
+            user_id,
+            f"Invalid event data: {str(e)}",
+        )
         return Promise.reject(
             CODE.INTERNAL_SERVER_ERROR,
             f"Invalid event data: {str(e)}",
@@ -80,14 +84,20 @@ async def append_user_event(
             model=CONFIG.embedding_model,
         )
         if not embedding.ok():
-            LOG.error(f"Failed to get embeddings: {embedding.msg()}")
+            TRACE_LOG.error(
+                project_id,
+                user_id,
+                f"Failed to get embeddings: {embedding.msg()}",
+            )
             embedding = [None]
         else:
             embedding = embedding.data()
             embedding_dim_current = embedding.shape[-1]
             if embedding_dim_current != CONFIG.embedding_dim:
-                LOG.error(
-                    f"Embedding dimension mismatch! Expected {CONFIG.embedding_dim}, got {embedding_dim_current}."
+                TRACE_LOG.error(
+                    project_id,
+                    user_id,
+                    f"Embedding dimension mismatch! Expected {CONFIG.embedding_dim}, got {embedding_dim_current}.",
                 )
                 embedding = [None]
     else:
@@ -173,7 +183,11 @@ async def search_user_events(
         project_id, [query], phase="query", model=CONFIG.embedding_model
     )
     if not query_embeddings.ok():
-        LOG.error(f"Failed to get embeddings: {query_embeddings.msg()}")
+        TRACE_LOG.error(
+            project_id,
+            user_id,
+            f"Failed to get embeddings: {query_embeddings.msg()}",
+        )
         return query_embeddings
     query_embedding = query_embeddings.data()[0]
 
@@ -213,6 +227,10 @@ async def search_user_events(
 
         # Create UserEventsData with the events
         user_events_data = UserEventsData(events=user_events)
-        LOG.info(f"Event Query: {query}")
+        TRACE_LOG.info(
+            project_id,
+            user_id,
+            f"Event Query: {query}",
+        )
 
     return Promise.resolve(user_events_data)

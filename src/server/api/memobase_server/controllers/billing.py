@@ -9,8 +9,6 @@ from ..models.response import CODE, IdData, IdsData, UserProfilesData, BillingDa
 from ..connectors import Session, ADMIN_URL
 from ..telemetry.capture_key import get_int_key, capture_int_key
 from ..env import (
-    LOG,
-    CONFIG,
     TelemetryKeyName,
     USAGE_TOKEN_LIMIT_MAP,
     BILLING_REFILL_AMOUNT_MAP,

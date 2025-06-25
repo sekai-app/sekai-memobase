@@ -1,5 +1,5 @@
 import asyncio
-from ....env import CONFIG, LOG
+from ....env import CONFIG, TRACE_LOG
 from ....models.utils import Promise, CODE
 from ....models.response import ProfileData
 from ....env import ProfileConfig, ContanstTable
@@ -13,6 +13,7 @@ from .types import UpdateResponse, PROMPTS, AddProfile, UpdateProfile, MergeAddR
 
 
 async def merge_or_valid_new_memos(
+    user_id: str,
     project_id: str,
     fact_contents: list[str],
     fact_attributes: list[dict],
@@ -41,6 +42,7 @@ async def merge_or_valid_new_memos(
     tasks = []
     for f_c, f_a in zip(fact_contents, fact_attributes):
         task = handle_profile_merge_or_valid(
+            user_id,
             project_id,
             f_a,
             f_c,
@@ -55,6 +57,7 @@ async def merge_or_valid_new_memos(
 
 
 async def handle_profile_merge_or_valid(
+    user_id: str,
     project_id: str,
     profile_attributes: dict,
     profile_content: str,
@@ -81,7 +84,11 @@ async def handle_profile_merge_or_valid(
         and not define_sub_topic.validate_value
         and runtime_profile is None
     ):
-        LOG.info(f"Skip validation: {KEY}")
+        TRACE_LOG.info(
+            project_id,
+            user_id,
+            f"Skip validation: {KEY}",
+        )
         session_merge_validate_results["add"].append(
             {
                 "content": profile_content,
@@ -106,11 +113,19 @@ async def handle_profile_merge_or_valid(
     # print(KEY, profile_content)
     # print(r.data())
     if not r.ok():
-        LOG.warning(f"Failed to merge profiles: {r.msg()}")
+        TRACE_LOG.warning(
+            project_id,
+            user_id,
+            f"Failed to merge profiles: {r.msg()}",
+        )
         return r
     update_response: UpdateResponse | None = parse_string_into_merge_action(r.data())
     if update_response is None:
-        LOG.warning(f"Failed to parse merge action: {r.data()}")
+        TRACE_LOG.warning(
+            project_id,
+            user_id,
+            f"Failed to parse merge action: {r.data()}",
+        )
         return Promise.reject(
             CODE.SERVER_PARSE_ERROR, "Failed to parse merge action of Memobase"
         )
@@ -142,17 +157,25 @@ async def handle_profile_merge_or_valid(
             )
     elif update_response["action"] == "ABORT":
         if runtime_profile is None:
-            LOG.info(
-                f"Invalid profile: {KEY}::{profile_content}, abort it\n<raw_response>\n{r.data()}\n</raw_response>"
+            TRACE_LOG.info(
+                project_id,
+                user_id,
+                f"Invalid profile: {KEY}::{profile_content}, abort it\n<raw_response>\n{r.data()}\n</raw_response>",
             )
         else:
-            LOG.info(
-                f"Invalid merge: {runtime_profile.attributes}, {profile_content}, abort it\n<raw_response>\n{r.data()}\n</raw_response>"
+            TRACE_LOG.info(
+                project_id,
+                user_id,
+                f"Invalid merge: {runtime_profile.attributes}, {profile_content}, abort it\n<raw_response>\n{r.data()}\n</raw_response>",
             )
             # session_merge_validate_results["delete"].append(runtime_profile.id)
         return Promise.resolve(None)
     else:
-        LOG.warning(f"Invalid action: {update_response['action']}")
+        TRACE_LOG.warning(
+            project_id,
+            user_id,
+            f"Invalid action: {update_response['action']}",
+        )
         return Promise.reject(
             CODE.SERVER_PARSE_ERROR, "Failed to parse merge action of Memobase"
         )

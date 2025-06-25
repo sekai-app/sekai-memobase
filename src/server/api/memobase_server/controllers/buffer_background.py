@@ -3,7 +3,7 @@ import asyncio
 import traceback
 from sqlalchemy import func
 from pydantic import BaseModel
-from ..env import CONFIG, LOG, BufferStatus
+from ..env import CONFIG, BufferStatus, TRACE_LOG
 from ..models.utils import Promise
 from ..models.response import CODE, ChatModalResponse, IdsData, UUID
 from ..models.database import BufferZone, GeneralBlob
@@ -83,14 +83,18 @@ async def flush_buffer_by_ids_in_background(
 
             queue_size = await redis_client.llen(buffer_queue_key)
 
-            LOG.info(
-                f"[background] Enqueued {len(actual_buffer_ids)} buffer IDs for user {user_id} to queue (queue size: {queue_size})"
+            TRACE_LOG.info(
+                project_id,
+                user_id,
+                f"[background] Enqueued {len(actual_buffer_ids)} buffer IDs to queue (queue size: {queue_size})",
             )
 
         await flush_buffer_background_running(user_id, project_id, blob_type)
     except Exception as e:
-        LOG.error(
-            f"[background] Error enqueue buffer ids: {e}: {traceback.format_exc()}"
+        TRACE_LOG.error(
+            project_id,
+            user_id,
+            f"[background] Error enqueue buffer ids: {e}: {traceback.format_exc()}",
         )
 
 
@@ -120,7 +124,11 @@ async def flush_buffer_background_running(
             user_key, __lock_value, nx=True, ex=process_interval_s
         )
         if not acquired:
-            LOG.debug(f"[background] Lock already acquired for user {user_id}")
+            TRACE_LOG.debug(
+                project_id,
+                user_id,
+                f"[background] Lock already acquired",
+            )
             return
 
     try:
@@ -132,8 +140,10 @@ async def flush_buffer_background_running(
 
             # Check if we've exceeded maximum processing time
             if current_time - start_time > max_processing_time_s:
-                LOG.warning(
-                    f"[background] Maximum processing time ({max_processing_time_s}s) exceeded for user {user_id}"
+                TRACE_LOG.warning(
+                    project_id,
+                    user_id,
+                    f"[background] Maximum processing time ({max_processing_time_s}s) exceeded",
                 )
                 break
 
@@ -141,20 +151,30 @@ async def flush_buffer_background_running(
             async with get_redis_client() as redis_client:
                 lock_value = await redis_client.get(user_key)
                 if lock_value is None or lock_value != __lock_value:  # Lock is expired
-                    LOG.debug(f"[background] Lock expired for user {user_id}")
+                    TRACE_LOG.debug(
+                        project_id,
+                        user_id,
+                        "[background] Lock expired",
+                    )
                     break
 
                 buffer_ids_str = await redis_client.lpop(buffer_queue_key)
                 if buffer_ids_str is None:  # Queue is empty
-                    LOG.debug(f"[background] Queue empty for user {user_id}")
+                    TRACE_LOG.debug(
+                        project_id,
+                        user_id,
+                        "[background] Queue empty",
+                    )
                     break
 
                 # Renew lock timeout if needed
                 await redis_client.expire(user_key, process_interval_s)
                 current_queue_size = await redis_client.llen(buffer_queue_key)
 
-            LOG.info(
-                f"[background]({iteration_count}/{max_iterations}) Processing buffer for user {user_id} (left queue size: {current_queue_size})"
+            TRACE_LOG.info(
+                project_id,
+                user_id,
+                f"[background]({iteration_count}/{max_iterations}) Processing buffer (left queue size: {current_queue_size})",
             )
 
             buffer_ids = unpack_ids_from_str(buffer_ids_str or "")
@@ -177,28 +197,42 @@ async def flush_buffer_background_running(
 
                 if not p.ok():
                     consecutive_errors += 1
-                    LOG.error(f"[background] Error flushing buffer by ids: {p.msg()}")
+                    TRACE_LOG.error(
+                        project_id,
+                        user_id,
+                        f"[background] Error flushing buffer by ids: {p.msg()}",
+                    )
 
                     # Stop if too many consecutive errors
                     if consecutive_errors >= max_consecutive_errors:
-                        LOG.error(
-                            f"[background] Too many consecutive errors ({consecutive_errors}) for user {user_id}, stopping"
+                        TRACE_LOG.error(
+                            project_id,
+                            user_id,
+                            f"[background] Too many consecutive errors ({consecutive_errors}), stopping",
                         )
                         break
                 else:
                     consecutive_errors = 0  # Reset error counter on success
-                    LOG.debug(f"[background] Processed batch in {processing_time:.2f}s")
+                    TRACE_LOG.debug(
+                        project_id,
+                        user_id,
+                        f"[background] Processed batch in {processing_time:.2f}s",
+                    )
 
             except Exception as e:
                 consecutive_errors += 1
-                LOG.error(
-                    f"[background] Unknown Error flushing buffer by ids: {e}\n{traceback.format_exc()}"
+                TRACE_LOG.error(
+                    project_id,
+                    user_id,
+                    f"[background] Unknown Error flushing buffer by ids: {e}\n{traceback.format_exc()}",
                 )
 
                 # Stop if too many consecutive errors
                 if consecutive_errors >= max_consecutive_errors:
-                    LOG.error(
-                        f"[background] Too many consecutive errors ({consecutive_errors}) for user {user_id}, stopping"
+                    TRACE_LOG.error(
+                        project_id,
+                        user_id,
+                        f"[background] Too many consecutive errors ({consecutive_errors}), stopping",
                     )
                     break
 
@@ -207,10 +241,12 @@ async def flush_buffer_background_running(
             iteration_count += 1
 
         total_processing_time = asyncio.get_event_loop().time() - start_time
-        LOG.info(
-            f"[background] Completed processing for user {user_id}. "
+        TRACE_LOG.info(
+            project_id,
+            user_id,
+            f"[background] Completed processing. "
             f"Iterations: {iteration_count}, Time: {total_processing_time:.2f}s, "
-            f"Final consecutive errors: {consecutive_errors}"
+            f"Final consecutive errors: {consecutive_errors}",
         )
 
     finally:
@@ -220,12 +256,20 @@ async def flush_buffer_background_running(
                     REDIS_LUA_CHECK_AND_DELETE_LOCK, 1, user_key, __lock_value
                 )
                 if result == 1:
-                    LOG.debug(
-                        f"[background] Successfully released lock for user {user_id}"
+                    TRACE_LOG.debug(
+                        project_id,
+                        user_id,
+                        f"[background] Successfully released lock",
                     )
                 else:
-                    LOG.warning(
-                        f"[background] Lock was already expired/released for user {user_id}"
+                    TRACE_LOG.warning(
+                        project_id,
+                        user_id,
+                        f"[background] Lock was already expired/released",
                     )
         except Exception as e:
-            LOG.error(f"[background] Failed to release lock for user {user_id}: {e}")
+            TRACE_LOG.error(
+                project_id,
+                user_id,
+                f"[background] Failed to release lock: {e}",
+            )

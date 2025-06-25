@@ -1,7 +1,7 @@
 import asyncio
 from ...project import get_project_profile_config
 from ....connectors import Session
-from ....env import LOG, ProfileConfig, CONFIG
+from ....env import ProfileConfig, CONFIG, TRACE_LOG
 from ....utils import get_blob_str, get_encoded_tokens
 from ....models.blob import Blob
 from ....models.utils import Promise, CODE
@@ -108,6 +108,7 @@ async def process_profile_res(
 
     # 2. Merge it to thw whole profile
     p = await merge_or_valid_new_memos(
+        user_id,
         project_id,
         fact_contents=extracted_data["fact_contents"],
         fact_attributes=extracted_data["fact_attributes"],
@@ -125,21 +126,31 @@ async def process_profile_res(
 
     # 3. Check if we need to organize profiles
     p = await organize_profiles(
+        user_id,
         project_id,
         intermediate_profile,
         config=project_profiles,
     )
     if not p.ok():
-        LOG.error(f"Failed to organize profiles: {p.msg()}")
+        TRACE_LOG.error(
+            project_id,
+            user_id,
+            f"Failed to organize profiles: {p.msg()}",
+        )
 
     # 4. Re-summary profiles if any slot is too big
     p = await re_summary(
+        user_id,
         project_id,
         add_profile=intermediate_profile["add"],
         update_profile=intermediate_profile["update"],
     )
     if not p.ok():
-        LOG.error(f"Failed to re-summary profiles: {p.msg()}")
+        TRACE_LOG.error(
+            project_id,
+            user_id,
+            f"Failed to re-summary profiles: {p.msg()}",
+        )
 
     return Promise.resolve((intermediate_profile, delta_profile_data))
 
@@ -152,7 +163,11 @@ async def process_event_res(
 ) -> Promise[list | None]:
     p = await tag_event(project_id, config, memo_str)
     if not p.ok():
-        LOG.error(f"Failed to tag event: {p.msg()}")
+        TRACE_LOG.error(
+            project_id,
+            user_id,
+            f"Failed to tag event: {p.msg()}",
+        )
         return p
     event_tags = p.data()
     return Promise.resolve(event_tags)
@@ -183,8 +198,10 @@ async def handle_session_event(
 async def handle_user_profile_db(
     user_id: str, project_id: str, intermediate_profile: MergeAddResult
 ) -> Promise[IdsData]:
-    LOG.info(
-        f"Adding {len(intermediate_profile['add'])}, updating {len(intermediate_profile['update'])}, deleting {len(intermediate_profile['delete'])} profiles for user {user_id}"
+    TRACE_LOG.info(
+        project_id,
+        user_id,
+        f"Adding {len(intermediate_profile['add'])}, updating {len(intermediate_profile['update'])}, deleting {len(intermediate_profile['delete'])} profiles",
     )
 
     p = await add_update_delete_user_profiles(

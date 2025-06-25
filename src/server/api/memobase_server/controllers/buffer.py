@@ -1,6 +1,6 @@
 from sqlalchemy import func
 from pydantic import BaseModel
-from ..env import CONFIG, LOG, BufferStatus
+from ..env import CONFIG, BufferStatus, TRACE_LOG
 from ..utils import (
     get_blob_token_size,
     pack_blob_from_db,
@@ -84,8 +84,10 @@ async def detect_buffer_full_or_not(
             buffer_token_size
             and buffer_token_size > CONFIG.max_chat_blob_buffer_token_size
         ):
-            LOG.info(
-                f"Flush {blob_type} buffer for user {user_id} due to reach maximum token size({buffer_token_size} > {CONFIG.max_chat_blob_buffer_token_size})"
+            TRACE_LOG.info(
+                project_id,
+                user_id,
+                f"Flush {blob_type} buffer due to reach maximum token size({buffer_token_size} > {CONFIG.max_chat_blob_buffer_token_size})",
             )
 
             return Promise.resolve(IdsData(ids=buffer_ids))
@@ -163,14 +165,20 @@ async def flush_buffer_by_ids(
             )
 
         if not buffer_blob_data:
-            LOG.info(f"No {blob_type} buffer to flush for user {user_id}")
+            TRACE_LOG.info(
+                project_id,
+                user_id,
+                f"No {blob_type} buffer to flush",
+            )
             return Promise.resolve(None)
 
         blob_ids = [row.blob_id for row in buffer_blob_data]
         blobs = [pack_blob_from_db(row, blob_type) for row in buffer_blob_data]
         total_token_size = sum(row.token_size for row in buffer_blob_data)
-        LOG.info(
-            f"Flush {blob_type} buffer for user {user_id} with {len(buffer_blob_data)} blobs and total token size({total_token_size})"
+        TRACE_LOG.info(
+            project_id,
+            user_id,
+            f"Flush {blob_type} buffer with {len(buffer_blob_data)} blobs and total token size({total_token_size})",
         )
 
         session.commit()
@@ -206,12 +214,18 @@ async def flush_buffer_by_ids(
                         GeneralBlob.project_id == project_id,
                     ).delete(synchronize_session=False)
                 session.commit()
-                LOG.info(
-                    f"Flushed {blob_type} buffer(size: {len(buffer_blob_data)}) for user {user_id}"
+                TRACE_LOG.info(
+                    project_id,
+                    user_id,
+                    f"Flushed {blob_type} buffer(size: {len(buffer_blob_data)})",
                 )
             except Exception as e:
                 session.rollback()
-                LOG.error(f"DB Error while deleting buffers/blobs: {e}")
+                TRACE_LOG.error(
+                    project_id,
+                    user_id,
+                    f"DB Error while deleting buffers/blobs: {e}",
+                )
                 log_pool_status(f"flush_buffer_by_ids_db_error_{blob_type}")
                 raise e
 
@@ -226,7 +240,11 @@ async def flush_buffer_by_ids(
                 synchronize_session=False,
             )
             session.commit()
-        LOG.error(f"Error in flush_buffer: {e}. Buffer status updated to failed.")
+        TRACE_LOG.error(
+            project_id,
+            user_id,
+            f"Error in flush_buffer: {e}. Buffer status updated to failed.",
+        )
         log_pool_status(f"flush_buffer_by_ids_exception_{blob_type}")
         raise e
 

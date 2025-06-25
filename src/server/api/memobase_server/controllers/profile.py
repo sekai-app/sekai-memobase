@@ -4,7 +4,7 @@ from ..models.database import GeneralBlob, UserProfile
 from ..models.response import CODE, IdData, IdsData, UserProfilesData, ProfileAttributes
 from ..connectors import Session, get_redis_client
 from ..utils import get_encoded_tokens
-from ..env import LOG, CONFIG
+from ..env import CONFIG, TRACE_LOG
 
 
 async def truncate_profiles(
@@ -83,7 +83,11 @@ async def get_user_profiles(user_id: str, project_id: str) -> Promise[UserProfil
                     UserProfilesData.model_validate_json(user_profiles)
                 )
             except ValidationError as e:
-                LOG.error(f"Invalid user profiles: {e}")
+                TRACE_LOG.error(
+                    project_id,
+                    user_id,
+                    f"Invalid user profiles: {e}",
+                )
                 await redis_client.delete(f"user_profiles::{project_id}::{user_id}")
     with Session() as session:
         user_profiles = (
@@ -165,7 +169,11 @@ async def update_user_profiles(
                 .one_or_none()
             )
             if db_profile is None:
-                LOG.error(f"Profile {profile_id} not found for user {user_id}")
+                TRACE_LOG.error(
+                    project_id,
+                    user_id,
+                    f"Profile {profile_id} not found",
+                )
                 continue
             db_profile.content = content
             if attribute is not None:
@@ -274,7 +282,11 @@ async def add_update_delete_user_profiles(
                     .one_or_none()
                 )
                 if db_profile is None:
-                    LOG.error(f"Profile {profile_id} not found for user {user_id}")
+                    TRACE_LOG.error(
+                        project_id,
+                        user_id,
+                        f"Profile {profile_id} not found",
+                    )
                     continue
                 db_profile.content = content
                 if attribute is not None:
@@ -290,7 +302,11 @@ async def add_update_delete_user_profiles(
 
             session.commit()
         except Exception as e:
-            LOG.error(f"Error merging user profiles: {e}")
+            TRACE_LOG.error(
+                project_id,
+                user_id,
+                f"Error merging user profiles: {e}",
+            )
             session.rollback()
             return Promise.reject(
                 CODE.SERVER_PARSE_ERROR, f"Error merging user profiles: {e}"

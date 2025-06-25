@@ -4,7 +4,7 @@ import traceback
 
 from ..controllers import full as controllers
 
-from ..env import LOG, TelemetryKeyName
+from ..env import TelemetryKeyName, TRACE_LOG
 from ..models.response import CODE
 from ..models.utils import Promise
 from ..models import response as res
@@ -81,7 +81,9 @@ async def insert_blob(
                     process_ids.data().ids,
                 )
     except Exception as e:
-        LOG.error(f"Error inserting blob: {e}, {traceback.format_exc()}")
+        TRACE_LOG.error(
+            project_id, user_id, f"Error inserting blob: {e}, {traceback.format_exc()}"
+        )
         return Promise.reject(
             CODE.INTERNAL_SERVER_ERROR, f"Error inserting blob: {e}"
         ).to_response(res.BaseResponse)

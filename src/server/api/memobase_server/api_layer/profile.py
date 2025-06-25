@@ -59,6 +59,7 @@ async def get_user_profile(
     total_profiles = p.data()
     if chats:
         p = await filter_profiles_with_chats(
+            user_id,
             project_id,
             total_profiles,
             chats,

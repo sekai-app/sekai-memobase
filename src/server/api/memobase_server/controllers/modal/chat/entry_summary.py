@@ -1,5 +1,5 @@
 import asyncio
-from ....env import CONFIG, LOG
+from ....env import CONFIG
 from ....models.utils import Promise
 from ....models.blob import Blob, BlobType
 from ....llms import llm_complete

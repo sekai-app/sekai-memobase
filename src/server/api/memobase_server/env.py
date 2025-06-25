@@ -263,6 +263,7 @@ LOG.setLevel(logging.INFO)
 class Colors:
     BLUE = "\033[94m"
     BOLD = "\033[1m"
+    GREEN = "\033[92m"
     END = "\033[0m"
 
 
@@ -279,3 +280,39 @@ ENCODER = tiktoken.encoding_for_model("gpt-4o")
 
 # 3. Load config
 CONFIG = Config.load_config()
+
+
+class ProjectLogger:
+    def __init__(self, logger: logging.Logger):
+        self.logger = logger
+
+    def debug(self, project_id: str, user_id: str, message: str):
+        self.logger.debug(
+            json.dumps({"project_id": str(project_id), "user_id": str(user_id)})
+            + " | "
+            + message
+        )
+
+    def info(self, project_id: str, user_id: str, message: str):
+        self.logger.info(
+            json.dumps({"project_id": str(project_id), "user_id": str(user_id)})
+            + " | "
+            + message
+        )
+
+    def warning(self, project_id: str, user_id: str, message: str):
+        self.logger.warning(
+            json.dumps({"project_id": str(project_id), "user_id": str(user_id)})
+            + " | "
+            + message
+        )
+
+    def error(self, project_id: str, user_id: str, message: str):
+        self.logger.error(
+            json.dumps({"project_id": str(project_id), "user_id": str(user_id)})
+            + " | "
+            + message
+        )
+
+
+TRACE_LOG = ProjectLogger(LOG)

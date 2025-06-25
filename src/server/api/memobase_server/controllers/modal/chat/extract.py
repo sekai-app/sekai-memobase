@@ -1,5 +1,5 @@
 import asyncio
-from ....env import CONFIG, LOG, ContanstTable
+from ....env import CONFIG, ContanstTable, TRACE_LOG
 from ....models.utils import Promise
 from ....models.blob import Blob, BlobType
 from ....models.response import AIUserProfiles, CODE
@@ -75,8 +75,10 @@ async def extract_topics(
                 for topic, sub_topic in already_topics_subtopics
             ]
         )
-        LOG.info(
-            f"User {user_id} already have {len(profiles)} profiles, {len(already_topics_subtopics)} topics"
+        TRACE_LOG.info(
+            project_id,
+            user_id,
+            f"Already have {len(profiles)} profiles, {len(already_topics_subtopics)} topics",
         )
     else:
         already_topics_prompt = ""
@@ -103,7 +105,11 @@ async def extract_topics(
     parsed_facts: AIUserProfiles = parse_string_into_profiles(results)
     new_facts: list[FactResponse] = parsed_facts.model_dump()["facts"]
     if not len(new_facts):
-        LOG.info(f"No new facts extracted {user_id}")
+        TRACE_LOG.info(
+            project_id,
+            user_id,
+            f"No new facts extracted",
+        )
         return Promise.resolve(
             {
                 "fact_contents": [],

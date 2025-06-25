@@ -5,11 +5,12 @@ from ....prompts.profile_init_utils import get_specific_subtopics
 from ....prompts.utils import parse_string_into_subtopics, attribute_unify
 from ....models.utils import Promise
 from ....models.response import ProfileData
-from ....env import CONFIG, LOG, ProfileConfig, ContanstTable
+from ....env import CONFIG, TRACE_LOG, ProfileConfig, ContanstTable
 from ....llms import llm_complete
 
 
 async def organize_profiles(
+    user_id: str,
     project_id: str,
     profile_options: MergeAddResult,
     config: ProfileConfig,
@@ -34,7 +35,7 @@ async def organize_profiles(
         return Promise.resolve(None)
     ps = await asyncio.gather(
         *[
-            organize_profiles_by_topic(project_id, group, USE_LANGUAGE)
+            organize_profiles_by_topic(user_id, project_id, group, USE_LANGUAGE)
             for group in need_to_organize_topics.values()
         ]
     )
@@ -56,6 +57,7 @@ async def organize_profiles(
 
 
 async def organize_profiles_by_topic(
+    user_id: str,
     project_id: str,
     profiles: list[ProfileData],
     USE_LANGUAGE: str,  # profiles in the same topics
@@ -67,8 +69,10 @@ async def organize_profiles_by_topic(
         p.attributes[ContanstTable.topic] == profiles[0].attributes[ContanstTable.topic]
         for p in profiles
     ), f"Unknown Error, all profiles are not in the same topic: {profiles[0].attributes['topic']}"
-    LOG.info(
-        f"Organizing profiles for topic: {profiles[0].attributes['topic']} with sub_topics {len(profiles)}"
+    TRACE_LOG.info(
+        project_id,
+        user_id,
+        f"Organizing profiles for topic: {profiles[0].attributes['topic']} with sub_topics {len(profiles)}",
     )
     topic = attribute_unify(profiles[0].attributes[ContanstTable.topic])
     suggest_subtopics = get_specific_subtopics(

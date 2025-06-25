@@ -2,7 +2,7 @@ from ..models.utils import Promise
 from ..models.response import ContextData, OpenAICompatibleMessage
 from ..prompts.chat_context_pack import CONTEXT_PROMPT_PACK
 from ..utils import get_encoded_tokens, event_str_repr
-from ..env import CONFIG, LOG
+from ..env import CONFIG, TRACE_LOG
 from .project import get_project_profile_config
 from .profile import get_user_profiles, truncate_profiles
 from .post_process.profile import filter_profiles_with_chats
@@ -41,6 +41,7 @@ async def get_user_context(
     if max_profile_token_size > 0:
         if chats:
             p = await filter_profiles_with_chats(
+                user_id,
                 project_id,
                 total_profiles,
                 chats,
@@ -114,8 +115,10 @@ async def get_user_context(
     user_events = p.data()
     event_section = "\n".join([event_str_repr(ed) for ed in user_events.events])
     event_section_tokens = len(get_encoded_tokens(event_section))
-    LOG.info(
-        f"Retrived {len(use_profiles)} profiles({profile_section_tokens} tokens), {len(user_events.events)} events({event_section_tokens} tokens)"
+    TRACE_LOG.info(
+        project_id,
+        user_id,
+        f"Retrived {len(use_profiles)} profiles({profile_section_tokens} tokens), {len(user_events.events)} events({event_section_tokens} tokens)",
     )
     return Promise.resolve(
         ContextData(context=context_prompt_func(profile_section, event_section))

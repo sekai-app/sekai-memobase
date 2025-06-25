@@ -7,7 +7,7 @@ from ...models.database import GeneralBlob, UserProfile
 from ...models.blob import OpenAICompatibleMessage
 from ...models.response import CODE, IdData, IdsData, UserProfilesData
 from ...utils import truncate_string, find_list_int_or_none
-from ...env import LOG, CONFIG
+from ...env import TRACE_LOG, CONFIG
 from ...prompts import pick_related_profiles as pick_prompt
 from ...llms import llm_complete
 
@@ -28,6 +28,7 @@ def try_json_reason(content: str) -> str | None:
 
 
 async def filter_profiles_with_chats(
+    user_id: str,
     project_id: str,
     profiles: UserProfilesData,
     chats: list[OpenAICompatibleMessage],
@@ -67,16 +68,28 @@ async def filter_profiles_with_chats(
         **pick_prompt.get_kwargs(),
     )
     if not r.ok():
-        LOG.error(f"Failed to pick related profiles: {r.msg()}")
+        TRACE_LOG.error(
+            project_id,
+            user_id,
+            f"Failed to pick related profiles: {r.msg()}",
+        )
         return r
     found_ids = find_list_int_or_none(r.data())
     reason = try_json_reason(r.data())
     if found_ids is None:
-        LOG.error(f"Failed to pick related profiles: {r.data()}")
+        TRACE_LOG.error(
+            project_id,
+            user_id,
+            f"Failed to pick related profiles: {r.data()}",
+        )
         return Promise.reject(
             CODE.INTERNAL_SERVER_ERROR, "Failed to pick related profiles"
         )
     ids = [i for i in found_ids if i < len(topics_index)]
     profiles = [profiles.profiles[topics_index[i]["index"]] for i in ids]
-    LOG.info(f"Filter profiles with chats: {reason}, {found_ids}")
+    TRACE_LOG.info(
+        project_id,
+        user_id,
+        f"Filter profiles with chats: {reason}, {found_ids}",
+    )
     return Promise.resolve({"reason": reason, "profiles": profiles})
