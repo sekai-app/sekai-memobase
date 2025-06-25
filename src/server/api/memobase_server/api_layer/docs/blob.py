@@ -28,27 +28,39 @@ const blobs = await user.getAll(BlobType.Enum.chat);
     go_code(
         """
 import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
+    "fmt"
+    "log"
+
     "github.com/memodb-io/memobase/src/client/memobase-go/blob"
+    "github.com/memodb-io/memobase/src/client/memobase-go/core"
 )
 
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
+func main() {
+    projectURL := "YOUR_PROJECT_URL"
+    apiKey := "YOUR_API_KEY"
+    // Initialize the client
+    client, err := core.NewMemoBaseClient(
+        projectURL,
+        apiKey,
+    )
+    if err != nil {
+        log.Fatalf("Failed to create client: %v", err)
+    }
 
-// Get user
-user, err := client.GetUser(userID)
-if err != nil {
-    panic(err)
-}
+    // Get a user
+    userID := "EXISTING_USER_ID" // Replace with an actual user ID
+    user, err := client.GetUser(userID, false)
+    if err != nil {
+        log.Fatalf("Failed to get user: %v", err)
+    }
 
-// Get all blobs
-blobs, err := user.GetAll(blob.ChatType)
-if err != nil {
-    panic(err)
+    // Get all chat blobs
+    blobIDs, err := user.GetAll(blob.ChatType, 0, 10)
+    if err != nil {
+        log.Fatalf("Failed to get blobs: %v", err)
+    }
+
+    fmt.Printf("Found %d chat blobs\n", len(blobIDs))
 }
 """
     ),
@@ -104,44 +116,55 @@ const blobId = await user.insert(Blob.parse({
     go_code(
         """
 import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
+    "fmt"
+    "log"
+
     "github.com/memodb-io/memobase/src/client/memobase-go/blob"
+    "github.com/memodb-io/memobase/src/client/memobase-go/core"
 )
 
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
+func main() {
+    projectURL := "YOUR_PROJECT_URL"
+    apiKey := "YOUR_API_KEY"
+    // Initialize the client
+    client, err := core.NewMemoBaseClient(
+        projectURL,
+        apiKey,
+    )
+    if err != nil {
+        log.Fatalf("Failed to create client: %v", err)
+    }
 
-// Get user
-user, err := client.GetUser(userID)
-if err != nil {
-    panic(err)
-}
+    // Get a user
+    userID := "EXISTING_USER_ID" // Replace with an actual user ID
+    user, err := client.GetUser(userID, false)
+    if err != nil {
+        log.Fatalf("Failed to get user: %v", err)
+    }
 
-// Create chat blob
-chatBlob := &blob.ChatBlob{
-    BaseBlob: blob.BaseBlob{
-        Type: blob.ChatType,
-    },
-    Messages: []blob.OpenAICompatibleMessage{
-        {
-            Role:    "user",
-            Content: "Hi, I'm here again",
+    // Create a chat blob
+    chatBlob := &blob.ChatBlob{
+        BaseBlob: blob.BaseBlob{
+            Type: blob.ChatType,
         },
-        {
-            Role:    "assistant",
-            Content: "Hi, Gus! How can I help you?",
+        Messages: []blob.OpenAICompatibleMessage{
+            {
+                Role:    "user",
+                Content: "Hello, I am Jinjia!",
+            },
+            {
+                Role:    "assistant",
+                Content: "Hi there! How can I help you today?",
+            },
         },
-    },
-}
+    }
 
-// Insert blob
-blobID, err := user.Insert(chatBlob)
-if err != nil {
-    panic(err)
+    // Insert the blob
+    blobID, err := user.Insert(chatBlob, false)
+    if err != nil {
+        log.Fatalf("Failed to insert blob: %v", err)
+    }
+    fmt.Printf("Successfully inserted blob with ID: %s\n", blobID)
 }
 """
     ),
@@ -174,33 +197,43 @@ const blob = await user.get(blobId);
     go_code(
         """
 import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
+    "fmt"
+    "log"
+
     "github.com/memodb-io/memobase/src/client/memobase-go/blob"
+    "github.com/memodb-io/memobase/src/client/memobase-go/core"
 )
 
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
+func main() {
+    projectURL := "YOUR_PROJECT_URL"
+    apiKey := "YOUR_API_KEY"
+    // Initialize the client
+    client, err := core.NewMemoBaseClient(
+        projectURL,
+        apiKey,
+    )
+    if err != nil {
+        log.Fatalf("Failed to create client: %v", err)
+    }
 
-// Get user
-user, err := client.GetUser(userID)
-if err != nil {
-    panic(err)
-}
+    // Get a user
+    userID := "EXISTING_USER_ID" // Replace with an actual user ID
+    user, err := client.GetUser(userID, false)
+    if err != nil {
+        log.Fatalf("Failed to get user: %v", err)
+    }
 
-// Get blob
-blob, err := user.Get(blobID)
-if err != nil {
-    panic(err)
-}
+    // Get a blob
+    blobID := "EXISTING_BLOB_ID" // Replace with an actual blob ID
+    retrievedBlob, err := user.Get(blobID)
+    if err != nil {
+        log.Fatalf("Failed to get blob: %v", err)
+    }
 
-// If it's a chat blob, you can access its messages
-if chatBlob, ok := blob.(*blob.ChatBlob); ok {
-    messages := chatBlob.Messages
-    // Process messages
+    // Type assert to use as ChatBlob
+    if chatBlob, ok := retrievedBlob.(*blob.ChatBlob); ok {
+        fmt.Printf("Retrieved message: %s\n", chatBlob.Messages[0].Content)
+    }
 }
 """
     ),
@@ -233,26 +266,38 @@ await user.delete(blobId);
     go_code(
         """
 import (
+    "fmt"
+    "log"
+
     "github.com/memodb-io/memobase/src/client/memobase-go/core"
 )
 
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
+func main() {
+    projectURL := "YOUR_PROJECT_URL"
+    apiKey := "YOUR_API_KEY"
+    // Initialize the client
+    client, err := core.NewMemoBaseClient(
+        projectURL,
+        apiKey,
+    )
+    if err != nil {
+        log.Fatalf("Failed to create client: %v", err)
+    }
 
-// Get user
-user, err := client.GetUser(userID)
-if err != nil {
-    panic(err)
-}
+    // Get a user
+    userID := "EXISTING_USER_ID" // Replace with an actual user ID
+    user, err := client.GetUser(userID, false)
+    if err != nil {
+        log.Fatalf("Failed to get user: %v", err)
+    }
 
-// Delete blob
-err = user.Delete(blobID)
-if err != nil {
-    panic(err)
+    // Delete a blob
+    blobID := "EXISTING_BLOB_ID" // Replace with an actual blob ID
+    err = user.Delete(blobID)
+    if err != nil {
+        log.Fatalf("Failed to delete blob: %v", err)
+    }
+    fmt.Printf("Successfully deleted blob with ID: %s\n", blobID)
 }
 """
     ),
@@ -286,27 +331,38 @@ await user.flush(BlobType.Enum.chat);
     go_code(
         """
 import (
-    "github.com/memodb-io/memobase/src/client/memobase-go/core"
+    "fmt"
+    "log"
+
     "github.com/memodb-io/memobase/src/client/memobase-go/blob"
+    "github.com/memodb-io/memobase/src/client/memobase-go/core"
 )
 
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
+func main() {
+    projectURL := "YOUR_PROJECT_URL"
+    apiKey := "YOUR_API_KEY"
+    // Initialize the client
+    client, err := core.NewMemoBaseClient(
+        projectURL,
+        apiKey,
+    )
+    if err != nil {
+        log.Fatalf("Failed to create client: %v", err)
+    }
 
-// Get user
-user, err := client.GetUser(userID)
-if err != nil {
-    panic(err)
-}
+    // Get a user
+    userID := "EXISTING_USER_ID" // Replace with an actual user ID
+    user, err := client.GetUser(userID, false)
+    if err != nil {
+        log.Fatalf("Failed to get user: %v", err)
+    }
 
-// Flush buffer
-err = user.Flush(blob.ChatType)
-if err != nil {
-    panic(err)
+    // Flush the buffer
+    err = user.Flush(blob.ChatType, false)
+    if err != nil {
+        log.Fatalf("Failed to flush buffer: %v", err)
+    }
+    fmt.Println("Successfully flushed buffer")
 }
 """
     ),
@@ -316,13 +372,42 @@ if err != nil {
 add_api_code_docs(
     "GET",
     "/users/buffer/capacity/{user_id}/{buffer_type}",
-    py_code(
+    go_code(
         """
-from memobase import Memobase
+import (
+    "fmt"
+    "log"
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
-u = client.get_user(uid)
-u.buffer("chat", status="processing")
+    "github.com/memodb-io/memobase/src/client/memobase-go/blob"
+    "github.com/memodb-io/memobase/src/client/memobase-go/core"
+)
+
+func main() {
+    projectURL := "YOUR_PROJECT_URL"
+    apiKey := "YOUR_API_KEY"
+    // Initialize the client
+    client, err := core.NewMemoBaseClient(
+        projectURL,
+        apiKey,
+    )
+    if err != nil {
+        log.Fatalf("Failed to create client: %v", err)
+    }
+
+    // Get a user
+    userID := "EXISTING_USER_ID" // Replace with an actual user ID
+    user, err := client.GetUser(userID, false)
+    if err != nil {
+        log.Fatalf("Failed to get user: %v", err)
+    }
+
+    // Get buffer capacity
+    blobIDs, err := user.Buffer(blob.ChatType, "processing")
+    if err != nil {
+        log.Fatalf("Failed to get buffer capacity: %v", err)
+    }
+    fmt.Printf("Found %d blobs in buffer\n", len(blobIDs))
+}
 """
     ),
 )

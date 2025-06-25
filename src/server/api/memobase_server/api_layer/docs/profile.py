@@ -27,26 +27,47 @@ const profiles = await user.profile();
     go_code(
         """
 import (
+    "fmt"
+    "log"
+
     "github.com/memodb-io/memobase/src/client/memobase-go/core"
 )
 
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
+func main() {
+    projectURL := "YOUR_PROJECT_URL"
+    apiKey := "YOUR_API_KEY"
+    // Initialize the client
+    client, err := core.NewMemoBaseClient(
+        projectURL,
+        apiKey,
+    )
+    if err != nil {
+        log.Fatalf("Failed to create client: %v", err)
+    }
 
-// Get user
-user, err := client.GetUser(userID)
-if err != nil {
-    panic(err)
-}
+    // Get a user
+    userID := "EXISTING_USER_ID" // Replace with an actual user ID
+    user, err := client.GetUser(userID, false)
+    if err != nil {
+        log.Fatalf("Failed to get user: %v", err)
+    }
 
-// Get profile
-profiles, err := user.Profile()
-if err != nil {
-    panic(err)
+    // Get user profile
+    profiles, err := user.Profile(nil)
+    if err != nil {
+        log.Fatalf("Failed to get user profile: %v", err)
+    }
+
+    // Print profiles
+    fmt.Println("\nUser Profiles:")
+    for _, profile := range profiles {
+        fmt.Printf("ID: %s\nTopic: %s\nSub-topic: %s\nContent: %s\n\n",
+            profile.ID,
+            profile.Attributes.Topic,
+            profile.Attributes.SubTopic,
+            profile.Content,
+        )
+    }
 }
 """
     ),
@@ -56,13 +77,41 @@ if err != nil {
 add_api_code_docs(
     "POST",
     "/users/profile/{user_id}",
-    py_code(
+    go_code(
         """
-from memobase import Memobase
+import (
+    "fmt"
+    "log"
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+    "github.com/memodb-io/memobase/src/client/memobase-go/core"
+)
 
-profile_id = u.add_profile("value", "topic", "sub_topic")
+func main() {
+    projectURL := "YOUR_PROJECT_URL"
+    apiKey := "YOUR_API_KEY"
+    // Initialize the client
+    client, err := core.NewMemoBaseClient(
+        projectURL,
+        apiKey,
+    )
+    if err != nil {
+        log.Fatalf("Failed to create client: %v", err)
+    }
+
+    // Get a user
+    userID := "EXISTING_USER_ID" // Replace with an actual user ID
+    user, err := client.GetUser(userID, false)
+    if err != nil {
+        log.Fatalf("Failed to get user: %v", err)
+    }
+
+    // Add a profile
+    profileID, err := user.AddProfile("value", "topic", "sub_topic")
+    if err != nil {
+        log.Fatalf("Failed to add profile: %v", err)
+    }
+    fmt.Printf("Successfully added profile with ID: %s\n", profileID)
+}
 """
     ),
 )
@@ -71,14 +120,42 @@ profile_id = u.add_profile("value", "topic", "sub_topic")
 add_api_code_docs(
     "PUT",
     "/users/profile/{user_id}/{profile_id}",
-    py_code(
+    go_code(
         """
-from memobase import Memobase
+import (
+    "fmt"
+    "log"
 
-client = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')
+    "github.com/memodb-io/memobase/src/client/memobase-go/core"
+)
 
-profile_id = u.add_profile("value", "topic", "sub_topic")
-u.update_profile(profile_id, "value2", "topic2", "sub_topic2")
+func main() {
+    projectURL := "YOUR_PROJECT_URL"
+    apiKey := "YOUR_API_KEY"
+    // Initialize the client
+    client, err := core.NewMemoBaseClient(
+        projectURL,
+        apiKey,
+    )
+    if err != nil {
+        log.Fatalf("Failed to create client: %v", err)
+    }
+
+    // Get a user
+    userID := "EXISTING_USER_ID" // Replace with an actual user ID
+    user, err := client.GetUser(userID, false)
+    if err != nil {
+        log.Fatalf("Failed to get user: %v", err)
+    }
+
+    // Update a profile
+    profileID := "EXISTING_PROFILE_ID" // Replace with an actual profile ID
+    err = user.UpdateProfile(profileID, "value2", "topic2", "sub_topic2")
+    if err != nil {
+        log.Fatalf("Failed to update profile: %v", err)
+    }
+    fmt.Printf("Successfully updated profile with ID: %s\n", profileID)
+}
 """
     ),
 )
@@ -108,26 +185,38 @@ await client.deleteProfile('user_id', 'profile_id');
     go_code(
         """
 import (
+    "fmt"
+    "log"
+
     "github.com/memodb-io/memobase/src/client/memobase-go/core"
 )
 
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
-if err != nil {
-    panic(err)
-}
+func main() {
+    projectURL := "YOUR_PROJECT_URL"
+    apiKey := "YOUR_API_KEY"
+    // Initialize the client
+    client, err := core.NewMemoBaseClient(
+        projectURL,
+        apiKey,
+    )
+    if err != nil {
+        log.Fatalf("Failed to create client: %v", err)
+    }
 
-// Get user
-user, err := client.GetUser(userID)
-if err != nil {
-    panic(err)
-}
+    // Get a user
+    userID := "EXISTING_USER_ID" // Replace with an actual user ID
+    user, err := client.GetUser(userID, false)
+    if err != nil {
+        log.Fatalf("Failed to get user: %v", err)
+    }
 
-// Delete profile
-err = user.DeleteProfile(profileID)
-if err != nil {
-    panic(err)
+    // Delete a profile
+    profileID := "EXISTING_PROFILE_ID" // Replace with an actual profile ID
+    err = user.DeleteProfile(profileID)
+    if err != nil {
+        log.Fatalf("Failed to delete profile: %v", err)
+    }
+    fmt.Printf("Successfully deleted profile with ID: %s\n", profileID)
 }
 """
     ),

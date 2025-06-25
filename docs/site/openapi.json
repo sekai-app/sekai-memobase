@@ -47,7 +47,7 @@
 					},
 					{
 						"lang": "go",
-						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\nok := client.Ping()\nif !ok {\n    panic(\"Failed to connect to Memobase\")\n}\n\n",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Ping the server\n    if !client.Ping() {\n        log.Fatal(\"Failed to connect to server\")\n    }\n    fmt.Println(\"Successfully connected to server\")\n}\n\n",
 						"label": "Go"
 					}
 				],
@@ -83,6 +83,11 @@
 						"lang": "javascript",
 						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nconst config = await client.getConfig();\n\n",
 						"label": "JavaScript"
+					},
+					{
+						"lang": "go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get config\n    config, err := client.GetConfig()\n    if err != nil {\n        log.Fatalf(\"Failed to get config: %v\", err)\n    }\n    fmt.Printf(\"Config: %s\n\", config)\n}\n\n",
+						"label": "Go"
 					}
 				]
 			},
@@ -135,6 +140,11 @@
 						"lang": "javascript",
 						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\n\nawait client.updateConfig('your_profile_config');\n\n",
 						"label": "JavaScript"
+					},
+					{
+						"lang": "go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Update config\n    err = client.UpdateConfig(\"your_profile_config\")\n    if err != nil {\n        log.Fatalf(\"Failed to update config: %v\", err)\n    }\n    fmt.Println(\"Successfully updated config\")\n}\n\n",
+						"label": "Go"
 					}
 				]
 			}
@@ -163,6 +173,11 @@
 						"lang": "python",
 						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nprint(memobase.get_usage())\n\n",
 						"label": "Python"
+					},
+					{
+						"lang": "go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get usage\n    usage, err := client.GetUsage()\n    if err != nil {\n        log.Fatalf(\"Failed to get usage: %v\", err)\n    }\n    fmt.Printf(\"Usage: %v\n\", usage)\n}\n\n",
+						"label": "Go"
 					}
 				]
 			}
@@ -269,6 +284,11 @@
 						"lang": "python",
 						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nusers = memobase.get_all_users(search=\"\", order_by=\"updated_at\", order_desc=True, limit=10, offset=0)\n\n",
 						"label": "Python"
+					},
+					{
+						"lang": "go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get all users\n    users, err := client.GetAllUsers(\"\", \"updated_at\", true, 10, 0)\n    if err != nil {\n        log.Fatalf(\"Failed to get all users: %v\", err)\n    }\n    fmt.Printf(\"Found %d users\n\", len(users))\n}\n\n",
+						"label": "Go"
 					}
 				]
 			}
@@ -322,6 +342,11 @@
 						"lang": "python",
 						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nmemobase = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nusage = memobase.get_daily_usage(days=7)\n\n",
 						"label": "Python"
+					},
+					{
+						"lang": "go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get daily usage\n    usage, err := client.GetDailyUsage(7)\n    if err != nil {\n        log.Fatalf(\"Failed to get daily usage: %v\", err)\n    }\n    fmt.Printf(\"Usage: %v\n\", usage)\n}\n\n",
+						"label": "Go"
 					}
 				]
 			}
@@ -380,7 +405,7 @@
 					},
 					{
 						"lang": "go",
-						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/google/uuid\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Generate a UUID for the user\nuserID := uuid.New().String()\n\n// Create user with some data\ndata := map[string]interface{}{\"ANY\": \"DATA\"}\nresultID, err := client.AddUser(data, userID)\nif err != nil {\n    panic(err)\n}\n\n",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/google/uuid\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Add a user\n    userID := uuid.New().String()\n    data := map[string]interface{}{\"ANY\": \"DATA\"}\n    _, err = client.AddUser(data, userID)\n    if err != nil {\n        log.Fatalf(\"Failed to add user: %v\", err)\n    }\n    fmt.Printf(\"User added with ID: %s\n\", userID)\n}\n\n",
 						"label": "Go"
 					}
 				]
@@ -441,7 +466,7 @@
 					},
 					{
 						"lang": "go",
-						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user by ID\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/google/uuid\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n    fmt.Printf(\"Successfully retrieved user with ID: %s\n\", user.UserID)\n}\n\n",
 						"label": "Go"
 					}
 				]
@@ -513,7 +538,7 @@
 					},
 					{
 						"lang": "go",
-						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Update user data\nnewData := map[string]interface{}{\"ANY\": \"NEW_DATA\"}\nerr = client.UpdateUser(userID, newData)\nif err != nil {\n    panic(err)\n}\n\n",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Update a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    newData := map[string]interface{}{\"ANY\": \"NEW_DATA\"}\n    _, err = client.UpdateUser(userID, newData)\n    if err != nil {\n        log.Fatalf(\"Failed to update user: %v\", err)\n    }\n    fmt.Printf(\"Successfully updated user with ID: %s\n\", userID)\n}\n\n",
 						"label": "Go"
 					}
 				]
@@ -572,7 +597,7 @@
 					},
 					{
 						"lang": "go",
-						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Delete user\nerr = client.DeleteUser(userID)\nif err != nil {\n    panic(err)\n}\n\n",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Delete a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    err = client.DeleteUser(userID)\n    if err != nil {\n        log.Fatalf(\"Failed to delete user: %v\", err)\n    }\n    fmt.Printf(\"Successfully deleted user with ID: %s\n\", userID)\n}\n\n",
 						"label": "Go"
 					}
 				]
@@ -667,7 +692,7 @@
 					},
 					{
 						"lang": "go",
-						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Get all blobs\nblobs, err := user.GetAll(blob.ChatType)\nif err != nil {\n    panic(err)\n}\n\n",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Get all chat blobs\n    blobIDs, err := user.GetAll(blob.ChatType, 0, 10)\n    if err != nil {\n        log.Fatalf(\"Failed to get blobs: %v\", err)\n    }\n\n    fmt.Printf(\"Found %d chat blobs\n\", len(blobIDs))\n}\n\n",
 						"label": "Go"
 					}
 				]
@@ -751,7 +776,7 @@
 					},
 					{
 						"lang": "go",
-						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Create chat blob\nchatBlob := &blob.ChatBlob{\n    BaseBlob: blob.BaseBlob{\n        Type: blob.ChatType,\n    },\n    Messages: []blob.OpenAICompatibleMessage{\n        {\n            Role:    \"user\",\n            Content: \"Hi, I'm here again\",\n        },\n        {\n            Role:    \"assistant\",\n            Content: \"Hi, Gus! How can I help you?\",\n        },\n    },\n}\n\n// Insert blob\nblobID, err := user.Insert(chatBlob)\nif err != nil {\n    panic(err)\n}\n\n",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Create a chat blob\n    chatBlob := &blob.ChatBlob{\n        BaseBlob: blob.BaseBlob{\n            Type: blob.ChatType,\n        },\n        Messages: []blob.OpenAICompatibleMessage{\n            {\n                Role:    \"user\",\n                Content: \"Hello, I am Jinjia!\",\n            },\n            {\n                Role:    \"assistant\",\n                Content: \"Hi there! How can I help you today?\",\n            },\n        },\n    }\n\n    // Insert the blob\n    blobID, err := user.Insert(chatBlob, false)\n    if err != nil {\n        log.Fatalf(\"Failed to insert blob: %v\", err)\n    }\n    fmt.Printf(\"Successfully inserted blob with ID: %s\n\", blobID)\n}\n\n",
 						"label": "Go"
 					}
 				]
@@ -823,7 +848,7 @@
 					},
 					{
 						"lang": "go",
-						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Get blob\nblob, err := user.Get(blobID)\nif err != nil {\n    panic(err)\n}\n\n// If it's a chat blob, you can access its messages\nif chatBlob, ok := blob.(*blob.ChatBlob); ok {\n    messages := chatBlob.Messages\n    // Process messages\n}\n\n",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Get a blob\n    blobID := \"EXISTING_BLOB_ID\" // Replace with an actual blob ID\n    retrievedBlob, err := user.Get(blobID)\n    if err != nil {\n        log.Fatalf(\"Failed to get blob: %v\", err)\n    }\n\n    // Type assert to use as ChatBlob\n    if chatBlob, ok := retrievedBlob.(*blob.ChatBlob); ok {\n        fmt.Printf(\"Retrieved message: %s\n\", chatBlob.Messages[0].Content)\n    }\n}\n\n",
 						"label": "Go"
 					}
 				]
@@ -893,7 +918,7 @@
 					},
 					{
 						"lang": "go",
-						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Delete blob\nerr = user.Delete(blobID)\nif err != nil {\n    panic(err)\n}\n\n",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Delete a blob\n    blobID := \"EXISTING_BLOB_ID\" // Replace with an actual blob ID\n    err = user.Delete(blobID)\n    if err != nil {\n        log.Fatalf(\"Failed to delete blob: %v\", err)\n    }\n    fmt.Printf(\"Successfully deleted blob with ID: %s\n\", blobID)\n}\n\n",
 						"label": "Go"
 					}
 				]
@@ -1038,7 +1063,7 @@
 					},
 					{
 						"lang": "go",
-						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Get profile\nprofiles, err := user.Profile()\nif err != nil {\n    panic(err)\n}\n\n",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Get user profile\n    profiles, err := user.Profile(nil)\n    if err != nil {\n        log.Fatalf(\"Failed to get user profile: %v\", err)\n    }\n\n    // Print profiles\n    fmt.Println(\"\nUser Profiles:\")\n    for _, profile := range profiles {\n        fmt.Printf(\"ID: %s\nTopic: %s\nSub-topic: %s\nContent: %s\n\n\",\n            profile.ID,\n            profile.Attributes.Topic,\n            profile.Attributes.SubTopic,\n            profile.Content,\n        )\n    }\n}\n\n",
 						"label": "Go"
 					}
 				]
@@ -1098,9 +1123,9 @@
 				},
 				"x-code-samples": [
 					{
-						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nprofile_id = u.add_profile(\"value\", \"topic\", \"sub_topic\")\n\n",
-						"label": "Python"
+						"lang": "go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Add a profile\n    profileID, err := user.AddProfile(\"value\", \"topic\", \"sub_topic\")\n    if err != nil {\n        log.Fatalf(\"Failed to add profile: %v\", err)\n    }\n    fmt.Printf(\"Successfully added profile with ID: %s\n\", profileID)\n}\n\n",
+						"label": "Go"
 					}
 				]
 			}
@@ -1227,9 +1252,9 @@
 				},
 				"x-code-samples": [
 					{
-						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\n\nprofile_id = u.add_profile(\"value\", \"topic\", \"sub_topic\")\nu.update_profile(profile_id, \"value2\", \"topic2\", \"sub_topic2\")\n\n",
-						"label": "Python"
+						"lang": "go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Update a profile\n    profileID := \"EXISTING_PROFILE_ID\" // Replace with an actual profile ID\n    err = user.UpdateProfile(profileID, \"value2\", \"topic2\", \"sub_topic2\")\n    if err != nil {\n        log.Fatalf(\"Failed to update profile: %v\", err)\n    }\n    fmt.Printf(\"Successfully updated profile with ID: %s\n\", profileID)\n}\n\n",
+						"label": "Go"
 					}
 				]
 			},
@@ -1299,7 +1324,7 @@
 					},
 					{
 						"lang": "go",
-						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Delete profile\nerr = user.DeleteProfile(profileID)\nif err != nil {\n    panic(err)\n}\n\n",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Delete a profile\n    profileID := \"EXISTING_PROFILE_ID\" // Replace with an actual profile ID\n    err = user.DeleteProfile(profileID)\n    if err != nil {\n        log.Fatalf(\"Failed to delete profile: %v\", err)\n    }\n    fmt.Printf(\"Successfully deleted profile with ID: %s\n\", profileID)\n}\n\n",
 						"label": "Go"
 					}
 				]
@@ -1383,7 +1408,7 @@
 					},
 					{
 						"lang": "go",
-						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n)\n\nprojectURL := \"YOUR_PROJECT_URL\"\napiKey := \"YOUR_API_KEY\"\nclient, err := core.NewMemoBaseClient(projectURL, apiKey)\nif err != nil {\n    panic(err)\n}\n\n// Get user\nuser, err := client.GetUser(userID)\nif err != nil {\n    panic(err)\n}\n\n// Flush buffer\nerr = user.Flush(blob.ChatType)\nif err != nil {\n    panic(err)\n}\n\n",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Flush the buffer\n    err = user.Flush(blob.ChatType, false)\n    if err != nil {\n        log.Fatalf(\"Failed to flush buffer: %v\", err)\n    }\n    fmt.Println(\"Successfully flushed buffer\")\n}\n\n",
 						"label": "Go"
 					}
 				]
@@ -1462,9 +1487,9 @@
 				},
 				"x-code-samples": [
 					{
-						"lang": "python",
-						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\nu = client.get_user(uid)\nu.buffer(\"chat\", status=\"processing\")\n\n",
-						"label": "Python"
+						"lang": "go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/blob\"\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Get buffer capacity\n    blobIDs, err := user.Buffer(blob.ChatType, \"processing\")\n    if err != nil {\n        log.Fatalf(\"Failed to get buffer capacity: %v\", err)\n    }\n    fmt.Printf(\"Found %d blobs in buffer\n\", len(blobIDs))\n}\n\n",
+						"label": "Go"
 					}
 				]
 			}
@@ -1556,6 +1581,11 @@
 						"lang": "javascript",
 						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nconst events = await user.event();\n\n",
 						"label": "JavaScript"
+					},
+					{
+						"lang": "go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Get user events\n    events, err := user.Event(10, nil, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get events: %v\", err)\n    }\n\n    fmt.Printf(\"Found %d events\n\", len(events))\n}\n\n",
+						"label": "Go"
 					}
 				]
 			}
@@ -1629,6 +1659,11 @@
 						"lang": "python",
 						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\nuid = client.add_user()\nu = client.get_user(uid)\n# ... insert messages to user\n\nevents = u.event(topk=5)\neid = events[0].id\n\nu.update_event(eid, {\"event_tip\": \"The event is about...\"})\nprint(u.event(topk=1))\n\n",
 						"label": "Python"
+					},
+					{
+						"lang": "go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Update an event\n    eventID := \"EXISTING_EVENT_ID\" // Replace with an actual event ID\n    eventData := map[string]interface{}{\"event_tip\": \"The event is about...\"}\n    err = user.UpdateEvent(eventID, eventData)\n    if err != nil {\n        log.Fatalf(\"Failed to update event: %v\", err)\n    }\n    fmt.Printf(\"Successfully updated event with ID: %s\n\", eventID)\n}\n\n",
+						"label": "Go"
 					}
 				]
 			},
@@ -1689,6 +1724,11 @@
 						"lang": "python",
 						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\nuid = client.add_user()\nu = client.get_user(uid)\n# ... insert messages to user\n\nevents = u.event(topk=1)\nprint(events)\n\neid = events[0].id\nu.delete_event(eid)\n\nprint(u.event(topk=1))\n\n",
 						"label": "Python"
+					},
+					{
+						"lang": "go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Delete an event\n    eventID := \"EXISTING_EVENT_ID\" // Replace with an actual event ID\n    err = user.DeleteEvent(eventID)\n    if err != nil {\n        log.Fatalf(\"Failed to delete event: %v\", err)\n    }\n    fmt.Printf(\"Successfully deleted event with ID: %s\n\", eventID)\n}\n\n",
+						"label": "Go"
 					}
 				]
 			}
@@ -1787,6 +1827,11 @@
 						"lang": "python",
 						"source": "# To use the Python SDK, install the package:\n# pip install memobase\n\nfrom memobase import Memobase\n\nclient = Memobase(project_url='PROJECT_URL', api_key='PROJECT_TOKEN')\nuid = client.add_user()\nu = client.get_user(uid)\n\nb = ChatBlob(messages=[\n    {\n        \"role\": \"user\",\n        \"content\": \"Hi, I'm here again\"\n    },\n    {\n        \"role\": \"assistant\",\n        \"content\": \"Hi, Gus! How can I help you?\"\n    }\n])\nu.insert(b)\nu.flush(sync=True)\n\nevents = u.search_event('query')\nprint(events)\n\n",
 						"label": "Python"
+					},
+					{
+						"lang": "go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get a user\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    // Search for events\n    events, err := user.SearchEvent(\"query\", 10, 0.7, 7)\n    if err != nil {\n        log.Fatalf(\"Failed to search events: %v\", err)\n    }\n\n    fmt.Printf(\"Found %d events\n\", len(events))\n}\n\n",
+						"label": "Go"
 					}
 				]
 			}
@@ -1952,6 +1997,11 @@
 						"lang": "javascript",
 						"source": "// To use the JavaScript SDK, install the package:\n// npm install @memobase/memobase\n\nimport { MemoBaseClient } from '@memobase/memobase';\n\nconst client = new MemoBaseClient(process.env.MEMOBASE_PROJECT_URL, process.env.MEMOBASE_API_KEY);\nconst user = await client.getUser(userId);\n\nconst context = await user.context();\n\n",
 						"label": "JavaScript"
+					},
+					{
+						"lang": "go",
+						"source": "// To use the Go SDK, install the package:\n// go get github.com/memodb-io/memobase/src/client/memobase-go@latest\n\nimport (\n    \"fmt\"\n    \"log\"\n\n    \"github.com/memodb-io/memobase/src/client/memobase-go/core\"\n)\n\nfunc main() {\n    projectURL := \"YOUR_PROJECT_URL\"\n    apiKey := \"YOUR_API_KEY\"\n    // Initialize the client\n    client, err := core.NewMemoBaseClient(\n        projectURL,\n        apiKey,\n    )\n    if err != nil {\n        log.Fatalf(\"Failed to create client: %v\", err)\n    }\n\n    // Get user context\n    userID := \"EXISTING_USER_ID\" // Replace with an actual user ID\n    user, err := client.GetUser(userID, false)\n    if err != nil {\n        log.Fatalf(\"Failed to get user: %v\", err)\n    }\n\n    context, err := user.Context(nil)\n    if err != nil {\n        log.Fatalf(\"Failed to get context: %v\", err)\n    }\n    fmt.Printf(\"User context: %s\n\", context)\n}\n\n",
+						"label": "Go"
 					}
 				]
 			}
