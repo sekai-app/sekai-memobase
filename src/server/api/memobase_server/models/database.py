@@ -500,7 +500,7 @@ class UserStatus(Base):
     __tablename__ = "user_statuses"
 
     # Specific columns
-    type: Mapped[str] = mapped_column(VARCHAR(SHORT_ENUM_SIZE), nullable=False)
+    type: Mapped[str] = mapped_column(VARCHAR(SHORT_ENUM_SIZE * 2), nullable=False)
     attributes: Mapped[dict] = mapped_column(JSONB, nullable=False)
 
     # Relationships
