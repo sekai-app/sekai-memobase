@@ -35,7 +35,7 @@ async def cost_project_usage(
     async with AsyncClient(
         base_url=ADMIN_URL, headers={"Authorization": f"Bearer {ADMIN_TOKEN}"}
     ) as client:
-        response = await client.post(
+        response = await client.put(
             f"/api/v1/billing/project/{project_id}",
             json={"usage": input_tokens + output_tokens},
         )
