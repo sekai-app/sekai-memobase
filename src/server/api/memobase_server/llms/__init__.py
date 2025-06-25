@@ -1,3 +1,4 @@
+import asyncio
 import time
 from ..prompts.utils import convert_response_to_json
 from ..utils import get_encoded_tokens
@@ -50,7 +51,8 @@ async def llm_complete(
     )
     out_tokens = len(get_encoded_tokens(results))
 
-    await project_cost_token_billing(project_id, in_tokens, out_tokens)
+    # await project_cost_token_billing(project_id, in_tokens, out_tokens)
+    asyncio.create_task(project_cost_token_billing(project_id, in_tokens, out_tokens))
 
     telemetry_manager.increment_counter_metric(
         CounterMetricName.LLM_TOKENS_INPUT,

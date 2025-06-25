@@ -99,7 +99,7 @@ async def flush_buffer_background_running(
     project_id: str,
     blob_type: BlobType,
     asleep_waiting_s: float = 0.1,  # Increased from 0.001 to reduce CPU usage
-    max_iterations: int = 100,  # Reduced from 1000 to prevent extremely long-running processes
+    max_iterations: int = 200,  # Maximum 200 tasks for this run, return after it reaches.
     process_interval_s: float = 60 * 5,  # Reduced from 10 minutes to 5 minutes
     max_processing_time_s: float = 60 * 15,  # Maximum 15 minutes total processing time
     max_consecutive_errors=5,  # Stop after 5 consecutive errors

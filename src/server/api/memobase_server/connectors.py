@@ -13,6 +13,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 REDIS_URL = os.getenv("REDIS_URL")
 PROJECT_ID = os.getenv("PROJECT_ID")
 ADMIN_URL = os.getenv("ADMIN_URL")
+ADMIN_TOKEN = os.getenv("ADMIN_TOKEN")
 
 if PROJECT_ID is None:
     LOG.warning(f"PROJECT_ID is not set")
