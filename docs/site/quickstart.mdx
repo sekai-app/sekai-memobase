@@ -2,26 +2,27 @@
 title: 'Quickstart'
 ---
 
+Ready to give your AI a memory boost? Here’s how to get started.
 
 <CardGroup cols={2}>
   <Card title="Patch OpenAI" icon="webhook" href="practices/openai">
-    Use OpenAI API with Memory, powered by Memobase
+    Got an existing OpenAI setup? Upgrade it with Memobase memory.
   </Card>
-  <Card title="Client Side" icon="code-branch" href="#memobase-client">
-    Use SDK or APIs to connect to Memobase Backend
+  <Card title="Client-Side" icon="code-branch" href="#memobase-client">
+    Use our SDKs or APIs to connect your app to a Memobase backend.
   </Card>
-  <Card title="Server Side" icon="chart-simple" href="#memobase-backend">
-    Launch Memobase Backend
+  <Card title="Server-Side" icon="chart-simple" href="#memobase-backend">
+    Deploy your own Memobase backend. It's easier than assembling IKEA furniture.
   </Card>
 </CardGroup>
 
 
 ## Memobase Client
 
-### Get Prepared
+### Step 1: Get Prepped
 
 <AccordionGroup>
-<Accordion title="Using SDK">
+<Accordion title="Install the SDK">
 <CodeGroup>
 ```bash pip
 pip install memobase
@@ -38,26 +39,26 @@ go get github.com/memodb-io/memobase/src/client/memobase-go@latest
 ```
 
 ```bash http
-# Skip to next step
+# Living on the edge with cURL? Skip to the next step.
 ```
 </CodeGroup>
 </Accordion>
-<Accordion title="Your Project URL and TOKEN">
-See [next section](#memobase-backend)
+<Accordion title="Find Your Project URL and Token">
+You'll get these when you set up your [backend](#memobase-backend). Keep 'em handy.
 </Accordion>
 </AccordionGroup>
 
-### Connect to Memobase Backend
+### Step 2: Connect to the Backend
 
 <AccordionGroup>
-<Accordion title="Instantiate client">
+<Accordion title="Instantiate the Client">
 <CodeGroup>
 ```python Python
 from memobase import MemoBaseClient
 
 client = MemoBaseClient(
-    project_url=PROJECT_URL,
-    api_key=PROJECT_TOKEN,
+    project_url=YOUR_PROJECT_URL,
+    api_key=YOUR_API_KEY,
 )
 ```
 ```typescript Node
@@ -76,7 +77,7 @@ client, err := core.NewMemoBaseClient(projectURL, apiKey)
 ```
 </CodeGroup>
 </Accordion>
-<Accordion title="Test connection">
+<Accordion title="Test the Connection (Ping!)">
 <CodeGroup>
 
 ```python Python
@@ -90,7 +91,7 @@ ok := client.Ping()
 ```
 
 ```bash cURL
-curl -H "Authorization: Bearer $PROJECT_TOKEN" "$PROJECT_URL/api/v1/healthcheck"
+curl -H "Authorization: Bearer $YOUR_API_KEY" "$YOUR_PROJECT_URL/api/v1/healthcheck"
 ```
 
 ```json Output
@@ -100,67 +101,62 @@ curl -H "Authorization: Bearer $PROJECT_TOKEN" "$PROJECT_URL/api/v1/healthcheck"
 </Accordion>
 </AccordionGroup>
 
-### User Management
-This section is a quickstart of how to do CURD of users.
+### Step 3: User Management (The Fun Part)
+Time to create, read, update, and delete users. The classic CRUD.
+
 <AccordionGroup>
-<Accordion title="Create">
+<Accordion title="Create a User">
 <CodeGroup>
 
 ```python Python
-uid = client.add_user({"ANY": "DATA"})
+uid = client.add_user({"name": "Gustavo"})
 ```
 ```typescript Node
-const userId = await client.addUser({ANY: "DATA"})
+const userId = await client.addUser({name: "Gustavo"})
 ```
 ```go Go
 userid := uuid.New()
-userId, err := client.AddUser(map[string]interface{}{"ANY": "DATA"}, userid.String())
+userId, err := client.AddUser(map[string]interface{}{"name": "Gustavo"}, userid.String())
 ```
 ```bash cURL
-curl -X POST "$PROJECT_URL/api/v1/users" \
-     -H "Authorization: Bearer $PROJECT_TOKEN" \
+curl -X POST "$YOUR_PROJECT_URL/api/v1/users" \
+     -H "Authorization: Bearer $YOUR_API_KEY" \
      -H "Content-Type: application/json" \
-     -d '{"data": {"ANY": "DATA"}}'
+     -d '{"data": {"name": "Gustavo"}}'
 ```
 
 ```json Output
-{"data":{"id":"60377b0b-bf46-462f-UUID-2fbc6a38a884"},"errno":0,"errmsg":""}
+{"data":{"id":"some-unique-user-id"},"errno":0,"errmsg":""}
 ```
 </CodeGroup>
 </Accordion>
 
-<Accordion title="Update">
+<Accordion title="Update a User">
 <CodeGroup>
 
 ```python Python
-client.update_user(uid, {"ANY": "NEW_DATA"})
+client.update_user(uid, {"status": "caffeinated"})
 ```
 ```typescript Node
-await client.updateUser(userId, {ANY: "NEW_DATA"})
+await client.updateUser(userId, {status: "caffeinated"})
 ```
 ```go Go
-client.UpdateUser(userId, map[string]interface{}{"ANY": "NEW_DATA"})
+client.UpdateUser(userId, map[string]interface{}{"status": "caffeinated"})
 ```
 ```bash cURL
-curl -X PUT "$PROJECT_URL/api/v1/users/{uid}" \
-     -H "Authorization: Bearer $PROJECT_TOKEN" \
+curl -X PUT "$YOUR_PROJECT_URL/api/v1/users/{uid}" \
+     -H "Authorization: Bearer $YOUR_API_KEY" \
      -H "Content-Type: application/json" \
-     -d '{"data": {"ANY": "NEW_DATA"}}'
+     -d '{"data": {"status": "caffeinated"}}'
 ```
 
 ```json Output
-{
-    "data":{
-        "id": "60377b0b-bf46-462f-UUID-2fbc6a38a884",
-    },
-    "errno":0,
-    "errmsg":""
-}
+{"data":{"id": "some-unique-user-id"},"errno":0,"errmsg":""}
 ```
 </CodeGroup>
 </Accordion>
 
-<Accordion title="Get">
+<Accordion title="Get a User">
 <CodeGroup>
 
 ```python Python
@@ -176,25 +172,17 @@ user, err := client.GetUser(userId)
 ```
 
 ```bash cURL
-curl -X GET "$PROJECT_URL/api/v1/users/{uid}" \
-     -H "Authorization: Bearer $PROJECT_TOKEN"
+curl -X GET "$YOUR_PROJECT_URL/api/v1/users/{uid}" \
+     -H "Authorization: Bearer $YOUR_API_KEY"
 ```
 
 ```json Output
-{
-    "data":{
-        "data":{"ANY":"DATA"},
-        "created_at":"2024-11-21T15:29:50.503356",
-        "updated_at":"2024-11-21T15:29:50.503356"
-    },
-    "errno":0,
-    "errmsg":""
-}
+{"data":{"data":{"name":"Gustavo", "status": "caffeinated"}, ... },"errno":0,"errmsg":""}
 ```
 </CodeGroup>
 </Accordion>
 
-<Accordion title="Delete">
+<Accordion title="Delete a User (Bye!)">
 <CodeGroup>
 
 ```python Python
@@ -210,8 +198,8 @@ client.DeleteUser(userId)
 ```
 
 ```bash cURL
-curl -X DELETE "$PROJECT_URL/api/v1/users/{uid}" \
-     -H "Authorization: Bearer $PROJECT_TOKEN"
+curl -X DELETE "$YOUR_PROJECT_URL/api/v1/users/{uid}" \
+     -H "Authorization: Bearer $YOUR_API_KEY"
 ```
 
 ```json Output
@@ -221,23 +209,18 @@ curl -X DELETE "$PROJECT_URL/api/v1/users/{uid}" \
 </Accordion>
 </AccordionGroup>
 
-### User Data Management
-Once you created a user, you can start to manage user data.
+### Step 4: Manage User Data
+Now that you have a user, let's give them some memories.
+
 <AccordionGroup>
-<Accordion title="Insert Data">
+<Accordion title="Insert Data (a.k.a. Chats)">
 <CodeGroup>
 
 ```python Python
 from memobase import ChatBlob
 b = ChatBlob(messages=[
-    {
-        "role": "user",
-        "content": "Hi, I'm here again"
-    },
-    {
-        "role": "assistant",
-        "content": "Hi, Gus! How can I help you?"
-    }
+    {"role": "user", "content": "Hi, I'm here again"},
+    {"role": "assistant", "content": "Hi, Gus! How can I help you?"}
 ])
 u = client.get_user(uid)
 bid = u.insert(b)
@@ -255,38 +238,28 @@ const blobId = await user.insert(Blob.parse({
 
 ```go Go
 chatBlob := &blob.ChatBlob{
-	BaseBlob: blob.BaseBlob{
-		Type: blob.ChatType,
-	},
 	Messages: []blob.OpenAICompatibleMessage{
-		{
-			Role:    "user",
-			Content: "Hello, I am Jinjia!",
-		},
-		{
-			Role:    "assistant",
-			Content: "Hi there! How can I help you today?",
-		},
+		{Role: "user", Content: "Hello, I am Jinjia!"},
+		{Role: "assistant", Content: "Hi there! How can I help you today?"},
 	},
 }
-
 blobID, err := user.Insert(chatBlob)
 ```
 
 ```bash cURL
-curl -X POST "$PROJECT_URL/api/v1/blobs/insert/{uid}" \
-     -H "Authorization: Bearer $PROJECT_TOKEN" \
+curl -X POST "$YOUR_PROJECT_URL/api/v1/blobs/insert/{uid}" \
+     -H "Authorization: Bearer $YOUR_API_KEY" \
      -H "Content-Type: application/json" \
-     -d '{ "blob_type": "chat", "blob_data": { "messages": [ {"role": "user","content": "Hi, Im here again"}, {"role": "assistant", "content": "Hi, Gus! How can I help you?", "alias": "Character"}] }}'
+     -d '{ "blob_type": "chat", "blob_data": { "messages": [ {"role": "user","content": "Hi, Im here again"}, {"role": "assistant", "content": "Hi, Gus! How can I help you?"}] }}'
 ```
 
 ```json Output
-{"data":{"id":"60377b0b-bf46-BLOB-UUID-2fbc6a38a884"},"errno":0,"errmsg":""}
+{"data":{"id":"some-unique-blob-id"},"errno":0,"errmsg":""}
 ```
 </CodeGroup>
 </Accordion>
 
-<Accordion title="Get">
+<Accordion title="Get Data">
 <CodeGroup>
 
 ```python Python
@@ -302,31 +275,17 @@ blob, err := user.Get(blobId)
 ```
 
 ```bash cURL
-curl -X GET "$PROJECT_URL/api/v1/blobs/{uid}/{bid}" \
-     -H "Authorization: Bearer $PROJECT_TOKEN"
+curl -X GET "$YOUR_PROJECT_URL/api/v1/blobs/{uid}/{bid}" \
+     -H "Authorization: Bearer $YOUR_API_KEY"
 ```
 
 ```json Output
-{
-    "data":{
-        "blob_type":"chat",
-        "blob_data":{
-            "messages":[
-                {"role":"user","alias":null,"content":"Hi, Im here again"},
-                {"role":"assistant","alias":null,"content":"Hi, Gus! How can I help you?"}
-                ]
-            },
-        "fields":null,
-        "created_at":"2024-11-23T08:38:22.067493",
-        "updated_at":"2024-11-23T08:38:22.067493"
-    },
-    "errno":0,
-    "errmsg":""}
+{"data":{"blob_type":"chat", "blob_data":{...}},"errno":0,"errmsg":""}
 ```
 </CodeGroup>
 </Accordion>
 
-<Accordion title="Delete">
+<Accordion title="Delete Data">
 <CodeGroup>
 
 ```python Python
@@ -342,8 +301,8 @@ err := user.Delete(blobId)
 ```
 
 ```bash cURL
-curl -X DELETE "$PROJECT_URL/api/v1/blobs/{uid}/{bid}" \
-     -H "Authorization: Bearer $PROJECT_TOKEN"
+curl -X DELETE "$YOUR_PROJECT_URL/api/v1/blobs/{uid}/{bid}" \
+     -H "Authorization: Bearer $YOUR_API_KEY"
 ```
 
 ```json Output
@@ -353,11 +312,12 @@ curl -X DELETE "$PROJECT_URL/api/v1/blobs/{uid}/{bid}" \
 </Accordion> 
 </AccordionGroup>
 
-### Memory Operations
-Memobase provides memory extraction and storage for each user：
-1. `flush`: User Data will stay in buffer until the buffer is too big or IDLE for too long. You can flush the buffer to trigger the memory extraction manually
+### Step 5: Memory Operations
+This is where the magic happens. Memobase extracts and stores memories for each user.
 
-<Accordion title="Flush" description="e.g. After a chat session is closed">
+1.  **`flush`**: User data hangs out in a buffer. If the buffer gets too big or sits idle for too long, it gets processed. You can also trigger this manually.
+
+<Accordion title="Flush (e.g., after a chat session ends)">
 <CodeGroup>
 
 ```python Python
@@ -373,8 +333,8 @@ err := user.Flush(blob.ChatType)
 ```
 
 ```bash cURL
-curl -X POST "$PROJECT_URL/api/v1/users/buffer/{uid}/chat" \
-     -H "Authorization: Bearer $PROJECT_TOKEN"
+curl -X POST "$YOUR_PROJECT_URL/api/v1/users/buffer/{uid}/chat" \
+     -H "Authorization: Bearer $YOUR_API_KEY"
 ```
 
 ```json Output
@@ -383,9 +343,9 @@ curl -X POST "$PROJECT_URL/api/v1/users/buffer/{uid}/chat" \
 </CodeGroup>
 </Accordion>
 
-2. `profile`: Get the memory profiles of a user.
+2.  **`profile`**: Get the memory profile of a user.
 
-<Accordion title="User Profile">
+<Accordion title="Get User Profile">
 <CodeGroup>
 
 ```python Python
@@ -401,55 +361,61 @@ profiles, err := user.Profile()
 ```
 
 ```bash cURL
-curl -X GET "$PROJECT_URL/api/v1/users/profile/{uid}" \
-     -H "Authorization: Bearer $PROJECT_TOKEN"
+curl -X GET "$YOUR_PROJECT_URL/api/v1/users/profile/{uid}" \
+     -H "Authorization: Bearer $YOUR_API_KEY"
 ```
 
 ```json Output
-{
-    "data":{
-        "profiles":[
-            {
-                "content":"Gus",
-                "attributes":{"topic":"basic_info","sub_topic":"name"},
-
-                "id":"186bdbf0-ce35-4608-9404-47af27000f7f",
-                "created_at":"2024-11-23T08:53:14.227481",
-                "updated_at":"2024-11-23T08:53:14.227481",
-            }
-        ]
-    },
-    "errno":0,
-    "errmsg":""}
+{"data":{"profiles":[ {"content":"Gus", "attributes":{...}}, ... ]},"errno":0,"errmsg":""}
 ```
 </CodeGroup>
 </Accordion>
 
-3. Pack the profiles into your system prompt:
+3.  **Pack the profiles into your system prompt**:
 
-
-<Accordion title="Prompt Example" description="Example Profile from ShareGPT">
+<Accordion title="Example Personalized Prompt">
 <CodeGroup>
 
-```txt Prompt
-Below are the user profile:
-* basic_info: name - 오*영
-* basic_info: language_spoken - User uses both English and Korean.
-* education:  - User had an English teacher who emphasized capitalization rules during school days.
-* education: major - 국어국문학과 (Korean Language and Literature)
-* demographics: marital_status - user is married
+```python Python
+u.context()
+```
+
+```typescript Node
+const context = await user.context();
+```
+
+```go Go
+context, err := user.Context(nil)
+```
+
+```bash cURL
+curl -X GET "$YOUR_PROJECT_URL/api/v1/users/context/{uid}" \
+     -H "Authorization: Bearer $YOUR_API_KEY"
+```
+
+```txt Output
+# Memory
+Unless the user has relevant queries, do not actively mention those memories in the conversation.
+## User Background:
+- basic_info:name: Gus
+- basic_info:location: San Francisco
 ...
-You should be aware of these information when you talk to the user.
+
+## Latest Events:
+- Gus went to the gym [mentioned on 2024-01-02]
+- Gus had a coffee with his friend [mentioned on 2024-01-01]
+...
 ```
 </CodeGroup>
 </Accordion>
 
 
 ## Memobase Backend
-Memobase offers a [open-source solution](https://github.com/memodb-io/memobase) with a docker backend to launch your own instance.
+We offer an [open-source solution](https://github.com/memodb-io/memobase) with a Docker backend so you can launch your own instance.
 You can use `docker-compose` to launch the backend [in one command](https://github.com/memodb-io/memobase/blob/main/src/server/readme.md#get-started).
 
-> We also provide a cloud service, but it is still under development. Below steps are for future reference.
-> 1. Sign up at [Memobase](https://memobase.io)
-> 2. Create a [new project](https://memobase.io/dashboard), and get your project url, token.
+> **Cloud Service Coming Soon!**
+> We're working on a hosted cloud service. For now, you'll have to get your hands dirty with Docker. It's good for you.
+> 1. Sign up at [Memobase](https://memobase.io) (when it's ready).
+> 2. Create a new project and get your project URL and token.
 

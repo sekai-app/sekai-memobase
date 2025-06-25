@@ -172,22 +172,22 @@ Memobase is building with FastAPI, Postgres and Redis, supporting request cachin
  ```python
  from memobase import MemoBaseClient, ChatBlob
  
- mb = MemoBaseClient(
+ client = MemoBaseClient(
      project_url=PROJECT_URL,
      api_key=PROJECT_TOKEN,
  )
- assert mb.ping()
+ assert client.ping()
  ```
 
 ### 2. Manage Users
 
 ```python
-uid = mb.add_user({"any_key": "any_value"})
-mb.update_user(uid, {"any_key": "any_value2"})
-u = mb.get_user(uid)
+uid = client.add_user({"any_key": "any_value"})
+client.update_user(uid, {"any_key": "any_value2"})
+u = client.get_user(uid)
 print(u)
 
-# mb.delete_user(uid)
+# client.delete_user(uid)
 ```
 
 ### 3. Insert Data
