@@ -8,7 +8,7 @@ import (
 )
 
 type BaseResponse struct {
-	Data   map[string]interface{} `json:"data"`
+	Data   interface{} `json:"data"`
 	Errmsg string                 `json:"errmsg"`
 	Errno  int                    `json:"errno"`
 }

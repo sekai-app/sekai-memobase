@@ -1,197 +1,112 @@
 package core
 
 import (
-	"encoding/json"
-	"io"
-	"net/http"
-	"net/http/httptest"
 	"testing"
+
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+)
+
+const (
+	TestProjectURL = "http://localhost:8019"
+	TestAPIKey     = "secret"
 )
 
 func TestNewMemoBaseClient(t *testing.T) {
-	tests := []struct {
-		name       string
-		projectURL string
-		apiKey     string
-		wantErr    bool
-	}{
-		{
-			name:       "valid initialization",
-			projectURL: "https://api.memobase.dev",
-			apiKey:     "test-key",
-			wantErr:    false,
-		},
-		{
-			name:       "missing api key",
-			projectURL: "https://api.memobase.dev",
-			apiKey:     "",
-			wantErr:    true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			client, err := NewMemoBaseClient(tt.projectURL, tt.apiKey)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("NewMemoBaseClient() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !tt.wantErr && client == nil {
-				t.Error("NewMemoBaseClient() returned nil client")
-			}
-		})
-	}
+	client, err := NewMemoBaseClient(TestProjectURL, TestAPIKey)
+	assert.NoError(t, err)
+	assert.NotNil(t, client)
 }
 
-func TestMemoBaseClient_Ping(t *testing.T) {
-	tests := []struct {
-		name       string
-		statusCode int
-		response   map[string]interface{}
-		want       bool
-	}{
-		{
-			name:       "successful ping",
-			statusCode: http.StatusOK,
-			response: map[string]interface{}{
-				"errno":  0,
-				"errmsg": "",
-				"data":   map[string]interface{}{},
-			},
-			want: true,
-		},
-		{
-			name:       "server error",
-			statusCode: http.StatusInternalServerError,
-			response: map[string]interface{}{
-				"errno":  500,
-				"errmsg": "internal server error",
-				"data":   nil,
-			},
-			want: false,
-		},
-		{
-			name:       "unauthorized",
-			statusCode: http.StatusUnauthorized,
-			response: map[string]interface{}{
-				"errno":  401,
-				"errmsg": "unauthorized",
-				"data":   nil,
-			},
-			want: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				// Verify request
-				if r.URL.Path != "/api/v1/healthcheck" {
-					t.Errorf("unexpected path: %s", r.URL.Path)
-				}
-				if r.Method != http.MethodGet {
-					t.Errorf("unexpected method: %s", r.Method)
-				}
-				if auth := r.Header.Get("Authorization"); auth != "Bearer test-key" {
-					t.Errorf("unexpected authorization header: %s", auth)
-				}
-
-				// Send response
-				w.WriteHeader(tt.statusCode)
-				if tt.response != nil {
-					json.NewEncoder(w).Encode(tt.response)
-				}
-			}))
-			defer server.Close()
-
-			client, _ := NewMemoBaseClient(server.URL, "test-key")
-			if got := client.Ping(); got != tt.want {
-				t.Errorf("MemoBaseClient.Ping() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+func TestPing(t *testing.T) {
+	client, _ := NewMemoBaseClient(TestProjectURL, TestAPIKey)
+	assert.True(t, client.Ping())
 }
 
-func TestMemoBaseClient_AddUser(t *testing.T) {
-	tests := []struct {
-		name       string
-		data       map[string]interface{}
-		id         string
-		statusCode int
-		response   map[string]interface{}
-		wantID     string
-		wantErr    bool
-	}{
-		{
-			name:       "successful user creation",
-			data:       map[string]interface{}{"name": "test"},
-			id:         "test-id",
-			statusCode: http.StatusOK,
-			response: map[string]interface{}{
-				"errno":  0,
-				"errmsg": "",
-				"data":   map[string]interface{}{"id": "test-id"},
-			},
-			wantID:  "test-id",
-			wantErr: false,
-		},
-		{
-			name:       "server error",
-			data:       map[string]interface{}{"name": "test"},
-			id:         "test-id",
-			statusCode: http.StatusInternalServerError,
-			response: map[string]interface{}{
-				"errno":  500,
-				"errmsg": "internal server error",
-				"data":   nil,
-			},
-			wantID:  "",
-			wantErr: true,
-		},
-	}
+func TestConfig(t *testing.T) {
+	client, _ := NewMemoBaseClient(TestProjectURL, TestAPIKey)
+	config := "language: en"
+	err := client.UpdateConfig(config)
+	assert.NoError(t, err)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				// Verify request
-				if r.Method != http.MethodPost {
-					t.Errorf("unexpected method: %s", r.Method)
-				}
-				if r.URL.Path != "/api/v1/users" {
-					t.Errorf("unexpected path: %s", r.URL.Path)
-				}
-				if auth := r.Header.Get("Authorization"); auth != "Bearer test-key" {
-					t.Errorf("unexpected authorization header: %s", auth)
-				}
+	newConfig, err := client.GetConfig()
+	assert.NoError(t, err)
+	assert.Equal(t, config, newConfig)
+}
 
-				// Verify request body
-				body, _ := io.ReadAll(r.Body)
-				var reqBody map[string]interface{}
-				if err := json.Unmarshal(body, &reqBody); err != nil {
-					t.Errorf("failed to parse request body: %v", err)
-				}
-				if reqBody["data"] == nil {
-					t.Error("missing data field in request")
-				}
-				if reqBody["id"] != tt.id {
-					t.Errorf("unexpected id in request: got %v, want %v", reqBody["id"], tt.id)
-				}
+func TestUserCRUD(t *testing.T) {
+	client, _ := NewMemoBaseClient(TestProjectURL, TestAPIKey)
 
-				// Send response
-				w.WriteHeader(tt.statusCode)
-				json.NewEncoder(w).Encode(tt.response)
-			}))
-			defer server.Close()
+	// Add User
+	userID, err := client.AddUser(map[string]interface{}{}, "")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, userID)
 
-			client, _ := NewMemoBaseClient(server.URL, "test-key")
-			gotID, err := client.AddUser(tt.data, tt.id)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("MemoBaseClient.AddUser() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if gotID != tt.wantID {
-				t.Errorf("MemoBaseClient.AddUser() = %v, want %v", gotID, tt.wantID)
-			}
-		})
-	}
+	// Get User
+	user, err := client.GetUser(userID, false)
+	assert.NoError(t, err)
+	assert.NotNil(t, user)
+	assert.Equal(t, userID, user.UserID)
+
+	// Update User
+	_, err = client.UpdateUser(userID, map[string]interface{}{"test": 123})
+	assert.NoError(t, err)
+
+	// Get User again to check update
+	user, err = client.GetUser(userID, false)
+	assert.NoError(t, err)
+	assert.Equal(t, 123.0, user.Fields["data"].(map[string]interface{})["test"])
+
+	// Delete User
+	err = client.DeleteUser(userID)
+	assert.NoError(t, err)
+
+	// Verify user is deleted
+	_, err = client.GetUser(userID, false)
+	assert.Error(t, err)
+}
+
+func TestGetOrCreateUser(t *testing.T) {
+	client, _ := NewMemoBaseClient(TestProjectURL, TestAPIKey)
+	userID := uuid.New().String()
+
+	// Create user
+	user, err := client.GetOrCreateUser(userID)
+	assert.NoError(t, err)
+	assert.NotNil(t, user)
+	assert.Equal(t, userID, user.UserID)
+
+	// Get user
+	user, err = client.GetOrCreateUser(userID)
+	assert.NoError(t, err)
+	assert.NotNil(t, user)
+	assert.Equal(t, userID, user.UserID)
+
+	client.DeleteUser(userID)
+}
+
+func TestGetAllUsers(t *testing.T) {
+	client, _ := NewMemoBaseClient(TestProjectURL, TestAPIKey)
+		userID, err := client.AddUser(map[string]interface{}{}, "")
+
+	users, err := client.GetAllUsers("", "updated_at", true, 10, 0)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, users)
+
+	client.DeleteUser(userID)
+}
+
+func TestGetUsage(t *testing.T) {
+	client, _ := NewMemoBaseClient(TestProjectURL, TestAPIKey)
+	usage, err := client.GetUsage()
+	assert.NoError(t, err)
+	assert.NotNil(t, usage)
+}
+
+func TestGetDailyUsage(t *testing.T) {
+	client, _ := NewMemoBaseClient(TestProjectURL, TestAPIKey)
+	usage, err := client.GetDailyUsage(7)
+	assert.NoError(t, err)
+	assert.NotNil(t, usage)
+	assert.IsType(t, []map[string]interface{}{}, usage)
 }

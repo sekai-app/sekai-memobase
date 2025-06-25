@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/memodb-io/memobase/src/client/memobase-go/blob"
 	"github.com/memodb-io/memobase/src/client/memobase-go/network"
@@ -16,18 +17,7 @@ type User struct {
 	Fields        map[string]interface{}
 }
 
-type UserProfile struct {
-	ID         string        `json:"id"`
-	UpdatedAt  blob.JSONTime `json:"updated_at"`
-	CreatedAt  blob.JSONTime `json:"created_at"`
-	Content    string        `json:"content"`
-	Attributes struct {
-		Topic    string `json:"topic"`
-		SubTopic string `json:"sub_topic"`
-	} `json:"attributes"`
-}
-
-func (u *User) Insert(blob blob.BlobInterface) (string, error) {
+func (u *User) Insert(blob blob.BlobInterface, sync bool) (string, error) {
 	reqData := map[string]interface{}{
 		"blob_type": blob.GetType(),
 		"blob_data": blob.GetBlobData(),
@@ -43,7 +33,7 @@ func (u *User) Insert(blob blob.BlobInterface) (string, error) {
 	}
 
 	resp, err := u.ProjectClient.HTTPClient.Post(
-		fmt.Sprintf("%s/blobs/insert/%s", u.ProjectClient.BaseURL, u.UserID),
+		fmt.Sprintf("%s/blobs/insert/%s?wait_process=%t", u.ProjectClient.BaseURL, u.UserID, sync),
 		"application/json",
 		bytes.NewBuffer(jsonData),
 	)
@@ -57,7 +47,12 @@ func (u *User) Insert(blob blob.BlobInterface) (string, error) {
 		return "", err
 	}
 
-	return baseResp.Data["id"].(string), nil
+	dataMap, ok := baseResp.Data.(map[string]interface{})
+	if !ok {
+		return "", fmt.Errorf("unexpected response format for Insert")
+	}
+
+	return dataMap["id"].(string), nil
 }
 
 func (u *User) Get(blobID string) (blob.BlobInterface, error) {
@@ -102,13 +97,16 @@ func (u *User) GetAll(blobType blob.BlobType, page int, pageSize int) ([]string,
 		return nil, err
 	}
 
-	// Handle the response data structure correctly
-	data, ok := baseResp.Data["ids"].([]interface{})
+	dataMap, ok := baseResp.Data.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected response format for GetAll")
+	}
+
+	data, ok := dataMap["ids"].([]interface{})
 	if !ok {
 		return nil, fmt.Errorf("unexpected response format for blob IDs")
 	}
 
-	// Convert []interface{} to []string
 	ids := make([]string, len(data))
 	for i, v := range data {
 		if str, ok := v.(string); ok {
@@ -141,9 +139,9 @@ func (u *User) Delete(blobID string) error {
 	return err
 }
 
-func (u *User) Flush(blobType blob.BlobType) error {
+func (u *User) Flush(blobType blob.BlobType, sync bool) error {
 	resp, err := u.ProjectClient.HTTPClient.Post(
-		fmt.Sprintf("%s/users/buffer/%s/%s", u.ProjectClient.BaseURL, u.UserID, blobType),
+		fmt.Sprintf("%s/users/buffer/%s/%s?wait_process=%t", u.ProjectClient.BaseURL, u.UserID, blobType, sync),
 		"application/json",
 		nil,
 	)
@@ -156,9 +154,46 @@ func (u *User) Flush(blobType blob.BlobType) error {
 	return err
 }
 
-func (u *User) Profile() ([]UserProfile, error) {
-	resp, err := u.ProjectClient.HTTPClient.Get(
+func (u *User) AddProfile(content string, topic string, subTopic string) (string, error) {
+	reqData := map[string]interface{}{
+		"content": content,
+		"attributes": map[string]interface{}{
+			"topic":     topic,
+			"sub_topic": subTopic,
+		},
+	}
+
+	jsonData, err := json.Marshal(reqData)
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := u.ProjectClient.HTTPClient.Post(
 		fmt.Sprintf("%s/users/profile/%s", u.ProjectClient.BaseURL, u.UserID),
+		"application/json",
+		bytes.NewBuffer(jsonData),
+	)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	baseResp, err := network.UnpackResponse(resp)
+	if err != nil {
+		return "", err
+	}
+
+	dataMap, ok := baseResp.Data.(map[string]interface{})
+	if !ok {
+		return "", fmt.Errorf("unexpected response format for AddProfile")
+	}
+
+	return dataMap["id"].(string), nil
+}
+
+func (u *User) Buffer(blobType blob.BlobType, status string) ([]string, error) {
+	resp, err := u.ProjectClient.HTTPClient.Get(
+		fmt.Sprintf("%s/users/buffer/capacity/%s/%s?status=%s", u.ProjectClient.BaseURL, u.UserID, blobType, status),
 	)
 	if err != nil {
 		return nil, err
@@ -170,19 +205,106 @@ func (u *User) Profile() ([]UserProfile, error) {
 		return nil, err
 	}
 
-	profiles, ok := baseResp.Data["profiles"].([]interface{})
+	dataMap, ok := baseResp.Data.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected response format for Buffer")
+	}
+
+	data, ok := dataMap["ids"].([]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected response format for blob IDs")
+	}
+
+	ids := make([]string, len(data))
+	for i, v := range data {
+		if str, ok := v.(string); ok {
+			ids[i] = str
+		} else {
+			return nil, fmt.Errorf("unexpected ID type at index %d", i)
+		}
+	}
+
+	return ids, nil
+}
+
+type ProfileOptions struct {
+	MaxTokenSize    int                    `json:"max_token_size,omitempty"`
+	PreferTopics    []string               `json:"prefer_topics,omitempty"`
+	OnlyTopics      []string               `json:"only_topics,omitempty"`
+	MaxSubtopicSize *int                   `json:"max_subtopic_size,omitempty"`
+	TopicLimits     map[string]int         `json:"topic_limits,omitempty"`
+	Chats           []blob.OpenAICompatibleMessage `json:"chats,omitempty"`
+}
+
+func (u *User) Profile(options *ProfileOptions) ([]UserProfileData, error) {
+	if options == nil {
+		options = &ProfileOptions{
+			MaxTokenSize: 1000,
+		}
+	}
+
+	params := url.Values{}
+	params.Add("max_token_size", fmt.Sprintf("%d", options.MaxTokenSize))
+
+	if options.PreferTopics != nil {
+		for _, t := range options.PreferTopics {
+			params.Add("prefer_topics", t)
+		}
+	}
+	if options.OnlyTopics != nil {
+		for _, t := range options.OnlyTopics {
+			params.Add("only_topics", t)
+		}
+	}
+	if options.MaxSubtopicSize != nil {
+		params.Add("max_subtopic_size", fmt.Sprintf("%d", *options.MaxSubtopicSize))
+	}
+	if options.TopicLimits != nil {
+		topicLimitsJSON, err := json.Marshal(options.TopicLimits)
+		if err != nil {
+			return nil, err
+		}
+		params.Add("topic_limits_json", string(topicLimitsJSON))
+	}
+	if options.Chats != nil {
+		chatsJSON, err := json.Marshal(options.Chats)
+		if err != nil {
+			return nil, err
+		}
+		params.Add("chats_str", string(chatsJSON))
+	}
+
+	resp, err := u.ProjectClient.HTTPClient.Get(
+		fmt.Sprintf("%s/users/profile/%s?%s", u.ProjectClient.BaseURL, u.UserID, params.Encode()),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	baseResp, err := network.UnpackResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	dataMap, ok := baseResp.Data.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected response format for Profile")
+	}
+
+	profiles, ok := dataMap["profiles"].([]interface{})
 	if !ok {
 		return nil, fmt.Errorf("unexpected response format for profiles")
 	}
 
-	var result []UserProfile
+	var result []UserProfileData
 	for _, p := range profiles {
 		profileMap, ok := p.(map[string]interface{})
 		if !ok {
 			continue
 		}
 
-		var profile UserProfile
+		var profile UserProfileData
 		jsonData, err := json.Marshal(profileMap)
 		if err != nil {
 			continue
@@ -253,36 +375,22 @@ func (u *User) DeleteProfile(profileID string) error {
 	return err
 }
 
-type EventTag struct {
-	Tag   string `json:"tag"`
-	Value string `json:"value"`
-}
-
-type ProfileDelta struct {
-	Content    string                 `json:"content"`
-	Attributes map[string]interface{} `json:"attributes"`
-}
-
-type EventData struct {
-	ProfileDelta []ProfileDelta `json:"profile_delta"`
-	EventTip     string         `json:"event_tip,omitempty"`
-	EventTags    []EventTag     `json:"event_tags,omitempty"`
-}
-
-type UserEventData struct {
-	ID        string        `json:"id"`
-	EventData EventData     `json:"event_data"`
-	CreatedAt blob.JSONTime `json:"created_at"`
-	UpdatedAt blob.JSONTime `json:"updated_at"`
-}
-
-func (u *User) Event(topk int) ([]UserEventData, error) {
+func (u *User) Event(topk int, maxTokenSize *int, needSummary bool) ([]UserEventData, error) {
 	if topk <= 0 {
 		topk = 10 // Default value
 	}
 
+	params := url.Values{}
+	params.Add("topk", fmt.Sprintf("%d", topk))
+	if maxTokenSize != nil {
+		params.Add("max_token_size", fmt.Sprintf("%d", *maxTokenSize))
+	}
+	if needSummary {
+		params.Add("need_summary", "true")
+	}
+
 	resp, err := u.ProjectClient.HTTPClient.Get(
-		fmt.Sprintf("%s/users/event/%s?topk=%d", u.ProjectClient.BaseURL, u.UserID, topk),
+		fmt.Sprintf("%s/users/event/%s?%s", u.ProjectClient.BaseURL, u.UserID, params.Encode()),
 	)
 	if err != nil {
 		return nil, err
@@ -294,7 +402,12 @@ func (u *User) Event(topk int) ([]UserEventData, error) {
 		return nil, err
 	}
 
-	events, ok := baseResp.Data["events"].([]interface{})
+	dataMap, ok := baseResp.Data.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected response format for Event")
+	}
+
+	events, ok := dataMap["events"].([]interface{})
 	if !ok {
 		return nil, fmt.Errorf("unexpected response format for events")
 	}
@@ -369,18 +482,72 @@ func (u *User) UpdateEvent(eventID string, eventData map[string]interface{}) err
 	return err
 }
 
-// ContextOptions contains all the optional parameters for the Context method
-type ContextOptions struct {
-	MaxTokenSize        int            `json:"max_token_size,omitempty"`
-	PreferTopics        []string       `json:"prefer_topics,omitempty"`
-	OnlyTopics          []string       `json:"only_topics,omitempty"`
-	MaxSubtopicSize     *int           `json:"max_subtopic_size,omitempty"`
-	TopicLimits         map[string]int `json:"topic_limits,omitempty"`
-	ProfileEventRatio   *float64       `json:"profile_event_ratio,omitempty"`
-	RequireEventSummary *bool          `json:"require_event_summary,omitempty"`
+func (u *User) SearchEvent(query string, topk int, similarityThreshold float64, timeRangeInDays int) ([]UserEventData, error) {
+	params := url.Values{}
+	params.Add("query", query)
+	params.Add("topk", fmt.Sprintf("%d", topk))
+	params.Add("similarity_threshold", fmt.Sprintf("%f", similarityThreshold))
+	params.Add("time_range_in_days", fmt.Sprintf("%d", timeRangeInDays))
+
+	resp, err := u.ProjectClient.HTTPClient.Get(
+		fmt.Sprintf("%s/users/event/search/%s?%s", u.ProjectClient.BaseURL, u.UserID, params.Encode()),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	baseResp, err := network.UnpackResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	dataMap, ok := baseResp.Data.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected response format for SearchEvent")
+	}
+
+	events, ok := dataMap["events"].([]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected response format for events")
+	}
+
+	var result []UserEventData
+	for _, e := range events {
+		eventMap, ok := e.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		var event UserEventData
+		jsonData, err := json.Marshal(eventMap)
+		if err != nil {
+			continue
+		}
+
+		if err := json.Unmarshal(jsonData, &event); err != nil {
+			fmt.Printf("Error unmarshaling event: %v\nData: %s\n", err, jsonData)
+			continue
+		}
+
+		result = append(result, event)
+	}
+
+	return result, nil
 }
 
-// Context retrieves the user context based on the provided options
+type ContextOptions struct {
+	MaxTokenSize        int                    `json:"max_token_size,omitempty"`
+	PreferTopics        []string               `json:"prefer_topics,omitempty"`
+	OnlyTopics          []string               `json:"only_topics,omitempty"`
+	MaxSubtopicSize     *int                   `json:"max_subtopic_size,omitempty"`
+	TopicLimits         map[string]int         `json:"topic_limits,omitempty"`
+	ProfileEventRatio   *float64               `json:"profile_event_ratio,omitempty"`
+	RequireEventSummary *bool                  `json:"require_event_summary,omitempty"`
+	Chats               []blob.OpenAICompatibleMessage `json:"chats,omitempty"`
+	EventSimilarityThreshold *float64 `json:"event_similarity_threshold,omitempty"`
+}
+
 func (u *User) Context(options *ContextOptions) (string, error) {
 	if options == nil {
 		options = &ContextOptions{
@@ -388,55 +555,49 @@ func (u *User) Context(options *ContextOptions) (string, error) {
 		}
 	}
 
-	// Build query parameters
-	maxTokenSize := 1000
-	if options.MaxTokenSize > 0 {
-		maxTokenSize = options.MaxTokenSize
+	params := url.Values{}
+	params.Add("max_token_size", fmt.Sprintf("%d", options.MaxTokenSize))
+
+	if options.PreferTopics != nil {
+		for _, t := range options.PreferTopics {
+			params.Add("prefer_topics", t)
+		}
 	}
-
-	url := fmt.Sprintf("%s/users/context/%s?max_token_size=%d",
-		u.ProjectClient.BaseURL, u.UserID, maxTokenSize)
-
-	// Add prefer_topics if provided
-	for _, topic := range options.PreferTopics {
-		url += fmt.Sprintf("&prefer_topics=%s", topic)
+	if options.OnlyTopics != nil {
+		for _, t := range options.OnlyTopics {
+			params.Add("only_topics", t)
+		}
 	}
-
-	// Add only_topics if provided
-	for _, topic := range options.OnlyTopics {
-		url += fmt.Sprintf("&only_topics=%s", topic)
-	}
-
-	// Add max_subtopic_size if provided
 	if options.MaxSubtopicSize != nil {
-		url += fmt.Sprintf("&max_subtopic_size=%d", *options.MaxSubtopicSize)
+		params.Add("max_subtopic_size", fmt.Sprintf("%d", *options.MaxSubtopicSize))
 	}
-
-	// Add topic_limits if provided
-	if len(options.TopicLimits) > 0 {
+	if options.TopicLimits != nil {
 		topicLimitsJSON, err := json.Marshal(options.TopicLimits)
 		if err != nil {
 			return "", err
 		}
-		url += fmt.Sprintf("&topic_limits_json=%s", string(topicLimitsJSON))
+		params.Add("topic_limits_json", string(topicLimitsJSON))
 	}
-
-	// Add profile_event_ratio if provided
 	if options.ProfileEventRatio != nil {
-		url += fmt.Sprintf("&profile_event_ratio=%f", *options.ProfileEventRatio)
+		params.Add("profile_event_ratio", fmt.Sprintf("%f", *options.ProfileEventRatio))
 	}
-
-	// Add require_event_summary if provided
 	if options.RequireEventSummary != nil {
-		requireEventSummary := "false"
-		if *options.RequireEventSummary {
-			requireEventSummary = "true"
+		params.Add("require_event_summary", fmt.Sprintf("%t", *options.RequireEventSummary))
+	}
+	if options.Chats != nil {
+		chatsJSON, err := json.Marshal(options.Chats)
+		if err != nil {
+			return "", err
 		}
-		url += fmt.Sprintf("&require_event_summary=%s", requireEventSummary)
+		params.Add("chats_str", string(chatsJSON))
+	}
+	if options.EventSimilarityThreshold != nil {
+		params.Add("event_similarity_threshold", fmt.Sprintf("%f", *options.EventSimilarityThreshold))
 	}
 
-	// Make the request
-	resp, err := u.ProjectClient.HTTPClient.Get(url)
+	resp, err := u.ProjectClient.HTTPClient.Get(
+		fmt.Sprintf("%s/users/context/%s?%s", u.ProjectClient.BaseURL, u.UserID, params.Encode()),
+	)
 	if err != nil {
 		return "", err
 	}
@@ -447,7 +608,12 @@ func (u *User) Context(options *ContextOptions) (string, error) {
 		return "", err
 	}
 
-	contextStr, ok := baseResp.Data["context"].(string)
+	dataMap, ok := baseResp.Data.(map[string]interface{})
+	if !ok {
+		return "", fmt.Errorf("unexpected response format for Context")
+	}
+
+	contextStr, ok := dataMap["context"].(string)
 	if !ok {
 		return "", fmt.Errorf("unexpected response format for context")
 	}

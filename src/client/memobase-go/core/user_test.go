@@ -1,316 +1,201 @@
 package core
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/memodb-io/memobase/src/client/memobase-go/blob"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestUser_Insert(t *testing.T) {
-	tests := []struct {
-		name       string
-		blobData   blob.BlobInterface
-		statusCode int
-		response   map[string]interface{}
-		wantID     string
-		wantErr    bool
-	}{
-		{
-			name: "successful blob insertion",
-			blobData: &blob.ChatBlob{
-				BaseBlob: blob.BaseBlob{
-					Type: blob.ChatType,
-					Fields: map[string]interface{}{
-						"test": "value",
-					},
-				},
-				Messages: []blob.OpenAICompatibleMessage{
-					{
-						Role:    "user",
-						Content: "test",
-					},
-				},
-			},
-			statusCode: http.StatusOK,
-			response: map[string]interface{}{
-				"errno":  0,
-				"errmsg": "",
-				"data":   map[string]interface{}{"id": "test-blob-id"},
-			},
-			wantID:  "test-blob-id",
-			wantErr: false,
-		},
-		{
-			name: "server error",
-			blobData: &blob.ChatBlob{
-				BaseBlob: blob.BaseBlob{
-					Type: blob.ChatType,
-					Fields: map[string]interface{}{
-						"test": "value",
-					},
-				},
-				Messages: []blob.OpenAICompatibleMessage{
-					{
-						Role:    "user",
-						Content: "test",
-					},
-				},
-			},
-			statusCode: http.StatusInternalServerError,
-			response: map[string]interface{}{
-				"errno":  500,
-				"errmsg": "internal server error",
-				"data":   nil,
-			},
-			wantID:  "",
-			wantErr: true,
-		},
+func TestBlobCRUD(t *testing.T) {
+	client, _ := NewMemoBaseClient(TestProjectURL, TestAPIKey)
+	userID, _ := client.AddUser(nil, "")
+	user, _ := client.GetUser(userID, false)
+
+	// Insert Blob
+	doc := &blob.DocBlob{
+		BaseBlob: blob.BaseBlob{Type: blob.DocType},
+		Content:  "test content",
 	}
+	blobID, err := user.Insert(doc, false)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, blobID)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				// Verify request
-				if r.Method != http.MethodPost {
-					t.Errorf("unexpected method: %s", r.Method)
-				}
-				expectedPath := "/api/v1/blobs/insert/test-user"
-				if r.URL.Path != expectedPath {
-					t.Errorf("unexpected path: got %s, want %s", r.URL.Path, expectedPath)
-				}
+	// Get Blob
+	retrievedBlob, err := user.Get(blobID)
+	assert.NoError(t, err)
+	assert.NotNil(t, retrievedBlob)
+	retrievedDoc, ok := retrievedBlob.(*blob.DocBlob)
+	assert.True(t, ok)
+	assert.Equal(t, "test content", retrievedDoc.Content)
 
-				// Verify request body
-				body, _ := io.ReadAll(r.Body)
-				var reqBody map[string]interface{}
-				if err := json.Unmarshal(body, &reqBody); err != nil {
-					t.Errorf("failed to parse request body: %v", err)
-				}
-				if reqBody["blob_type"] != string(tt.blobData.GetType()) {
-					t.Errorf("unexpected blob_type: got %v, want %v", reqBody["blob_type"], tt.blobData.GetType())
-				}
+	// Get All Blobs
+	blobs, err := user.GetAll(blob.DocType, 0, 10)
+	assert.NoError(t, err)
+	assert.Len(t, blobs, 1)
 
-				// Send response
-				w.WriteHeader(tt.statusCode)
-				json.NewEncoder(w).Encode(tt.response)
-			}))
-			defer server.Close()
+	// Delete Blob
+	err = user.Delete(blobID)
+	assert.NoError(t, err)
 
-			client, _ := NewMemoBaseClient(server.URL, "test-key")
-			user := &User{
-				UserID:        "test-user",
-				ProjectClient: client,
-			}
+	// Verify blob is deleted
+	_, err = user.Get(blobID)
+	assert.Error(t, err)
 
-			gotID, err := user.Insert(tt.blobData)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("User.Insert() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if gotID != tt.wantID {
-				t.Errorf("User.Insert() = %v, want %v", gotID, tt.wantID)
-			}
-		})
-	}
+	client.DeleteUser(userID)
 }
 
-func TestUser_GetAll(t *testing.T) {
-	tests := []struct {
-		name       string
-		blobType   blob.BlobType
-		page       int
-		pageSize   int
-		statusCode int
-		response   map[string]interface{}
-		wantIDs    []string
-		wantErr    bool
-	}{
-		{
-			name:       "successful get all blobs",
-			blobType:   blob.ChatType,
-			page:       0,
-			pageSize:   10,
-			statusCode: http.StatusOK,
-			response: map[string]interface{}{
-				"errno":  0,
-				"errmsg": "",
-				"data": map[string]interface{}{
-					"ids": []interface{}{"id1", "id2", "id3"},
-				},
-			},
-			wantIDs: []string{"id1", "id2", "id3"},
-			wantErr: false,
-		},
-		{
-			name:       "server error",
-			blobType:   blob.ChatType,
-			page:       0,
-			pageSize:   10,
-			statusCode: http.StatusInternalServerError,
-			response: map[string]interface{}{
-				"errno":  500,
-				"errmsg": "internal server error",
-				"data":   nil,
-			},
-			wantIDs: nil,
-			wantErr: true,
-		},
-	}
+func TestProfileCRUD(t *testing.T) {
+	client, _ := NewMemoBaseClient(TestProjectURL, TestAPIKey)
+	userID, _ := client.AddUser(nil, "")
+	user, _ := client.GetUser(userID, false)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				// Verify request
-				if r.Method != http.MethodGet {
-					t.Errorf("unexpected method: %s", r.Method)
-				}
-				expectedPath := fmt.Sprintf("/api/v1/users/blobs/test-user/%s", tt.blobType)
-				if r.URL.Path != expectedPath {
-					t.Errorf("unexpected path: got %s, want %s", r.URL.Path, expectedPath)
-				}
+	// Add Profile
+	profileID, err := user.AddProfile("test content", "test_topic", "test_sub_topic")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, profileID)
 
-				// Send response
-				w.WriteHeader(tt.statusCode)
-				json.NewEncoder(w).Encode(tt.response)
-			}))
-			defer server.Close()
+	// Get Profile
+	profiles, err := user.Profile(nil)
+	assert.NoError(t, err)
+	assert.Len(t, profiles, 1)
+	assert.Equal(t, "test content", profiles[0].Content)
 
-			client, _ := NewMemoBaseClient(server.URL, "test-key")
-			user := &User{
-				UserID:        "test-user",
-				ProjectClient: client,
-			}
+	// Update Profile
+	err = user.UpdateProfile(profileID, "updated content", "updated_topic", "updated_sub_topic")
+	assert.NoError(t, err)
 
-			gotIDs, err := user.GetAll(tt.blobType, tt.page, tt.pageSize)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("User.GetAll() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !tt.wantErr {
-				if len(gotIDs) != len(tt.wantIDs) {
-					t.Errorf("User.GetAll() returned %d IDs, want %d", len(gotIDs), len(tt.wantIDs))
-					return
-				}
-				for i, id := range gotIDs {
-					if id != tt.wantIDs[i] {
-						t.Errorf("User.GetAll()[%d] = %v, want %v", i, id, tt.wantIDs[i])
-					}
-				}
-			}
-		})
-	}
+	// Get Profile again to check update
+	profiles, err = user.Profile(nil)
+	assert.NoError(t, err)
+	assert.Len(t, profiles, 1)
+	assert.Equal(t, "updated content", profiles[0].Content)
+
+	// Delete Profile
+	err = user.DeleteProfile(profileID)
+	assert.NoError(t, err)
+
+	// Verify profile is deleted
+	profiles, err = user.Profile(nil)
+	assert.NoError(t, err)
+	assert.Len(t, profiles, 0)
+
+	client.DeleteUser(userID)
 }
 
-func TestUser_Profile(t *testing.T) {
-	tests := []struct {
-		name       string
-		statusCode int
-		response   map[string]interface{}
-		want       []UserProfile
-		wantErr    bool
-	}{
-		{
-			name:       "successful get profiles",
-			statusCode: http.StatusOK,
-			response: map[string]interface{}{
-				"errno":  0,
-				"errmsg": "",
-				"data": map[string]interface{}{
-					"profiles": []map[string]interface{}{
-						{
-							"id":         "test-id",
-							"updated_at": "2025-01-30T11:24:56.446991",
-							"created_at": "2025-01-30T11:24:56.446991",
-							"content":    "test content",
-							"attributes": map[string]interface{}{
-								"topic":     "test topic",
-								"sub_topic": "test subtopic",
-							},
-						},
-					},
-				},
-			},
-			want: []UserProfile{
-				{
-					ID:      "test-id",
-					Content: "test content",
-					Attributes: struct {
-						Topic    string `json:"topic"`
-						SubTopic string `json:"sub_topic"`
-					}{
-						Topic:    "test topic",
-						SubTopic: "test subtopic",
-					},
-				},
-			},
-			wantErr: false,
-		},
-		{
-			name:       "server error",
-			statusCode: http.StatusInternalServerError,
-			response: map[string]interface{}{
-				"errno":  500,
-				"errmsg": "internal server error",
-				"data":   nil,
-			},
-			want:    nil,
-			wantErr: true,
+func TestEventCRUD(t *testing.T) {
+	client, _ := NewMemoBaseClient(TestProjectURL, TestAPIKey)
+	userID, _ := client.AddUser(nil, "")
+	user, _ := client.GetUser(userID, false)
+
+	// Insert chat to generate event
+	chat := &blob.ChatBlob{
+		BaseBlob: blob.BaseBlob{Type: blob.ChatType},
+		Messages: []blob.OpenAICompatibleMessage{
+			{Role: "user", Content: "Hello"},
+			{Role: "assistant", Content: "Hi there"},
 		},
 	}
+	_, err := user.Insert(chat, false)
+	assert.NoError(t, err)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				// Verify request
-				if r.Method != http.MethodGet {
-					t.Errorf("unexpected method: %s", r.Method)
-				}
-				expectedPath := "/api/v1/users/profile/test-user"
-				if r.URL.Path != expectedPath {
-					t.Errorf("unexpected path: got %s, want %s", r.URL.Path, expectedPath)
-				}
+	err = user.Flush(blob.ChatType, true)
+	assert.NoError(t, err)
 
-				// Send response
-				w.WriteHeader(tt.statusCode)
-				json.NewEncoder(w).Encode(tt.response)
-			}))
-			defer server.Close()
+	// Get Events
+	events, err := user.Event(10, nil, false)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, events)
 
-			client, _ := NewMemoBaseClient(server.URL, "test-key")
-			user := &User{
-				UserID:        "test-user",
-				ProjectClient: client,
-			}
+	// Update Event
+	eventID := events[0].ID.String()
+	err = user.UpdateEvent(eventID, map[string]interface{}{"event_tip": "test tip"})
+	assert.NoError(t, err)
 
-			got, err := user.Profile()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("User.Profile() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !tt.wantErr {
-				if len(got) != len(tt.want) {
-					t.Errorf("User.Profile() returned %d profiles, want %d", len(got), len(tt.want))
-					return
-				}
-				for i, profile := range got {
-					if profile.ID != tt.want[i].ID {
-						t.Errorf("Profile[%d].ID = %v, want %v", i, profile.ID, tt.want[i].ID)
-					}
-					if profile.Attributes.Topic != tt.want[i].Attributes.Topic {
-						t.Errorf("Profile[%d].Attributes.Topic = %v, want %v", i, profile.Attributes.Topic, tt.want[i].Attributes.Topic)
-					}
-					if profile.Attributes.SubTopic != tt.want[i].Attributes.SubTopic {
-						t.Errorf("Profile[%d].Attributes.SubTopic = %v, want %v", i, profile.Attributes.SubTopic, tt.want[i].Attributes.SubTopic)
-					}
-					if profile.Content != tt.want[i].Content {
-						t.Errorf("Profile[%d].Content = %v, want %v", i, profile.Content, tt.want[i].Content)
-					}
-				}
-			}
-		})
+	// Get Event again to check update
+	events, err = user.Event(10, nil, false)
+	assert.NoError(t, err)
+	assert.Equal(t, "test tip", events[0].EventData.EventTip)
+
+	// Delete Event
+	err = user.DeleteEvent(eventID)
+	assert.NoError(t, err)
+
+	// Verify event is deleted
+	events, err = user.Event(10, nil, false)
+	assert.NoError(t, err)
+	assert.Empty(t, events)
+
+	client.DeleteUser(userID)
+}
+
+func TestContext(t *testing.T) {
+	client, _ := NewMemoBaseClient(TestProjectURL, TestAPIKey)
+	userID, _ := client.AddUser(nil, "")
+	user, _ := client.GetUser(userID, false)
+
+	// Insert chat to generate context
+	chat := &blob.ChatBlob{
+		BaseBlob: blob.BaseBlob{Type: blob.ChatType},
+		Messages: []blob.OpenAICompatibleMessage{
+			{Role: "user", Content: "My name is John"},
+			{Role: "assistant", Content: "Nice to meet you John"},
+		},
 	}
+	_, err := user.Insert(chat, true)
+	assert.NoError(t, err)
+
+	context, err := user.Context(nil)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, context)
+
+	client.DeleteUser(userID)
+}
+
+func TestSearchEvent(t *testing.T) {
+	client, _ := NewMemoBaseClient(TestProjectURL, TestAPIKey)
+	userID, _ := client.AddUser(nil, "")
+	user, _ := client.GetUser(userID, false)
+
+	// Insert chat to generate event
+	chat := &blob.ChatBlob{
+		BaseBlob: blob.BaseBlob{Type: blob.ChatType},
+		Messages: []blob.OpenAICompatibleMessage{
+			{Role: "user", Content: "I live in New York"},
+			{Role: "assistant", Content: "That's great"},
+		},
+	}
+	_, err := user.Insert(chat, false)
+	assert.NoError(t, err)
+
+	err = user.Flush(blob.ChatType, true)
+	assert.NoError(t, err)
+
+	events, err := user.SearchEvent("New York", 10, 0.2, 7)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, events)
+
+	client.DeleteUser(userID)
+}
+
+func TestBuffer(t *testing.T) {
+	client, _ := NewMemoBaseClient(TestProjectURL, TestAPIKey)
+	userID, _ := client.AddUser(nil, "")
+	user, _ := client.GetUser(userID, false)
+
+	// Insert chat to buffer
+	chat := &blob.ChatBlob{
+		BaseBlob: blob.BaseBlob{Type: blob.ChatType},
+		Messages: []blob.OpenAICompatibleMessage{
+			{Role: "user", Content: "Hello"},
+		},
+	}
+	_, err := user.Insert(chat, false)
+	assert.NoError(t, err)
+
+	ids, err := user.Buffer(blob.ChatType, "idle")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, ids)
+
+	client.DeleteUser(userID)
 }

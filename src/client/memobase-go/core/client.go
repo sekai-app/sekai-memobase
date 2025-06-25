@@ -73,7 +73,9 @@ func (c *MemoBaseClient) Ping() bool {
 func (c *MemoBaseClient) AddUser(data map[string]interface{}, id string) (string, error) {
 	reqBody := map[string]interface{}{
 		"data": data,
-		"id":   id,
+	}
+	if id != "" {
+		reqBody["id"] = id
 	}
 
 	jsonData, err := json.Marshal(reqBody)
@@ -96,15 +98,16 @@ func (c *MemoBaseClient) AddUser(data map[string]interface{}, id string) (string
 		return "", err
 	}
 
-	return baseResp.Data["id"].(string), nil
+	dataMap, ok := baseResp.Data.(map[string]interface{})
+	if !ok {
+		return "", fmt.Errorf("unexpected response format for AddUser")
+	}
+
+	return dataMap["id"].(string), nil
 }
 
 func (c *MemoBaseClient) UpdateUser(userID string, data map[string]interface{}) (string, error) {
-	reqBody := map[string]interface{}{
-		"data": data,
-	}
-
-	jsonData, err := json.Marshal(reqBody)
+	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return "", err
 	}
@@ -130,7 +133,12 @@ func (c *MemoBaseClient) UpdateUser(userID string, data map[string]interface{}) 
 		return "", err
 	}
 
-	return baseResp.Data["id"].(string), nil
+	dataMap, ok := baseResp.Data.(map[string]interface{})
+	if !ok {
+		return "", fmt.Errorf("unexpected response format for UpdateUser")
+	}
+
+	return dataMap["id"].(string), nil
 }
 
 func (c *MemoBaseClient) GetUser(userID string, noGet bool) (*User, error) {
@@ -146,10 +154,15 @@ func (c *MemoBaseClient) GetUser(userID string, noGet bool) (*User, error) {
 			return nil, err
 		}
 
+		dataMap, ok := baseResp.Data.(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("unexpected response format for GetUser")
+		}
+
 		return &User{
 			UserID:        userID,
 			ProjectClient: c,
-			Fields:        baseResp.Data,
+			Fields:        dataMap,
 		}, nil
 	}
 
@@ -208,7 +221,12 @@ func (c *MemoBaseClient) GetConfig() (string, error) {
 		return "", err
 	}
 
-	config, ok := baseResp.Data["profile_config"].(string)
+	dataMap, ok := baseResp.Data.(map[string]interface{})
+	if !ok {
+		return "", fmt.Errorf("unexpected response format for GetConfig")
+	}
+
+	config, ok := dataMap["profile_config"].(string)
 	if !ok {
 		return "", fmt.Errorf("unexpected response format for profile_config")
 	}
@@ -239,4 +257,89 @@ func (c *MemoBaseClient) UpdateConfig(config string) error {
 
 	_, err = network.UnpackResponse(resp)
 	return err
+}
+
+func (c *MemoBaseClient) GetUsage() (map[string]interface{}, error) {
+	resp, err := c.HTTPClient.Get(fmt.Sprintf("%s/project/billing", c.BaseURL))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	baseResp, err := network.UnpackResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	dataMap, ok := baseResp.Data.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected response format for GetUsage")
+	}
+
+	return dataMap, nil
+}
+
+func (c *MemoBaseClient) GetAllUsers(search string, orderBy string, orderDesc bool, limit int, offset int) ([]map[string]interface{}, error) {
+	url := fmt.Sprintf("%s/project/users?search=%s&order_by=%s&order_desc=%t&limit=%d&offset=%d", c.BaseURL, search, orderBy, orderDesc, limit, offset)
+	resp, err := c.HTTPClient.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	baseResp, err := network.UnpackResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	dataMap, ok := baseResp.Data.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected response format for GetAllUsers")
+	}
+
+	users, ok := dataMap["users"].([]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected response format for users")
+	}
+
+	var result []map[string]interface{}
+	for _, u := range users {
+		userMap, ok := u.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		result = append(result, userMap)
+	}
+
+	return result, nil
+}
+
+func (c *MemoBaseClient) GetDailyUsage(days int) ([]map[string]interface{}, error) {
+	url := fmt.Sprintf("%s/project/usage?last_days=%d", c.BaseURL, days)
+	resp, err := c.HTTPClient.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	baseResp, err := network.UnpackResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	dataArray, ok := baseResp.Data.([]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected response format for GetDailyUsage: expected array, got %T", baseResp.Data)
+	}
+
+	var result []map[string]interface{}
+	for _, item := range dataArray {
+		if itemMap, ok := item.(map[string]interface{}); ok {
+			result = append(result, itemMap)
+		} else {
+			return nil, fmt.Errorf("unexpected item type in GetDailyUsage response: expected map[string]interface{}, got %T", item)
+		}
+	}
+
+	return result, nil
 }
