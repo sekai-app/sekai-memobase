@@ -60,15 +60,17 @@ async def doubao_cache_complete(
     messages = []
     messages.extend(history_messages)
     messages.append({"role": "user", "content": prompt})
-    if sp_args.get("no_cache", None):
+    if sp_args.get("no_cache", None) or system_prompt is None:
 
-        messages.insert(0, {"role": "system", "content": system_prompt})
+        if system_prompt is not None:
+            messages.insert(0, {"role": "system", "content": system_prompt})
 
         response = await doubao_async_client.chat.completions.create(
             model=model, messages=messages, timeout=120, **kwargs
         )
         LOG.info(f"No Cached {prompt_id} {model} {response.usage.prompt_tokens}")
         return response.choices[0].message.content
+
     context_id = await doubao_cache_create_context_and_save(
         model, system_prompt, prompt_id
     )

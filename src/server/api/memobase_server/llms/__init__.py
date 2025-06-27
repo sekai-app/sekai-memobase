@@ -6,6 +6,7 @@ from ..env import CONFIG, LOG
 from ..controllers.billing import project_cost_token_billing
 from ..models.utils import Promise
 from ..models.response import CODE
+from ..models.database import DEFAULT_PROJECT_ID
 from ..telemetry import telemetry_manager, CounterMetricName, HistogramMetricName
 
 from .openai_model_llm import openai_complete
@@ -46,7 +47,9 @@ async def llm_complete(
 
     in_tokens = len(
         get_encoded_tokens(
-            prompt + system_prompt + "\n".join([m["content"] for m in history_messages])
+            prompt
+            + (system_prompt or "")
+            + "\n".join([m["content"] for m in history_messages])
         )
     )
     out_tokens = len(get_encoded_tokens(results))
@@ -84,3 +87,12 @@ async def llm_complete(
         return Promise.reject(
             CODE.UNPROCESSABLE_ENTITY, "Failed to parse JSON response"
         )
+
+
+async def llm_sanity_check():
+    r = await llm_complete(
+        DEFAULT_PROJECT_ID, "Test", max_tokens=1, prompt_id="__test__"
+    )
+    if not r.ok():
+        raise ValueError(f"LLM sanity check failed: {r.msg()}")
+    LOG.info("LLM sanity check passed")

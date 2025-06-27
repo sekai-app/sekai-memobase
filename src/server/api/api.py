@@ -14,6 +14,7 @@ from memobase_server.connectors import (
 from memobase_server import api_layer
 from memobase_server.env import LOG
 from memobase_server.llms.embeddings import check_embedding_sanity
+from memobase_server.llms import llm_sanity_check
 from uvicorn.config import LOGGING_CONFIG
 from memobase_server.api_layer.docs import API_X_CODE_DOCS
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
@@ -23,6 +24,7 @@ from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 async def lifespan(app: FastAPI):
     init_redis_pool()
     await check_embedding_sanity()
+    await llm_sanity_check()
     LOG.info(f"Start Memobase Server {memobase_server.__version__} 🖼️")
     yield
     await close_connection()

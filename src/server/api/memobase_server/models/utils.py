@@ -34,9 +34,7 @@ class Promise(Generic[D]):
 
     def data(self) -> Optional[D]:
         if not self.ok():
-            raise PromiseUnpackError(
-                f"Promise contains error: CODE {self.__errcode}; MSG {self.__errmsg}"
-            )
+            raise PromiseUnpackError(self.msg())
         return self.__data
 
     def code(self) -> CODE:
@@ -44,7 +42,7 @@ class Promise(Generic[D]):
 
     def msg(self) -> str:
         if not self.ok():
-            return f"Promise contains error: CODE {self.__errcode}; MSG {self.__errmsg}"
+            return f"CODE {self.__errcode}; ERROR {self.__errmsg}"
         return ""
 
     def to_response(self, ResponseModel: Type[T]) -> T:
