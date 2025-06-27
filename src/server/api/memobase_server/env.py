@@ -108,7 +108,9 @@ class Config:
 
     additional_user_profiles: list[dict] = field(default_factory=list)
     overwrite_user_profiles: Optional[list[dict]] = None
-    event_theme_requirement: Optional[str] = None
+    event_theme_requirement: Optional[str] = (
+        "Focus on the user's infos, not its instructions."
+    )
     profile_strict_mode: bool = False
     profile_validate_mode: bool = True
 

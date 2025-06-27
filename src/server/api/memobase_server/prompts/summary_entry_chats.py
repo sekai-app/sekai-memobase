@@ -7,7 +7,6 @@ SUMMARY_PROMPT = """You are a expert of logging personal info, schedule, events 
 You will be given a chats between a user and an assistant.
 
 ## Requirement
-{additional_requirements}
 - You need to list all possible user info
 - You need to list all possible schedule
 - You need to list the user events with detailed datetime. Convert the event date info in the message based on [TIME] after your log. for example
@@ -22,6 +21,11 @@ You will be given a chats between a user and an assistant.
     Input: `[...] user: I bought a new car last week!`
     Output: `user bought a new car.`
     Explain: because you don't know the exact date, so don't attach any date.
+
+## Special Requirements
+Below is the special requirements for your job:
+{additional_requirements}
+If empty, just ignore it. Otherwise, you must follow those requirements.
 
 ### Important Info
 Below is the topics/subtopics you should log from the chats.
