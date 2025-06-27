@@ -1,10 +1,12 @@
-[0.0.345] - unreleased
+### [0.0.35] - 2025/6/27
 
 **Changed**
 
 - Remove rich log to simple logging, add project id and user id
 
 - Update api doc structure
+
+- Update go SDK to latest version
 
 
 
