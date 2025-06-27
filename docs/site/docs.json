@@ -43,7 +43,8 @@
                 ]
               },
               "features/message",
-              "features/context"
+              "features/context",
+              "features/search"
             ]
           },
           {
