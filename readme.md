@@ -139,12 +139,8 @@ Memobase is building with FastAPI, Postgres and Redis, supporting request cachin
 >
 > Try [Memobase-Playground](https://github.com/memodb-io/memobase-playground), an open-source, full-stack AI Chatbot with long-term memory. [live-demo](https://app.memobase.io/playground)
 
-<div align="center">
-  <a href="https://app.memobase.io/playground">
-  <img style="border-radius: 12px; width: 512px;" src="https://github.com/user-attachments/assets/f9431519-4693-43df-aaaa-560d8f531de7">
-  </a>
-<p>Memobase Playground</p>
-</div>
+https://github.com/user-attachments/assets/eb2eea30-48bc-4714-9706-e417ae1931df
+
 
 
 
