@@ -74,7 +74,9 @@ async def get_user_context(
         profile_section = ""
 
     profile_section_tokens = len(get_encoded_tokens(profile_section))
-    max_event_token_size = max_token_size - profile_section_tokens
+    max_event_token_size = min(
+        max_token_size - profile_section_tokens, max_token_size - max_profile_token_size
+    )
     if max_event_token_size <= 0:
         return Promise.resolve(
             ContextData(context=context_prompt_func(profile_section, ""))
