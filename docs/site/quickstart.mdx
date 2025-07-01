@@ -69,11 +69,24 @@ const client = new MemoBaseClient(process.env['MEMOBASE_PROJECT_URL'], process.e
 
 ```go Go
 import (
+    "fmt"
+    "log"
+
     "github.com/memodb-io/memobase/src/client/memobase-go/core"
 )
-projectURL := "YOUR_PROJECT_URL"
-apiKey := "YOUR_API_KEY"
-client, err := core.NewMemoBaseClient(projectURL, apiKey)
+
+func main() {
+    projectURL := "YOUR_PROJECT_URL"
+    apiKey := "YOUR_API_KEY"
+    // Initialize the client
+    client, err := core.NewMemoBaseClient(
+        projectURL,
+        apiKey,
+    )
+    if err != nil {
+        log.Fatalf("Failed to create client: %v", err)
+    }
+}
 ```
 </CodeGroup>
 </Accordion>
@@ -87,7 +100,31 @@ assert client.ping()
 const ping = await client.ping()
 ```
 ```go Go
-ok := client.Ping()
+import (
+    "fmt"
+    "log"
+
+    "github.com/memodb-io/memobase/src/client/memobase-go/core"
+)
+
+func main() {
+    projectURL := "YOUR_PROJECT_URL"
+    apiKey := "YOUR_API_KEY"
+    // Initialize the client
+    client, err := core.NewMemoBaseClient(
+        projectURL,
+        apiKey,
+    )
+    if err != nil {
+        log.Fatalf("Failed to create client: %v", err)
+    }
+
+    // Ping the server
+    if !client.Ping() {
+        log.Fatal("Failed to connect to server")
+    }
+    fmt.Println("Successfully connected to server")
+}
 ```
 
 ```bash cURL
@@ -115,8 +152,10 @@ uid = client.add_user({"name": "Gustavo"})
 const userId = await client.addUser({name: "Gustavo"})
 ```
 ```go Go
-userid := uuid.New()
-userId, err := client.AddUser(map[string]interface{}{"name": "Gustavo"}, userid.String())
+import "github.com/google/uuid"
+
+userID := uuid.New().String()
+_, err := client.AddUser(map[string]interface{}{"name": "Gustavo"}, userID)
 ```
 ```bash cURL
 curl -X POST "$YOUR_PROJECT_URL/api/v1/users" \
@@ -141,7 +180,7 @@ client.update_user(uid, {"status": "caffeinated"})
 await client.updateUser(userId, {status: "caffeinated"})
 ```
 ```go Go
-client.UpdateUser(userId, map[string]interface{}{"status": "caffeinated"})
+_, err = client.UpdateUser(userID, map[string]interface{}{"status": "caffeinated"})
 ```
 ```bash cURL
 curl -X PUT "$YOUR_PROJECT_URL/api/v1/users/{uid}" \
@@ -168,7 +207,7 @@ const user = await client.getUser(userId)
 ```
 
 ```go Go
-user, err := client.GetUser(userId)
+user, err := client.GetUser(userID, false)
 ```
 
 ```bash cURL
@@ -194,7 +233,7 @@ await client.deleteUser(userId)
 ```
 
 ```go Go
-client.DeleteUser(userId)
+err = client.DeleteUser(userID)
 ```
 
 ```bash cURL
@@ -238,12 +277,12 @@ const blobId = await user.insert(Blob.parse({
 
 ```go Go
 chatBlob := &blob.ChatBlob{
-	Messages: []blob.OpenAICompatibleMessage{
-		{Role: "user", Content: "Hello, I am Jinjia!"},
-		{Role: "assistant", Content: "Hi there! How can I help you today?"},
-	},
+    Messages: []blob.OpenAICompatibleMessage{
+        {Role: "user", Content: "Hello, I am Jinjia!"},
+        {Role: "assistant", Content: "Hi there! How can I help you today?"},
+    },
 }
-blobID, err := user.Insert(chatBlob)
+blobID, err := user.Insert(chatBlob, false)
 ```
 
 ```bash cURL
@@ -271,7 +310,7 @@ const blob = await user.get(blobId)
 ```
 
 ```go Go
-blob, err := user.Get(blobId)
+blob, err := user.Get(blobID)
 ```
 
 ```bash cURL
@@ -297,7 +336,7 @@ await user.delete(blobId)
 ```
 
 ```go Go
-err := user.Delete(blobId)
+err := user.Delete(blobID)
 ```
 
 ```bash cURL
@@ -329,7 +368,7 @@ await user.flush(BlobType.Enum.chat)
 ```
 
 ```go Go
-err := user.Flush(blob.ChatType)
+err := user.Flush(blob.ChatType, false)
 ```
 
 ```bash cURL
@@ -357,7 +396,7 @@ const profiles = await user.profile()
 ```
 
 ```go Go
-profiles, err := user.Profile()
+profiles, err := user.Profile(nil)
 ```
 
 ```bash cURL
