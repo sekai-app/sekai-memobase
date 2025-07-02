@@ -1,0 +1,53 @@
+{
+    "family": "sekai-memobase-dev-ecs-tk",
+    "containerDefinitions": [
+        {
+            "name": "sekai-memobase",
+            "image": "010526279899.dkr.ecr.us-east-1.amazonaws.com/sekai-memobase-dev",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "sekai-memobase-8019-tcp",
+                    "containerPort": 8019,
+                    "hostPort": 8019,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/sekai-memobase-dev",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        }
+    ],
+    "executionRoleArn": "arn:aws:iam::010526279899:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "volumes": [],
+    "placementConstraints": [],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "3072",
+    "ephemeralStorage": {
+        "sizeInGiB": 100
+    },
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "enableFaultInjection": false
+}
