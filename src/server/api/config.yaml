@@ -1,0 +1,84 @@
+# Storage and Performance
+## boolean, default to false. If set to true, the chat blobs will be persisted in the database.
+persistent_chat_blobs: false
+## int, default to 3600 (1 hour). Controls how frequently the chat buffer is flushed to persistent storage.
+buffer_flush_interval: 3600
+## This is the parameter to control the buffer size of Memobase. Larger numbers lower your LLM cost but increase profile update lag.
+max_chat_blob_buffer_token_size: 512
+## The maximum subtopics one topic can have. When a topic has more than this, it will trigger a re-organization.
+max_profile_subtopics: 10
+## The maximum token size of one profile slot. When a profile slot is larger, it will trigger a re-summary.
+max_pre_profile_token_size: 128
+## Time-to-live for cached user profiles in seconds.
+cache_user_profiles_ttl: 1200
+
+# Timezone
+use_timezone: "UTC"
+
+# LLM Configuration
+# OpenAI Scheme Only
+language: "en"
+llm_api_key: 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
+llm_base_url: https://api.openai.com/v1/
+best_llm_model: gpt-4.1
+summary_llm_model: gpt-4.1
+
+enable_event_embedding: true
+embedding_provider: "openai"
+embedding_base_url: https://api.openai.com/v1
+embedding_api_key: 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
+embedding_model: "text-embedding-3-small"
+embedding_dim: 1536
+embedding_max_token_size: 8192
+
+
+overwrite_user_profiles:
+  - topic: "content_preferences"
+    sub_topics:
+      - name: "protagonist_archetype"
+        description: "A concise label for their character concept. Examples: 'Fallen Noble', 'Street Survivor', 'Mysterious Heir', 'Rebel Leader'"
+
+  - topic: "user_behavioral_insights"
+    sub_topics:
+      - name: "creativity_preference"
+        description: "Inferred user preference for creativity. Values: 'structured' (prefers preset options), 'creative' (enjoys creating custom content), 'hybrid' (mixes preset and custom elements)"
+      - name: "response_style"
+        description: "User's usual way of response (Descriptive, Terse, Questioning, Action-Oriented, Mixed)"
+      - name: "narrative_agency"
+        description: "User's preferred level of control over the narrative. Values: 'Director' (proactively shapes the story, e.g., power-gamers who seize control), 'Actor' (engages with the story within given boundaries), 'Observer' (prefers to follow the narrative passively, e.g., casual observers who never steer)."
+
+  - topic: "psychological_drivers"
+    sub_topics:
+      - name: "power_fantasy_type"
+        description: "Identify their core fantasy fulfillment. Values: 'underdog' (rising from nothing), 'privilege' (managing inherited power), 'revenge' (seeking justice), 'social' (building relationships)"
+      - name: "conflict_engagement"
+        description: "How they prefer to face challenges. Values: 'growth' (personal development), 'systemic' (changing corrupt systems), 'revenge' (personal vendetta), 'protection' (defending others)"
+      - name: "romantic_preference_companion"
+        description: "Inferred romantic preference"
+      - name: "attachment_style_companion"
+        description: "Inferred attachment style"
+      - name: "social_dynamics_preference_companion"
+        description: "Inferred social dynamics preference"
+      - name: "relationship_preference"
+        description: "User's relationship preference. Indicates how they want to interact with other characters in the story."
+
+  - topic: "platform_recommendations"
+    sub_topics:
+      - name: "preference_summary"
+        description: "One sentence summary of the user content preference for future recommendation"
+      - name: "inferred_elements"
+        description: "List of world setting elements inferred from user's world choice, each with an associated weight from 0 to 1. Examples: [{'element': 'fantasy', 'weight': 0.8}, {'element': 'sci-fi', 'weight': 0.9}]. Five elements at most."
+      - name: "interested_story_tropes"
+        description: "List of tropes inferred from user's character choice and previous chat history, each with an associated weight from 0 to 1. Examples: [{'tag': 'Harem', 'weight': 1.0}, {'tag': 'Enemies to Lovers', 'weight': 0.7}]. Used for content recommendation. Five elements at most."
+      - name: "interested_ip_tags"
+        description: "List of IP tags or IP characters tags inferred from user's world choice, character choice, and companion choice. Each tag has an associated weight from 0 to 1. Examples: [{'tag': 'Naruto', 'weight': 0.8}, {'tag': 'Genshin Impact', 'weight': 0.9}]. Used for future content recommendation. Five elements at most."
+      - name: "gender_orientation_preference"
+        description: "Inferred user's preference for story themes related to gender orientation and protagonist embodiment. This should be derived from the user's character choice (e.g., their chosen gender, who they want to embody), companion choice (e.g., gender of romantic interest), and any stated preferences or interests in specific relationship dynamics or tropes during the conversation. The probabilities should reflect the strength of these signals and ideally sum to 1, though partial assignments are acceptable if signals are mixed or incomplete. All probabilities are between 0 and 1."
+
+# Enforces strict validation of profile structure.
+profile_strict_mode: true
+profile_validate_mode: true
+
+# Summary Configuration
+enable_event_summary: true
+minimum_chats_token_size_for_event_summary: 256
