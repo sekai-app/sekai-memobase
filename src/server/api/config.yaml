@@ -18,15 +18,15 @@ use_timezone: "UTC"
 # LLM Configuration
 # OpenAI Scheme Only
 language: "en"
-llm_api_key: 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
-llm_base_url: https://api.openai.com/v1/
+llm_api_key: sk-2bB9lhZiw2hWn8mo8QOXQ7AuCbBjBnNrhEgLyL5crgTW4X0P
+llm_base_url: https://yunwu.ai/v1/
 best_llm_model: gpt-4.1
 summary_llm_model: gpt-4.1
 
 enable_event_embedding: true
 embedding_provider: "openai"
-embedding_base_url: https://api.openai.com/v1
-embedding_api_key: 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
+embedding_base_url: https://yunwu.ai/v1
+embedding_api_key: sk-2bB9lhZiw2hWn8mo8QOXQ7AuCbBjBnNrhEgLyL5crgTW4X0P
 embedding_model: "text-embedding-3-small"
 embedding_dim: 1536
 embedding_max_token_size: 8192
