@@ -1,54 +1,55 @@
 from datetime import datetime
 from .utils import pack_merge_action_into_string
-from ..env import CONFIG
+from ..env import CONFIG, LOG
 
 ADD_KWARGS = {
     "prompt_id": "merge_profile",
 }
+
 EXAMPLES = {
     "replace": [
         {
             "input": """## User Topic
-basic_info, Age
+content_preferences, protagonist_archetype
 ## Old Memo
-User is 39 years old
+User prefers hero archetype characters [observed in early sessions]
 ## New Memo
-User is 40 years old[mentioned on 2025-05-17]
+User consistently chooses anti-hero archetype characters with moral complexity [pattern across recent 5 sessions, 2025-05-17]
 """,
             "response": """
-Age has one true value only, the old one is outdated, so replace it with the new one.
+User preferences have evolved from simple hero to complex anti-hero archetypes, the recent pattern shows more sophisticated character preferences.
 ---
-- UPDATE{tab}User is 40 years old[mentioned on 2025-05-17]
+- UPDATE{tab}User consistently chooses anti-hero archetype characters with moral complexity [pattern across recent 5 sessions, 2025-05-17]
 """,
         },
     ],
     "merge": [
         {
             "input": """## User Topic
-interest, Food
+psychological_drivers, romantic_preference_companion
 ## Old Memo
-User loves cheese pizza[mentioned on 2025-03]
+User shows interest in slow-burn relationship development with companions [pattern observed 2025-03]
 ## New Memo
-User loves chicken pizza[mentioned on 2025-05]; User ate chicken pizza[mentioned on 2025-05]
+User consistently chooses intimate dialogue options and emotional bonding scenes with companion characters [behavioral pattern 2025-05]
 """,
             "response": """
-interest of food is not exclusive, so merge the two memos. Also, I need to keep the final memo concise.
+Both insights relate to romantic preferences with companions and should be merged to show the full pattern.
 ---
-- UPDATE{tab}Love cheese pizza[mentioned on 2025-03] and chicken pizza[mentioned on 2025-05]
+- UPDATE{tab}User shows interest in slow-burn relationship development and consistently chooses intimate dialogue options and emotional bonding scenes with companion characters [patterns from 2025-03 to 2025-05]
 """,
         },
     ],
     "keep": [
         {
             "input": """## User Topic
-basic_info, Birthday
+user_behavioral_insights, creativity_preference
 ## Old Memo
-1999/04/30
+High creative input preference, creates custom characters and worlds [established pattern]
 ## New Memo
-User didn't provide any birthday
+User used a preset character once due to time constraints [single session 2025-05-17]
 """,
             "response": """
-birthday is a unique value and the new memo doesn't provide any valuable info, so keep the old one.
+A single instance doesn't override an established behavioral pattern. The old memo represents the user's true preference.
 ---
 - ABORT{tab}invalid
 """,
@@ -57,36 +58,34 @@ birthday is a unique value and the new memo doesn't provide any valuable info, s
     "special": [
         {
             "input": """## Update Instruction
-Always keep the latest goal and remove the old one.
+Always prioritize the most recent behavioral patterns for recommendation accuracy.
 ## User Topic
-work, goal
+platform_recommendations, interested_story_tropes
 ## Old Memo
-Want to be a software engineer
+Enemies-to-lovers and redemption arcs [early pattern]
 ## New Memo
-Want to start a startup
+Found family and friendship dynamics [recent consistent pattern]
 """,
             "response": """
-Goal is not exclusive, but the instruction requires to keep the latest goal and remove the old one.
-So replace the old one with the new one.
+Following the instruction to prioritize recent patterns for better recommendations.
 ---
-- UPDATE{tab}Start a startup
+- UPDATE{tab}Found family and friendship dynamics [recent consistent pattern]
 """,
         },
     ],
     "validate": [
         {
             "input": """### Topic Description
-Record the user's long-term goal of study.
+Record user's preferred protagonist archetypes in roleplay scenarios.
 ## User Topic
-study, goal
+content_preferences, protagonist_archetype
 ## Old Memo
 NONE
 ## New Memo
-I want to play video game in the next weekend
+User mentioned liking pizza during a casual conversation
 """,
-            "response": """Just validate the new memo.
-The topic is about the user's goal of study, but the value is about planning for playing games.
-Also, this topic is about long-term goal and the value is about short-term plan.
+            "response": """
+The topic is about protagonist archetypes in roleplay, but the new memo is about food preferences in casual conversation - completely unrelated to the topic.
 ---
 - ABORT{tab}invalid
 """,
@@ -94,72 +93,73 @@ Also, this topic is about long-term goal and the value is about short-term plan.
         {
             "input": """Today is 2025-04-05
 ### Topic Description
-Record the user's current working plans, forgive the outdated plans
+Record user's response style patterns for personalized interaction tuning, prioritize recent behavioral changes.
 ## User Topic
-work, curent_plans
+user_behavioral_insights, response_style
 ## Old Memo
-User need to prepare for the interview in 2025-03-21[mentioned on 2025-03-11]
+Detailed, narrative-style responses [pattern from 2025-01 to 2025-02]
 ## New Memo
-User need to develop a Memobase Playgeound App before 2025-05-01[mentioned on 2025-04-05]
+Brief, action-focused response style [consistent pattern from 2025-03 to 2025-04-05]
 """,
-            "response": """User can have multiple current working plans, I can merge the two plans.
-But based on the requirements, the old memo is outdated(today is 04-05, but the interview is in 03-21), so I need to discard the old memo.
+            "response": """
+User response patterns can evolve over time. The new pattern is more recent and sustained, indicating a genuine preference change for personalized interactions.
 ---
-- UPDATE{tab}User need to develop a Memobase Playgeound App before 2025-05-01[mentioned on 2025-04-05]
+- UPDATE{tab}Brief, action-focused response style [consistent pattern from 2025-03 to 2025-04-05]
 """,
         },
     ],
 }
 
-MERGE_FACTS_PROMPT = """You are a smart memo manager which controls the memory/figure of a user.
-You job is to validate the memo and merge memos.
-You will be given two memos, one old and one new on the same topic/aspect of the user.
-You should update the memo based on the inputs.
+SEKAI_MERGE_FACTS_PROMPT = """You are a behavioral pattern analyst managing user preference profiles for the Sekai immersive roleplay platform.
+Your job is to intelligently merge and validate user behavioral insights, content preferences, and interaction patterns.
 
-There are some guidelines about how to update the memo:
-### replace the old one
-The old memo is considered outdated and should be replaced with the new memo, or the new memo is conflicting with the old memo:
+You will be given two sets of insights - existing and new - about the same aspect of user behavior in Sekai.
+Your goal is to create the most accurate and useful profile for content recommendation.
+
+### Merge Guidelines for Sekai Profiles:
+
+#### Replace patterns when:
+- New behavioral evidence shows a clear preference evolution or change
+- Recent sustained patterns contradict older observations  
+- New insights are based on more comprehensive data
 <example>
 {example_replace}
 </example>
 
-### merge the memos
-Note that MERGE should be selected as long as there is information in the old memo that is not included in the new memo.
-The old and new memo tell different parts of the same story and should be merged together:
+#### Merge patterns when:
+- New and old insights complement each other without conflict
+- Both provide valuable information about user preferences
+- Combined insight gives a fuller picture of user behavior
 <example>
 {example_merge}
 </example>
 
-### keep the old one
-If the new memo has no information added,  containing nothing useful or is invalid, you should keep the old memo by aborting this update(output `- ABORT{tab}invalid`)
+#### Keep existing patterns when:
+- New data is insufficient, inconsistent, or represents temporary behavior
+- Single instances contradict established behavioral patterns
+- New insights are not relevant to the specific behavioral topic
 <example>
 {example_keep}
 </example>
 
-### special case
-User may give you instructions in '## Update Instruction' section to update the memo in a certain way.
-You need to understand the instruction and update the memo accordingly.
+#### Special considerations:
+- Follow any specific update instructions for recommendation optimization
+- Consider recency for rapidly changing behavioral preferences
+- Prioritize sustained patterns over isolated instances
 <example>
 {example_special}
 </example>
 
-### no old memo
-`## Old Memo` is not always provided, if empty, you just need to validate the new memo based on the topic description.
-
-## Save the final memo with valid requirements
-The final memo(w/wo old memo) should be saved matching the topic description.
-The topic description may contain some requirements for the memo:
-- The value should be certain type, format, in a certain range, etc.
-- The value should only record certain information, for example, the user's name, email, long-term goal of study, etc.
-You need to judge whether the topic's value matches the description.
-If not, you should modify the valid content in memo or decide to discard this operation(output `- ABORT{tab}invalid`).
-!! If there is not specific topic description, you should accept the memo as long as it's revelant, only reject/invalid the memo if it's completely inrevelant.
+### Validation for Behavioral Insights:
+Ensure insights match the behavioral topic and are useful for content recommendation:
+- Verify insights relate to user behavior in Sekai roleplay scenarios
+- Check that patterns are based on actual user choices and interactions
+- Validate insights would help personalize content recommendations
 <example>
 {example_validate}
 </example>
 
-## Input formate
-Below is the input format:
+## Input Format:
 <template>
 Today is [YYYY-MM-DD]
 ## Update Instruction
@@ -173,49 +173,35 @@ Today is [YYYY-MM-DD]
 ## New Memo
 [new_memo]
 </template>
-- [update_instruction], [topic_description], [old_memo] may be empty. When empty, a `NONE` will be placed.
-- Pay attention to and keep the time annotation in the new and old memos (e.g., XXX[mentioned on 2025, happend at 2023]).
 
-## Output requirements
-Think step by step before memo update.
-Based on the above instructions, you need to think step by step and output your final result in the following format:
+Fields may contain "NONE" when empty. Preserve behavioral pattern timestamps and session information.
+
+## Output Requirements:
+Analyze the behavioral patterns step by step, then output:
+
 ```
-YOUR THOUGHT
+YOUR BEHAVIORAL ANALYSIS
 ---
-- UPDATE{tab}MEMO
+- UPDATE{tab}MERGED_INSIGHT
 ```
-Or
+Or:
 ```
-YOUR THOUGHT
+YOUR ANALYSIS
 ---
 - ABORT{tab}invalid
 ```
 
-You first need to think about the requirements and if the topic's value is suitable for this topic step by step.
-Then output your result on topic's value after `---` .
-### RESULT
-If the topic can be revised to match the description's requirements, output:
-- UPDATE{tab}MEMO
-the new line must start with `- UPDATE{tab}`, then output the revised value of the topic
-If the memo is totally invalid, just output `- ABORT{tab}invalid` after `---`
-If there is not specific topic description, you should accept the memo as long as it's revelant, only reject/invalid the memo if it's completely inrevelant.
-If the memo is not formatted correctly, you should decide whether it can be fixed by revising the memo, if yes, update it, if not, abort the update.
+### Key Principles:
+1. **Behavioral Focus**: Only insights about user behavior in Sekai scenarios are valid
+2. **Pattern Recognition**: Distinguish between established patterns and isolated incidents  
+3. **Recommendation Value**: Ensure insights would improve content personalization
+4. **Recency Weighting**: Recent sustained patterns often indicate current preferences
+5. **Completeness**: Final insights should be comprehensive but concise (max 3 sentences)
 
-Make sure you understand the topic description(In `### Topic Description` section) if it exists and update the final memo accordingly.
-Understand the memos wisely, you are allowed to infer the information from the new memo and old memo to decide the final memo.
-Follow the instruction mentioned below:
-- Do not return anything from the custom few shot prompts provided above.
-- Stick to the correct output format. 
-- Make sure the final memo is no more than 5 sentences. Always concise and output the guts of the memo.
-- Do not make any explanations in MEMO, only output the final value related to the topic.
-- Never make up things that are not mentioned in the input.
-- If the input memos are not matching the topic description, you should output `- ABORT{tab}invalid` after `---`
-- Keep the time annotation in the new and old memos (e.g., XXX[mentioned on 2025, happend at 2023]).
-- If you decide to update, make sure the final memo is concise and no redundant information. (e.g. "User is sad; User's mood is sad" -> "User is sad")
+Preserve timestamps and behavioral evidence. Never fabricate patterns not present in the input.
 
-That's all, now perform your job.
+Now perform your behavioral analysis.
 """
-
 
 def get_input(
     topic, subtopic, old_memo, new_memo, update_instruction=None, topic_description=None
@@ -234,29 +220,27 @@ def get_input(
 {new_memo}
 """
 
-
 def form_example(examples: list[dict]) -> str:
-    return "\n".join(
-        [
-            f"""<input>
+    return "\n".join([
+        f"""<input>
 {example['input']}
 </input>
 <output>
 {example['response']}
 </output>
 """
-            for example in examples
-        ]
-    ).format(tab=CONFIG.llm_tab_separator)
-
+        for example in examples
+    ]).format(tab=CONFIG.llm_tab_separator)
 
 def get_prompt() -> str:
+    LOG.info("DEBUG: get prompt at merge_profile.py")
     example_replace = form_example(EXAMPLES["replace"])
     example_merge = form_example(EXAMPLES["merge"])
     example_keep = form_example(EXAMPLES["keep"])
     example_special = form_example(EXAMPLES["special"])
     example_validate = form_example(EXAMPLES["validate"])
-    return MERGE_FACTS_PROMPT.format(
+    
+    return SEKAI_MERGE_FACTS_PROMPT.format(
         example_replace=example_replace,
         example_merge=example_merge,
         example_keep=example_keep,
@@ -265,10 +249,8 @@ def get_prompt() -> str:
         tab=CONFIG.llm_tab_separator,
     )
 
-
 def get_kwargs() -> dict:
     return ADD_KWARGS
-
 
 if __name__ == "__main__":
     print(get_prompt())

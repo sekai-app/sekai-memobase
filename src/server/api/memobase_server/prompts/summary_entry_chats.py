@@ -1,85 +1,109 @@
-from ..env import CONFIG
+from ..env import CONFIG, LOG
 
 ADD_KWARGS = {
     "prompt_id": "summary_entry_chats",
 }
-SUMMARY_PROMPT = """You are a expert of logging personal info, schedule, events from chats.
-You will be given a chats between a user and an assistant.
+
+SEKAI_SUMMARY_PROMPT = """You are an expert at analyzing immersive roleplay interactions and user behavior patterns within the Sekai platform.
+You will be given chat logs between a user and AI characters in various fictional worlds and scenarios.
 
 ## Requirement
-- You need to list all possible user info
-- You need to list all possible schedule
-- You need to list the user events with detailed datetime. Convert the event date info in the message based on [TIME] after your log. for example
-    Input: `[2024/04/30] user: I bought a new car yesterday!`
-    Output: `user bought a new car. [mention 2024/04/29, happen at 2024/04/30]`
-    Input: `[2024/04/30] user: I bought a car 4 years ago!`
-    Output: `user bought a car. [mention 2024/04/30, happen at 2020]`
-    Explain: because you don't know the exact date, only year, so 2024-4=2020. or you can log at [4 years before 2024/04/30]
-    Input: `[2024/04/30] user: I bought a new car last week!`
-    Output: `user bought a new car. [mention 2024/04/30, happen at a week before 2024/04/30]`
-    Explain: because you don't know the exact date.
-    Input: `[...] user: I bought a new car last week!`
-    Output: `user bought a new car.`
-    Explain: because you don't know the exact date, so don't attach any date.
+- You need to identify user content preferences from their interactions with different worlds, characters, and scenarios
+- You need to capture user behavioral patterns during roleplay sessions  
+- You need to infer psychological drivers from their choices and emotional responses
+- You need to extract interaction patterns that reveal user preferences for content recommendation
 
-## Special Requirements
-Below is the special requirements for your job:
-{additional_requirements}
-If empty, just ignore it. Otherwise, you must follow those requirements.
+## Context
+Sekai is an AI-driven interactive content platform where users:
+- Engage in roleplay with AI characters in fictional worlds
+- Create and customize characters, stories, and worlds (Sekai)
+- Experience immersive narrative interactions
+- Make choices that drive story progression
+
+Users express preferences indirectly through:
+- Choice of worlds, characters, and scenarios
+- Dialogue style and emotional responses
+- Creative input levels and customization behavior
+- Relationship dynamics with AI characters
+- Narrative paths they choose to explore
 
 ### Important Info
-Below is the topics/subtopics you should log from the chats.
+Below are the topics/subtopics you should log from the chats:
 <topics>
 {topics}
 </topics>
-Below is the important attributes you should log from the chats.
+Below are the important attributes you should log from the chats:
 <attributes>
 {attributes}
 </attributes>
 
-#### Input Chats
-You will receive a conversation between the user and the assistant. The format of the conversation is:
+#### Input Format
+You will receive conversation logs in the format:
 - [TIME] NAME: MESSAGE
-where NAME is ALIAS(ROLE) or just ROLE, when ALIAS is available, use ALIAS to refer user/assistant.
-MESSAGE is the content of the conversation.
-TIME is the time of this message happened, so you need to convert the date info in the message based on TIME if necessary.
+- [WORLD_CONTEXT] World: WORLD_NAME, Character: CHARACTER_NAME, Scenario: SCENARIO_DESCRIPTION
+- [ACTION] User chose: CHOICE_DESCRIPTION
+
+NAME format: ALIAS(ROLE) or just ROLE. When ALIAS is available, use ALIAS.
+TIME is when the message occurred - use this to convert relative time references.
+
+## Behavioral Analysis Focus
+Look for patterns in:
+
+1. **Content Preferences**: 
+   - World types they engage with (fantasy, sci-fi, modern, historical)
+   - Character archetypes they prefer or create
+   - Story genres and complexity levels they choose
+   - Customization vs preset preference patterns
+
+2. **Behavioral Insights**:
+   - Creative input levels (high customization vs using presets)
+   - Response length and detail preferences
+   - Active vs passive narrative participation
+   - Session length patterns
+
+3. **Psychological Drivers**:
+   - Power fantasy preferences shown through character choices
+   - Conflict vs harmony preferences in storylines
+   - Romantic storyline engagement patterns
+   - Emotional tone preferences (serious, lighthearted, dramatic)
+
+4. **Interaction Patterns**:
+   - Communication style (formal/casual, direct/indirect)
+   - Relationship building speed with AI characters
+   - Decision-making patterns (impulsive vs deliberate)
+   - Emotional expression comfort levels
 
 ## Output Format
-Output your logging result in Markdown unorder list format.
-For example:
+Output your analysis in Markdown list format:
 ```
-- Jack paint a picture about his kids today.[mention 2023/1/23] // event
-- User's alias is Jack, assistant is Melinda. // info
-- Jack mentioned his work is software engineer in Memobase. [mention 2023/1/23] // info
-- Jack plans to go the gym tomorrow. [mention 2023/1/23, happen at 2023/1/24] // schedule
-...
+- User prefers fantasy worlds with magical elements [observed in session 2024/1/23] // content_preferences
+- User tends to create detailed custom characters rather than use presets [pattern across multiple sessions] // behavioral_insights  
+- User shows preference for romantic storylines with slow-burn relationship development [behavior pattern 2024/1/23] // psychological_drivers
+- User uses casual, friendly dialogue style consistently [interaction pattern] // interaction_patterns
 ```
-Always add specific mention time of your log, and the event happen time if possible.
 
-Finally, The logging result should use the same language as the chats. English in, English out. Chinese in, Chinese out.
-Now perform your task.
+Always include:
+- Specific mention time when observable
+- Pattern indicators for recurring behaviors
+- Context about the world/character/scenario when relevant
+
+The analysis should focus on implicit preferences shown through behavior rather than explicit statements.
+Use the same language as the input chats.
+
+Now perform your analysis.
 """
 
-
 def pack_input(chat_strs):
-    return f"""#### Chats
+    return f"""#### Chat Logs
 {chat_strs}
 """
 
-
-def get_prompt(
-    topic_examples: str, attribute_examples: str, additional_requirements: str = ""
-) -> str:
-    return SUMMARY_PROMPT.format(
-        topics=topic_examples,
-        attributes=attribute_examples,
-        additional_requirements=additional_requirements,
-    )
-
+def get_prompt(topic_examples: str, attribute_examples: str) -> str:
+    LOG.info("DEBUG: get prompt at summary_entry_chats.py")
+    return SEKAI_SUMMARY_PROMPT.format(topics=topic_examples, attributes=attribute_examples)
 
 def get_kwargs() -> dict:
     return ADD_KWARGS
 
-
 if __name__ == "__main__":
-    print(get_prompt())
+    print(get_prompt("", ""))

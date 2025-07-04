@@ -1,250 +1,238 @@
 from . import user_profile_topics
 from .utils import pack_profiles_into_string
 from ..models.response import AIUserProfiles
-from ..env import CONFIG
+from ..env import CONFIG, LOG
 
 ADD_KWARGS = {
     "prompt_id": "extract_profile",
 }
+
 EXAMPLES = [
     (
-        """- User say Hi to assistant.
+        """- User consistently chooses hero archetype characters who overcome challenges through determination [observed across multiple sessions]
 """,
-        AIUserProfiles(**{"facts": []}),
+        AIUserProfiles(**{
+            "facts": [
+                {
+                    "topic": "content_preferences",
+                    "sub_topic": "protagonist_archetype",
+                    "memo": "hero archetype characters who overcome challenges through determination",
+                }
+            ]
+        }),
     ),
     (
-        """
-- User is married to SiLei [mention 2025/01/15, happen at 2025/01/01]
+        """- User created 3 custom characters instead of using presets [session 2024/1/23]
+- User spent 15 minutes customizing character appearance and background [session 2024/1/23]
 """,
-        AIUserProfiles(
-            **{
-                "facts": [
-                    {
-                        "topic": "demographics",
-                        "sub_topic": "marital_status",
-                        "memo": "married",
-                    },
-                    {
-                        "topic": "life_event",
-                        "sub_topic": "Marriage",
-                        "memo": "married to SiLei [happen at 2025/01/01]",
-                    },
-                ]
-            }
-        ),
+        AIUserProfiles(**{
+            "facts": [
+                {
+                    "topic": "user_behavioral_insights", 
+                    "sub_topic": "creativity_preference",
+                    "memo": "high creative input preference, creates custom characters and spends significant time on customization [session 2024/1/23]",
+                }
+            ]
+        }),
     ),
     (
-        """
-- User lives in San Francisco [mention 2025/01/01]
-- User is looking for a daily restaurant in San Francisco [mention 2025/01/01]
+        """- User always chooses romantic dialogue options with companion character Aria [pattern across 5 sessions]
+- User shows preference for slow-burn relationship development with companions [behavioral pattern]
 """,
-        AIUserProfiles(
-            **{
-                "facts": [
-                    {
-                        "topic": "contact_info",
-                        "sub_topic": "city",
-                        "memo": "San Francisco [mention 2025/01/01]",
-                    }
-                ]
-            }
-        ),
+        AIUserProfiles(**{
+            "facts": [
+                {
+                    "topic": "psychological_drivers",
+                    "sub_topic": "romantic_preference_companion", 
+                    "memo": "prefers romantic storylines with slow-burn development, particularly with companion Aria [pattern across 5 sessions]",
+                }
+            ]
+        }),
     ),
     (
-        """
-- User is referred as Melinda [mention 2025/01/01]
-- User is applying PhD [mention 2025/01/01]
+        """- User responds with detailed, narrative-style messages averaging 50+ words [interaction pattern]
+- User takes active role in driving story progression through choices [behavioral pattern observed]
 """,
-        AIUserProfiles(
-            **{
-                "facts": [
-                    {
-                        "topic": "basic_info",
-                        "sub_topic": "name",
-                        "memo": "Referred as Melinda",
-                    },
-                    {
-                        "topic": "education",
-                        "sub_topic": "degree",
-                        "memo": "user is applying PhD [mention 2025/01/01]",
-                    },
-                ]
-            }
-        ),
+        AIUserProfiles(**{
+            "facts": [
+                {
+                    "topic": "user_behavioral_insights",
+                    "sub_topic": "response_style", 
+                    "memo": "detailed, narrative-style responses averaging 50+ words",
+                },
+                {
+                    "topic": "user_behavioral_insights",
+                    "sub_topic": "narrative_agency",
+                    "memo": "active participation in story progression through deliberate choices",
+                }
+            ]
+        }),
     ),
     (
-        """
-- User had a meeting with John at 3pm [mention 2024/10/11, happen at 2024/10/10]
-- User is starting a project with John [mention 2024/10/11]
+        """- User shows interest in enemies-to-lovers romance tropes [pattern observed across sessions] 
+- User prefers fantasy and supernatural story elements [behavioral pattern]
 """,
-        AIUserProfiles(
-            **{
-                "facts": [
-                    {
-                        "topic": "work",
-                        "sub_topic": "collaboration",
-                        "memo": "user is starting a project with John [mention 2024/10/11] and already met once [mention 2024/10/10]",
-                    }
-                ]
-            }
-        ),
+        AIUserProfiles(**{
+            "facts": [
+                {
+                    "topic": "platform_recommendations",
+                    "sub_topic": "interested_story_tropes",
+                    "memo": "enemies-to-lovers romance tropes [pattern observed across sessions]",
+                },
+                {
+                    "topic": "platform_recommendations", 
+                    "sub_topic": "inferred_elements",
+                    "memo": "fantasy and supernatural story elements",
+                }
+            ]
+        }),
     ),
     (
-        """
-- User is a software engineer at Memobase [mention 2025/01/01]
-- User's name is John [mention 2025/01/01]
+        """- User consistently chooses conflict resolution through dialogue rather than combat [behavioral pattern]
+- User avoids aggressive or violent story paths [preference pattern observed]
 """,
-        AIUserProfiles(
-            **{
-                "facts": [
-                    {
-                        "topic": "basic_info",
-                        "sub_topic": "Name",
-                        "memo": "John",
-                    },
-                    {
-                        "topic": "work",
-                        "sub_topic": "Title",
-                        "memo": "user is a Software engineer [mention 2025/01/01]",
-                    },
-                    {
-                        "topic": "work",
-                        "sub_topic": "Company",
-                        "memo": "user works at Memobase [mention 2025/01/01]",
-                    },
-                ]
-            }
-        ),
+        AIUserProfiles(**{
+            "facts": [
+                {
+                    "topic": "psychological_drivers",
+                    "sub_topic": "conflict_engagement",
+                    "memo": "prefers peaceful conflict resolution through dialogue, avoids violent story paths",
+                }
+            ]
+        }),
     ),
     (
-        """
-- User's favorite movies are Inception and Interstellar [mention 2025/01/01]
-- User's favorite movie is Tenet [mention 2025/01/02]
+        """- User shows strong emotional attachment to companion characters [behavioral pattern]
+- User tends to develop deep, protective relationships with companions [interaction pattern]
 """,
-        AIUserProfiles(
-            **{
-                "facts": [
-                    {
-                        "topic": "interest",
-                        "sub_topic": "Movie",
-                        "memo": "Inception, Interstellar and Tenet; favorite movie is Tenet [mention 2025/01/02]",
-                    },
-                    {
-                        "topic": "interest",
-                        "sub_topic": "movie_director",
-                        "memo": "user seems to be a Big fan of director Christopher Nolan [mention 2025/01/02]",
-                    },
-                ]
-            }
-        ),
+        AIUserProfiles(**{
+            "facts": [
+                {
+                    "topic": "psychological_drivers",
+                    "sub_topic": "attachment_style_companion",
+                    "memo": "strong emotional attachment with tendency to develop deep, protective relationships",
+                }
+            ]
+        }),
+    ),
+    (
+        """- User consistently chooses female companion characters for romantic interactions [pattern across sessions]
+- User shows preference for heterosexual romantic storylines [behavioral pattern]
+""",
+        AIUserProfiles(**{
+            "facts": [
+                {
+                    "topic": "platform_recommendations",
+                    "sub_topic": "gender_orientation_preference",
+                    "memo": "preference for female companions in heterosexual romantic storylines",
+                }
+            ]
+        }),
     ),
 ]
 
-DEFAULT_JOB = """You are a professional psychologist.
-Your responsibility is to carefully read out the memo of user and extract the important profiles of user in structured format.
-Then extract relevant and important facts, preferences about the user that will help evaluate the user's state.
-You will not only extract the information that's explicitly stated, but also infer what's implied from the conversation.
-You will use the same language as the user's input to record the facts.
+DEFAULT_JOB = """You are a specialist in analyzing immersive roleplay interactions and user behavior patterns.
+Your responsibility is to carefully analyze user interaction logs from Sekai and extract content preferences, behavioral insights, and psychological drivers that reveal user preferences for personalized content recommendation.
+You will extract both explicit preferences and implicit patterns shown through user choices, dialogue styles, and interaction behaviors.
+You will use the same language as the user's input to record the insights.
 """
 
-FACT_RETRIEVAL_PROMPT = """{system_prompt}
+SEKAI_FACT_RETRIEVAL_PROMPT = """{system_prompt}
+
 ## Formatting
-### Input
+### Input Context
 #### Topics Guidelines
-You'll be given some user-relatedtopics and subtopics that you should focus on collecting and extracting.
-Don't collect topics that are not related to the user, it will cause confusion.
-For example, if the memo mentions the position of another person, don't generate a "work{tab}position" topic, it will cause confusion. Only generate a topic if the user mentions their own work.
-You can create your own topics/sub_topics if you find it necessary, unless the user requests to not to create new topics/sub_topics.
-#### User Before Topics
-You will be given the topics and subtopics that the user has already shared with the assistant.
-Consider use the same topic/subtopic if it's mentioned in the conversation again.
-#### Memos
-You will receive a memo of user in Markdown format, which states user infos, events, preferences, etc.
-The memo is summarized from the chats between user and a assistant.
+You'll be given topics and subtopics focused on content preferences, behavioral insights, psychological drivers, and interaction patterns specific to immersive roleplay experiences.
+
+Focus on extracting:
+- **Content Preferences**: World types, character archetypes, story genres, customization patterns
+- **Behavioral Insights**: Creativity levels, response styles, narrative participation patterns  
+- **Psychological Drivers**: Power fantasies, conflict preferences, relationship dynamics
+- **Interaction Patterns**: Communication style, decision-making, emotional expression
+
+Don't extract general personal information unrelated to content consumption and roleplay behavior.
+
+#### User Existing Profiles
+You will be given existing user profiles to consider for consistency and evolution of preferences.
+
+#### Behavioral Analysis Logs  
+You will receive analysis of user interactions in roleplay scenarios, including:
+- Choice patterns in different worlds and with different characters
+- Creative input and customization behaviors
+- Dialogue and relationship building patterns
+- Narrative participation and decision-making styles
 
 ### Output
-You need to extract the facts and preferences from the memo and place them in order list:
+Extract insights and place them in the format:
 - TOPIC{tab}SUB_TOPIC{tab}MEMO
+
 For example:
-- basic_info{tab}name{tab}melinda
-- work{tab}title{tab}software engineer
+- content_preferences{tab}world_type{tab}fantasy and sci-fi settings
+- psychological_drivers{tab}romantic_preferences{tab}slow-burn relationship development
 
-For each line is a fact or preference, containing:
-1. TOPIC: topic represents of this preference
-2. SUB_TOPIC: the detailed topic of this preference
-3. MEMO: the extracted infos, facts or preferences of `user`
-those elements should be separated by `{tab}` and each line should be separated by `\n` and started with "- ".
-
+Each line represents a behavioral insight or preference pattern containing:
+1. TOPIC: main category of the insight
+2. SUB_TOPIC: specific aspect within the category  
+3. MEMO: the extracted behavioral pattern or preference
 
 ## Examples
-Here are some few shot examples:
+Here are examples of behavioral analysis extraction:
 {examples}
-Return the facts and preferences in a markdown list format as shown above.
 
-Remember the following:
-- If the user mentions time-sensitive information, try to infer the specific date from the data.
-- Use specific dates when possible, never use relative dates like "today" or "yesterday" etc.
-- If you do not find anything relevant in the below conversation, you can return an empty list.
-- Make sure to return the response in the format mentioned in the formatting & examples section.
-- You should infer what's implied from the conversation, not just what's explicitly stated.
-- Place all content related to this topic/sub_topic in one element, no repeat.
+## Guidelines
+- Focus on patterns that emerge from user behavior rather than one-time events
+- Infer preferences from choices and interaction styles
+- Look for consistency across multiple sessions when possible
+- Extract insights that would be useful for content recommendation
+- If multiple related patterns exist, combine them into a single comprehensive memo
+- Only extract insights with actual behavioral evidence
 
-Following is a conversation between the user and the assistant. You have to extract/infer the relevant facts and preferences from the conversation and return them in the list format as shown above.
-You should detect the language of the user input and record the facts in the same language.
-If you do not find anything relevant facts, user memories, and preferences in the below conversation, just return "NONE" or "NO FACTS".
-
-Only extract the attributes with actual values, if the user does not provide any value, do not extract it.
+If you find no relevant behavioral patterns or preferences, return "NONE" or "NO INSIGHTS".
 
 #### Topics Guidelines
-Below is the list of topics and subtopics that you should focus on collecting and extracting:
+Below are the topics and subtopics to focus on:
 {topic_examples}
 
-Now perform your task.
+Now perform your analysis.
 """
-
 
 def pack_input(already_input, memo_str, strict_mode: bool = False):
     header = ""
     if strict_mode:
-        header = "Don't extract topics/subtopics that are not mentioned in #### Topics Guidelines, otherwise your answer is invalid!"
+        header = "Focus only on topics/subtopics listed in Topics Guidelines that relate to content preferences and roleplay behavior patterns!"
     return f"""{header}
-#### User Before topics
+#### User Existing Profiles
 {already_input}
-Don't output the topics and subtopics that are not mentioned in the following conversation.
-#### Memo
+
+#### Behavioral Analysis Logs
 {memo_str}
 """
-
 
 def get_default_profiles() -> str:
     return user_profile_topics.get_prompt()
 
-
 def get_prompt(topic_examples: str) -> str:
+    LOG.info("DEBUG: get prompt at extract_profile.py")
     sys_prompt = CONFIG.system_prompt or DEFAULT_JOB
-    examples = "\n\n".join(
-        [
-            f"""<example>
+    examples = "\n\n".join([
+        f"""<example>
 <input>{p[0]}</input>
 <output>
 {pack_profiles_into_string(p[1])}
 </output>
 </example>
 """
-            for p in EXAMPLES
-        ]
-    )
-    return FACT_RETRIEVAL_PROMPT.format(
+        for p in EXAMPLES
+    ])
+    return SEKAI_FACT_RETRIEVAL_PROMPT.format(
         system_prompt=sys_prompt,
         examples=examples,
         tab=CONFIG.llm_tab_separator,
         topic_examples=topic_examples,
     )
 
-
 def get_kwargs() -> dict:
     return ADD_KWARGS
-
 
 if __name__ == "__main__":
     print(get_prompt(get_default_profiles()))
